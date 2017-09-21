@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Homepage</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript" charset="utf-8" async defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" type="text/javascript" charset="utf-8" async defer></script>
+    <script> 
+    $(document).ready(function(){
+        $(".toggle-sidebar").click(function(){
+            $("#sidebar").animate({width:'toggle'},550,function(){
+                $('.overlay').fadeIn("slow");
+            });
+        });
+    });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-md-12 col-lg-4" id="sidebar">
+                <div class="row">
+                    <div class="col-xs-10 col-md-8 col-lg-4 inner-sidebar">
+                        <div id="wrapper-sidebar">
+                            Lorem ipsum
+                            <div class="toggle-sidebar toggle-sidebar-in-sidebar">
+                                Click Me
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-2 col-md-4 overlay">
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-lg-8" id="main">
+                <div class="row">
+                    <header id="header" class="col-xs-12">
+                        HEADER
+                        <div class="toggle-sidebar toggle-sidebar-in-main" style="float:right">
+                            Click Me
+                        </div>
+                    </header><!-- /header -->
+                    <div id="wrapper" class="row">
+                        <div class="col-xs-12 col-md-2 item">
+                            ITEM
+                        </div>
+                        <div class="col-xs-12 col-md-2 item">
+                            ITEM
+                        </div>
+                        <div class="col-xs-12 col-md-2 item">
+                            ITEM
+                        </div>
+                        <div class="col-xs-12 col-md-2 item">
+                            ITEM
+                        </div>
+                        <div class="col-xs-12 col-md-2 item">
+                            ITEM
+                        </div>
+                        <div class="col-xs-12 col-md-2 item">
+                            ITEM
+                        </div>
+                        <div class="col-xs-12 col-md-2 item">
+                            ITEM
+                        </div>
+                        <div class="col-xs-12 col-md-2 item">
+                            ITEM
+                        </div>
+                        <div class="col-xs-12 col-md-2 item">
+                            ITEM
+                        </div>
+                        <div class="col-xs-12 col-md-2 item">
+                            ITEM
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
