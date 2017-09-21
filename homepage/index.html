@@ -16,6 +16,10 @@
         $(".toggle-sidebar").click(function(){
             $(".overlay").fadeToggle('slow');
         });
+        $(".overlay").click(function(){
+            $("#sidebar").animate({width:'toggle'},550);
+            $(".overlay").fadeToggle('slow');
+        });
     });
     </script>
 </head>
