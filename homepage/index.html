@@ -11,9 +11,10 @@
     <script> 
     $(document).ready(function(){
         $(".toggle-sidebar").click(function(){
-            $("#sidebar").animate({width:'toggle'},550,function(){
-                $('.overlay').fadeIn("slow");
-            });
+            $("#sidebar").animate({width:'toggle'},550);
+        });
+        $(".toggle-sidebar").click(function(){
+            $(".overlay").fadeToggle('slow');
         });
     });
     </script>
@@ -21,20 +22,15 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-xs-12 col-md-12 col-lg-4" id="sidebar">
-                <div class="row">
-                    <div class="col-xs-10 col-md-8 col-lg-4 inner-sidebar">
-                        <div id="wrapper-sidebar">
-                            Lorem ipsum
-                            <div class="toggle-sidebar toggle-sidebar-in-sidebar">
-                                Click Me
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xs-2 col-md-4 overlay">
-                        
+            <div class="col-xs-10 col-md-8 col-lg-4" id="sidebar">
+                <div id="wrapper-sidebar">
+                    Lorem ipsum
+                    <div class="toggle-sidebar toggle-sidebar-in-sidebar">
+                        Click Me
                     </div>
                 </div>
+            </div>
+            <div class="col-xs-12 overlay">
             </div>
             <div class="col-xs-12 col-lg-8" id="main">
                 <div class="row">
