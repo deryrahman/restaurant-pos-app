@@ -11,15 +11,17 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" type="text/javascript" charset="utf-8" async defer></script>
     <script> 
     $(document).ready(function(){
-        $(".toggle-sidebar").click(function(){
-            $("#sidebar").animate({width:'toggle'},550);
-        });
-        $(".toggle-sidebar").click(function(){
+        $(".toggle-sidebar-in-main").click(function(){
+            $("#sidebar").animate({width:'toggle'},550,function(){
+                $("#inside-wrapper-sidebar").fadeToggle('fast');
+            });
             $(".overlay").fadeToggle('slow');
         });
-        $(".overlay").click(function(){
-            $("#sidebar").animate({width:'toggle'},550);
-            $(".overlay").fadeToggle('slow');
+        $(".overlay, .toggle-sidebar-in-sidebar, #add-item").click(function(){
+            $("#inside-wrapper-sidebar").fadeToggle(10,function(){
+                $("#sidebar").animate({width:'toggle'},550);
+                $(".overlay").fadeToggle('slow');
+            });
         });
     });
     </script>
@@ -27,14 +29,146 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-xs-10 col-md-8 col-lg-4" id="sidebar">
+            <div class="col-xs-10 col-sm-5 col-lg-4" id="sidebar">
                 <div id="wrapper-sidebar">
-                    Lorem ipsum
-                    <div class="toggle-sidebar toggle-sidebar-in-sidebar">
-                        Click Me
+                    <div id="inside-wrapper-sidebar">
+                        <div class="row padding-default">
+                            <div class="col-xs-10 col-sm-6">
+                                <div class="page-header">
+                                    <h3>Invoice #1234<br>
+                                    <small>Sat, 23/09/2017</small>
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="col-xs-2 col-sm-6">
+                                <div class="icon-helper-page-header align-right">
+                                    <div class="toggle-sidebar toggle-sidebar-in-sidebar">
+                                        <span class="glyphicon glyphicon-remove hidden-lg"></span>
+                                    </div>
+                                    <div id="member-auth">
+                                        <a href="#">
+                                            <span class="glyphicon glyphicon-user"></span><span class="hidden-xs"> New member</span>
+                                        </a><br>
+                                        <a href="#">
+                                            <span class="glyphicon glyphicon-log-in"></span><span class="hidden-xs"> Login member</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row padding-default">
+                            <div class="col-xs-12">
+                                <a href="#" id="add-item"><span class="glyphicon glyphicon-plus"></span> Add item</a>
+                            </div>
+                        </div>
+                        <div class="row padding-default">
+                            <div id="invoice-item-list" class="col-xs-12">
+                                <div class="invoice-item row">
+                                    <div class="col-xs-6 invoice-item-name">
+                                        Ayam bakar kecap pedas
+                                    </div>
+                                    <div class="col-xs-2 invoice-item-count">
+                                        2
+                                    </div>
+                                    <div class="col-xs-4 invoice-item-price align-right">
+                                        <div class="row padding-default">
+                                            Rp35000
+                                        </div>
+                                        <div class="row padding-default">
+                                            Rp70000
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="invoice-item row">
+                                    <div class="col-xs-6 invoice-item-name">
+                                        Jus lemon
+                                    </div>
+                                    <div class="col-xs-2 invoice-item-count">
+                                        2
+                                    </div>
+                                    <div class="col-xs-4 invoice-item-price align-right">
+                                        <div class="row padding-default">
+                                            Rp35000
+                                        </div>
+                                        <div class="row padding-default">
+                                            Rp70000
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="invoice-item row">
+                                    <div class="col-xs-6 invoice-item-name">
+                                        Greentea caffe
+                                    </div>
+                                    <div class="col-xs-2 invoice-item-count">
+                                        2
+                                    </div>
+                                    <div class="col-xs-4 invoice-item-price align-right">
+                                        <div class="row padding-default">
+                                            Rp35000
+                                        </div>
+                                        <div class="row padding-default">
+                                            Rp70000
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="full gray">
+                        <div class="row padding-default">
+                            <div id="invoice-subtotal" class="col-xs-12">
+                                <div class="invoice-item row">
+                                    <div class="col-xs-6 invoice-item-name">
+                                        Subtotal
+                                    </div>
+                                    <div class="col-xs-2 invoice-item-count">
+                                    </div>
+                                    <div class="col-xs-4 invoice-item-price align-right">
+                                        <div class="row padding-default">
+                                            Rp210000
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="invoice-item row">
+                                    <div class="col-xs-6 invoice-item-name">
+                                        Tax
+                                    </div>
+                                    <div class="col-xs-2 invoice-item-count">
+                                        5%
+                                    </div>
+                                    <div class="col-xs-4 invoice-item-price align-right">
+                                        <div class="row padding-default">
+                                            Rp10500
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="full gray">
+                        <div class="row padding-default">
+                            <div id="invoice-subtotal" class="col-xs-12">
+                                <div class="invoice-item row">
+                                    <div class="col-xs-6 invoice-item-name">
+                                        Total
+                                    </div>
+                                    <div class="col-xs-2 invoice-item-count">
+                                    </div>
+                                    <div class="col-xs-4 invoice-item-price align-right">
+                                        <div class="row padding-default">
+                                            Rp220500
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row padding-default">
+                            <div class="col-xs-6">
+                                <button type="submit" class="btn btn-danger col-xs-12">Cancel</button>
+                            </div>
+                            <div class="col-xs-6">
+                                <button type="submit" class="btn btn-success col-xs-12">Payment</button>
+                            </div>
+                        </div>
                     </div>
-                    <a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a>
-                    <a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a>
                 </div>
             </div>
             <div class="col-xs-12 overlay">
@@ -46,7 +180,7 @@
                             <header id="wrapper-header">
                                 <div class="row">
                                     <div class="col-xs-2 col-md-1">
-                                        <div class="toggle-sidebar toggle-sidebar-in-main">
+                                        <div class="toggle-sidebar toggle-sidebar-in-main hidden-lg">
                                             <span class="glyphicon glyphicon-paste" aria-hidden="true"></span>
                                         </div>
                                     </div>
