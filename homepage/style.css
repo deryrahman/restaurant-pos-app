@@ -12,6 +12,8 @@ body {
 }
 .item {
 	border: 1px solid #000;
+	height: 60px;
+	margin: 5px -5px;
 }
 
 /* HEADER */
@@ -31,17 +33,25 @@ body {
 
 /* SIDEBAR */
 #sidebar {
-	background: #fff;
 	z-index: 10;
 	position: absolute;
 	display: none;
   height: 100vh;
-  margin-right: -15px;
   margin-left: -15px;
 }
 #wrapper-sidebar {
+	background: #fff;
 	border: 1px solid #000;
-	min-width:200px;
+	height: 100vh;
+}
+#inside-wrapper-sidebar{
+	display: none;
+}
+.icon-helper-page-header{
+	margin: 20px 0 0 0;
+}
+#member-auth{
+	margin: 15px 0 0 0;
 }
 .overlay{
 	z-index: 5;
@@ -50,7 +60,34 @@ body {
 	height: 100vh;
 	display: none;
 }
+/* invoice list */
+#invoice-item-list {
+	margin: 15px 0 0 0;
+}
+.invoice-item{
+	margin-bottom: 10px;
+}
 
+/* misc */
+.align-center {
+	text-align: center;
+}
+.align-left {
+	text-align: left;
+}
+.align-right {
+	text-align: right;
+}
+.padding-default {
+	padding-right: 15px;
+	padding-left: 15px;
+}
+.full {
+	width: 100%;
+}
+hr.gray {
+	border-top: 1px solid #ccc;
+}
 
 /* small bootstrap */
 @media only screen and (min-width: 768px) {
@@ -78,8 +115,11 @@ body {
 		position: static;
 		display: block;
 	}
-	.toggle-sidebar {
-		display: none;
+	#member-auth{
+		margin: 40px 0 0 0;
+	}
+	#inside-wrapper-sidebar{
+		display: block;
 	}
 
 }
