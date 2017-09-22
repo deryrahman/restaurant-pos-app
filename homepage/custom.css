@@ -44,3 +44,7 @@
 .navbar-right {
   float: right!important;
 }
+
+.col-half-offset{
+    margin-left:4.166666667%
+}

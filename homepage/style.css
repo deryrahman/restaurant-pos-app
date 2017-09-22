@@ -12,6 +12,8 @@ body {
 }
 .item {
 	border: 1px solid #000;
+	height: 60px;
+	margin: 5px -5px;
 }
 
 /* HEADER */
