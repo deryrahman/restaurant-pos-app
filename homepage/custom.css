@@ -48,3 +48,21 @@
 .col-half-offset{
     margin-left:4.166666667%
 }
+
+.navbar-nav > li > a {
+	color: #ff8a65 !important;
+}
+.navbar-nav > li > a:hover {
+	color: #ff5722 !important;
+	background-color: transparent !important;
+	border-bottom: 3px solid #ccc;
+}
+.navbar-nav > .active > a {
+	color: #ff5722 !important;
+	background-color: transparent !important;
+	border-bottom: 3px solid #ff5722;
+}
+.navbar-nav > .active > a:hover {
+	color: #ff5722 !important;
+	border-bottom: 3px solid #ff5722 !important;
+}

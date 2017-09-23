@@ -1,5 +1,27 @@
 body {
+	background: #eee;
 	overflow-x: hidden;
+}
+/* color */
+a {
+	color: #ff5722;
+}
+a:hover {
+	color: #bf360c;
+	text-decoration: none;
+}
+.bg-main {
+	color: #fff;
+	background: #ff5722;
+}
+.bg-main a {
+	color: #fff;
+}
+.bg-main a:hover {
+	color: #ffccbc;
+}
+.white {
+	color: #fff;
 }
 /* MAIN */
 #main {
@@ -13,7 +35,7 @@ body {
 
 /* item */
 .item {
-	border: 1px solid #000;
+	background: white;
 	min-height: 60px;
 	line-height: 60px;
 	margin: 5px -5px;
@@ -27,16 +49,34 @@ h4.title-item {
 	right: 10px;
 	top: 10px;
 }
+.category-tag {
+	font-style: italic;
+	color: #666;
+}
 
 /* HEADER */
 #wrapper-header {
-	text-align: center;
 	font-size:1.5em;
 	min-height: 70px;
-	border: 1px solid #000;
 }
 #wrapper-header>.row>div {
 	min-height: 70px;
+}
+.page-header-sidebar {
+	border-bottom: none;
+}
+.navbar-white-orange{
+	border-bottom: 1px solid #ccc;
+}
+.search-bar {
+	width: 100%;
+	display: none;
+	margin: 15px 0;
+}
+.search-bar input {
+	background: transparent;
+	border: 0;
+	border-bottom: 3px solid #ff8a65;
 }
 
 /* SIDEBAR */
@@ -49,7 +89,6 @@ h4.title-item {
 }
 #wrapper-sidebar {
 	background: #fff;
-	border: 1px solid #000;
 	height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
@@ -75,8 +114,6 @@ h4.title-item {
 	margin: 15px 0 0 0;
 }
 .invoice-item{
-	padding-top: 5px;
-	padding-bottom: 5px;
 }
 .invoice-item-with-delete:hover{
 	background: #eee;
@@ -95,11 +132,22 @@ h4.title-item {
 	padding-right: 15px;
 	padding-left: 15px;
 }
+.margin-default {
+	margin-right: 15px;
+	margin-left: 15px;
+}
+.padding-v-default {
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
 .margin-bottom-default {
 	margin-bottom: 15px;
 }
 .full {
 	width: 100%;
+}
+.full-80 {
+	width: 80%;
 }
 hr.gray {
 	border-top: 1px solid #ccc;
