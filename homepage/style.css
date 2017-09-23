@@ -30,7 +30,6 @@ h4.title-item {
 
 /* HEADER */
 #wrapper-header {
-	line-height: 70px;
 	text-align: center;
 	font-size:1.5em;
 	min-height: 70px;
@@ -108,7 +107,9 @@ hr.gray {
 .pointer{
 	cursor: pointer;
 }
-
+.line-height-header {
+	line-height: 70px;
+}
 /* small bootstrap */
 @media only screen and (min-width: 768px) {
 	.container {
