@@ -10,10 +10,22 @@ body {
 	margin-right: -15px;
   margin-left: -15px;
 }
+
+/* item */
 .item {
 	border: 1px solid #000;
-	height: 60px;
+	min-height: 60px;
+	line-height: 60px;
 	margin: 5px -5px;
+}
+h4.title-item {
+	margin-top: 21px;
+	margin-bottom: 21px;
+}
+.price-item{
+	position: absolute;
+	right: 10px;
+	top: 10px;
 }
 
 /* HEADER */
@@ -26,9 +38,6 @@ body {
 }
 #wrapper-header>.row>div {
 	min-height: 70px;
-}
-.toggle-sidebar {
-	cursor: pointer;
 }
 
 /* SIDEBAR */
@@ -71,7 +80,6 @@ body {
 	padding-bottom: 5px;
 }
 .invoice-item-with-delete:hover{
-	cursor: pointer;
 	background: #eee;
 }
 /* misc */
@@ -97,11 +105,22 @@ body {
 hr.gray {
 	border-top: 1px solid #ccc;
 }
+.pointer{
+	cursor: pointer;
+}
 
 /* small bootstrap */
 @media only screen and (min-width: 768px) {
 	.container {
 		width: 100% !important;
+	}
+	.item{
+		height: 120px;
+		line-height: 2;
+	}
+	.price-item{
+		top: auto;
+		bottom: 10px;
 	}
 }
 
