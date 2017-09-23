@@ -34,7 +34,7 @@ body {
 /* SIDEBAR */
 #sidebar {
 	z-index: 10;
-	position: absolute;
+	position: fixed;
 	display: none;
   height: 100vh;
   margin-left: -15px;
@@ -43,6 +43,8 @@ body {
 	background: #fff;
 	border: 1px solid #000;
 	height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 #inside-wrapper-sidebar{
 	display: none;
@@ -55,7 +57,7 @@ body {
 }
 .overlay{
 	z-index: 5;
-	position: absolute;
+	position: fixed;
 	background: rgba(0, 0, 0, 0.5);
 	height: 100vh;
 	display: none;
@@ -65,9 +67,13 @@ body {
 	margin: 15px 0 0 0;
 }
 .invoice-item{
-	margin-bottom: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
-
+.invoice-item-with-delete:hover{
+	cursor: pointer;
+	background: #eee;
+}
 /* misc */
 .align-center {
 	text-align: center;
@@ -81,6 +87,9 @@ body {
 .padding-default {
 	padding-right: 15px;
 	padding-left: 15px;
+}
+.margin-bottom-default {
+	margin-bottom: 15px;
 }
 .full {
 	width: 100%;
