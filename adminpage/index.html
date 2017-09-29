@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+
+        <div class="navbar-header">
+            <a href="#" class="navbar-brand">PEREGRINE</a>
+        </div>
+
+        <div>
+            <ul class="nav navbar-nav navbar-left">
+                <li class="active"><a href="index.html">Admin Page</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">Iqbal</a></li>
+                <li><a href="login.html">Logout</a></li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+
+<header id="header">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10">
+                <h1>Dashboard <small>Manage Users and Items</small></h1>
+            </div>
+            <div class="col-md-2">
+
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="main">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group">
+                    <a href="#" class="list-group-item active main-bg-color">
+                        Overview
+                    </a>
+                    <a role="button" class="list-group-item" id="toggle-users">
+                        <span class="badge">21</span>
+                        Users</a>
+                    <a href="#" class="list-group-item" id="toggle-items">
+                        <span class="badge">8</span>
+                        Items</a>
+                </div>
+            </div>
+            <div class="col-md-9">
+
+                <!-- Statistics -->
+                <div class="panel panel-default" style="display:block">
+                    <div class="panel-heading main-bg-color">
+                        <h3 class="panel-title">Statistics</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-3">
+                            <div class="well dash-box">
+                                <h2><span class="glyphicon glyphicon-user" aria-hidden="true"></span> 21</h2>
+                                <h4>Users</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="well">
+                                <h2><span class="glyphicon glyphicon-glass" aria-hidden="true"></span> 8</h2>
+                                <h4>Items</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="well">
+                                <h2><span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span> 3</h2>
+                                <h4>Restaurants</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="well">
+                                <h2><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> 1233</h2>
+                                <h4>Reciepts</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users -->
+                <div class="panel panel-default" style="display:none" id="panel-users">
+                    <div class="panel-heading main-bg-color">
+                        <h3 class="panel-title">Users</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-default btn-block">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                 New User
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover">
+                            <tr>
+                                <th>#ID</th>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Email</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Iqbal</td>
+                                <td>Admin</td>
+                                <td>iqbalkhowarizmi@ymail.com</td>
+                                <td><a role="button">edit</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
