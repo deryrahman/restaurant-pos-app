@@ -19,14 +19,16 @@ public class ItemDAOImpl implements ItemDAO {
     Statement stmt;
     PreparedStatement pstmt;
 
-    public ItemDAOImpl() {
+    public ItemDAOImpl(Long categoryId) {
         hashItems = new Hashtable<Long, Item>();
         conn = null;
         stmt = null;
         try {
             conn = JDBCConn.getConnection();
             stmt = conn.createStatement();
-            String query = "SELECT * FROM items";
+            String query = "";
+            if(categoryId>0) query = "SELECT * FROM items JOIN categories WHERE categories.ID=items.category_id AND categories.ID="+categoryId;
+            else query = "SELECT * FROM items";
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 //Retrieve by column name
@@ -88,7 +90,7 @@ public class ItemDAOImpl implements ItemDAO {
             pstmt.setString(3, price);
             if(description != null) pstmt.setString(4, description);
             else pstmt.setNull(4, Types.INTEGER);
-            pstmt.setLong(5, categoyId!=null?categoyId:0);
+            pstmt.setLong(5, categoyId!=null?categoyId:1);
             pstmt.setString(6, status!=null?status:"draft");
             pstmt.executeUpdate();
         } catch (SQLException e) {

@@ -15,7 +15,11 @@ import java.util.Map;
  */
 @Path("/categories")
 public class CategoryService {
-    private CategoryDAOImpl categoryDAOImpl = new CategoryDAOImpl();
+    private CategoryDAOImpl categoryDAOImpl;
+
+    public CategoryService() {
+        categoryDAOImpl = new CategoryDAOImpl();
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -45,5 +49,10 @@ public class CategoryService {
             return Response.status(201).entity(result).build();
         }
         return Response.status(409).build();
+    }
+
+    @Path("{id}")
+    public ItemService getItemService(@PathParam("id") Long categoryId){
+        return new ItemService(categoryId);
     }
 }

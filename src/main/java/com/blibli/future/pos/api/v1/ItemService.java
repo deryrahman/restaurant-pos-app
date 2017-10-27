@@ -9,9 +9,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
 
-@Path("items")
+@Path("/items")
 public class ItemService {
-    private ItemDAOImpl itemDAOImpl = new ItemDAOImpl();
+    private ItemDAOImpl itemDAOImpl;
+
+    public ItemService(Long categoryId) {
+        itemDAOImpl = new ItemDAOImpl(categoryId);
+    }
+
+    public ItemService(){
+        itemDAOImpl = new ItemDAOImpl(Long.valueOf(-1));
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
