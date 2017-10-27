@@ -36,9 +36,10 @@ public class ItemService {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createItemInJSON(Item item) {
-
-        String result = "Item saved : \n" + item;
-        return Response.status(201).entity(result).build();
-
+        if(itemDAOImpl.createItem(item)) {
+            String result = "Item saved : \n" + item;
+            return Response.status(201).entity(result).build();
+        }
+        return Response.status(409).build();
     }
 }

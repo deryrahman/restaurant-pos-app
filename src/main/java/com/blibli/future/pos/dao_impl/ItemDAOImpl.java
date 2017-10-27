@@ -68,7 +68,7 @@ public class ItemDAOImpl implements ItemDAO {
         return hashItems.get(id);
     }
 
-    public void createItem(Item item) {
+    public boolean createItem(Item item) {
         conn = null;
         pstmt = null;
         String query = "INSERT INTO items (ID,date_created, name, price, description, category_id, status)" +
@@ -87,11 +87,12 @@ public class ItemDAOImpl implements ItemDAO {
             pstmt.setString(2, name);
             pstmt.setString(3, price);
             pstmt.setString(4, description);
-            pstmt.setLong(5, categoyId);
-            pstmt.setString(5, status);
+            pstmt.setLong(5, categoyId!=null?categoyId:0);
+            pstmt.setString(6, status!=null?status:"draft");
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         } finally {
             try {
                 if (pstmt != null) pstmt.close();
@@ -100,6 +101,7 @@ public class ItemDAOImpl implements ItemDAO {
                 e.printStackTrace();
             }
         }
+        return true;
     }
 
     public void updateItem(Item item) {
