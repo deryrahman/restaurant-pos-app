@@ -1,7 +1,6 @@
 /* Body */
 body {
     background: #efefef;
-    margin-bottom: 40px;
 }
 
 
@@ -87,22 +86,6 @@ body {
     padding-bottom: 15px;
     margin-top: 33px;
     margin-bottom: 10px;
-}
-
-/* Footer */
-#footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 40px;
-    background-color: #333333;
-    color: #ffffff;
-    text-align: center;
-}
-
-#footer > p {
-    margin-top: 10px;
-    vertical-align: middle;
 }
 
 /* Media */
