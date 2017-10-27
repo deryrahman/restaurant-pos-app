@@ -86,7 +86,8 @@ public class ItemDAOImpl implements ItemDAO {
             pstmt.setString(1, datetime);
             pstmt.setString(2, name);
             pstmt.setString(3, price);
-            pstmt.setString(4, description);
+            if(description != null) pstmt.setString(4, description);
+            else pstmt.setNull(4, Types.INTEGER);
             pstmt.setLong(5, categoyId!=null?categoyId:0);
             pstmt.setString(6, status!=null?status:"draft");
             pstmt.executeUpdate();

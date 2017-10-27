@@ -95,7 +95,7 @@ public class Item {
                 "Datetime : "+createdDate+"\n"+
                 "Name : "+name+"\n"+
                 "Price : "+price+"\n"+
-                "Description : "+price+"\n"+
+                "Description : "+description+"\n"+
                 "CategoryId : "+categoryId+"\n"+
                 "Status : "+status+"\n";
     }
