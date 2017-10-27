@@ -2,7 +2,7 @@ package com.blibli.future.pos.entity;
 
 public class User {
 
-    private Long user_id;
+    private Long id;
     private Long restaurant_id;
     private String name;
     private String password;
@@ -12,8 +12,8 @@ public class User {
     public User() {
     }
 
-    public User(Long user_id, Long restaurant_id, String name, String password, String email, String role) {
-        this.user_id = user_id;
+    public User(Long id, Long restaurant_id, String name, String password, String email, String role) {
+        this.id = id;
         this.restaurant_id = restaurant_id;
         this.name = name;
         this.password = password;
@@ -21,12 +21,12 @@ public class User {
         this.role = role;
     }
 
-    public Long getUser_id() {
-        return user_id;
+    public Long getId() {
+        return id;
     }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getRestaurant_id() {
@@ -67,5 +67,14 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return "ID : " + id + '\n' +
+                "RestaurantID :" + restaurant_id +
+                "Name : " + name + '\n' +
+                "Email : " + email + '\n' +
+                "Role : " + role + '\n';
     }
 }
