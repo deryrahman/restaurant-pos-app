@@ -1,6 +1,4 @@
-package com.blibli.future.pos;
-
-import java.math.BigInteger;
+package com.blibli.future.pos.util;
 
 /**
  * Created by dery on 10/27/17.
