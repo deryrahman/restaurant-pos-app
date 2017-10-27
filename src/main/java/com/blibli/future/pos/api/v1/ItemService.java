@@ -6,11 +6,20 @@ import com.blibli.future.pos.util.MetaData;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.*;
 
-@Path("items")
+@Path("/items")
 public class ItemService {
-    private ItemDAOImpl itemDAOImpl = new ItemDAOImpl();
+    private ItemDAOImpl itemDAOImpl;
+
+    public ItemService(Long categoryId) {
+        itemDAOImpl = new ItemDAOImpl(categoryId);
+    }
+
+    public ItemService(){
+        itemDAOImpl = new ItemDAOImpl(Long.valueOf(-1));
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -18,15 +27,8 @@ public class ItemService {
         // Insert map
         Map map = new HashMap();
         // Insert map -> metadata
-        map.put("metadata", new MetaData(Long.valueOf(40),Integer.valueOf(10)));
-        // Insert map -> results
-//        for (int i=1; i<=1000; i++){
-//            items.add(new Item(
-//                    Long.valueOf(i),
-//                    "Title "+String.valueOf(i),
-//                    "50000")
-//            );
-//        }
+        Long size = Long.valueOf(itemDAOImpl.getAllItems().size());
+        map.put("metadata", new MetaData(size,Integer.valueOf(10)));
         map.put("results",itemDAOImpl.getAllItems());
 
         return map;
@@ -36,17 +38,16 @@ public class ItemService {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     public Item getItem(@PathParam("id") Long id){
-        Item item = new Item(id);
-        return item;
+        return itemDAOImpl.getItem(id);
     }
 
-//    @POST
-//    @Path("/post")
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    public Response createTrackInJSON(Item item) {
-//
-//        String result = "Item saved : " + item;
-//        return Response.status(201).entity(result).build();
-//
-//    }
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createItemInJSON(Item item) {
+        if(itemDAOImpl.createItem(item)) {
+            String result = "Item saved : \n" + item;
+            return Response.status(201).entity(result).build();
+        }
+        return Response.status(409).build();
+    }
 }
