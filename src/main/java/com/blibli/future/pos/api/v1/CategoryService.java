@@ -51,7 +51,7 @@ public class CategoryService {
         return Response.status(409).build();
     }
 
-    @Path("{id}")
+    @Path("{id}/items")
     public ItemService getItemService(@PathParam("id") Long categoryId){
         return new ItemService(categoryId);
     }
