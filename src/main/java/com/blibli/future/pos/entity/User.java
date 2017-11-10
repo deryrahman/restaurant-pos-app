@@ -1,5 +1,8 @@
 package com.blibli.future.pos.entity;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
 
     private Long id;
@@ -72,7 +75,7 @@ public class User {
     @Override
     public String toString() {
         return "ID : " + id + '\n' +
-                "RestaurantID :" + restaurant_id +
+                "RestaurantID :" + restaurant_id + '\n' +
                 "Name : " + name + '\n' +
                 "Email : " + email + '\n' +
                 "Role : " + role + '\n';

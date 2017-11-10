@@ -7,6 +7,18 @@
     <groupId>com.blibli.future.pos</groupId>
     <artifactId>RestaurantPOS</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <dependencies>
         <dependency>
             <groupId>com.sun.jersey</groupId>
@@ -19,10 +31,12 @@
             <artifactId>jersey-json</artifactId>
             <version>1.9</version>
         </dependency>
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.39</version>
         </dependency>
+
     </dependencies>
 </project>
