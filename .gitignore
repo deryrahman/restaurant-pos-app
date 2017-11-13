@@ -1,11 +1,28 @@
 # Intellij
+.idea
+.idea/*
+.gradle
+.gradle/*
+gradle/wrapper/gradle-wrapper.properties
 .idea/
 *.iml
 *.iws
 
-# Maven
-log/
-target/
+out
+log
+build
+out/*
+log/*
+build/*
+dist
+bin
+
+classes
+classes/*
+/classes/
+gradlew.bat
+gradlew
+gradle/
 
 # Project
 *JDBCConn.java
