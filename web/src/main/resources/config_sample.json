@@ -1,0 +1,4 @@
+{
+  "baseUrl": "http://localhost:8080",
+  "restaurantRestPath": "http://localhost:8080/restaurant"
+}
