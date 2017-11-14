@@ -1,5 +1,5 @@
 <%@ page import="com.blibli.future.pos.webapp.Config" %><%
-    Config webConfig = (Config) request.getServletContext().getAttribute("webappConfig");
+    Config webConfig = (Config) config.getServletContext().getAttribute("webappConfig");
     String baseUrl = webConfig.getBaseUrl();
 %>
 
