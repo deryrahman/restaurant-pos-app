@@ -1,9 +1,13 @@
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'war'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
+    compile 'javax.servlet:javax.servlet-api:3.1.0'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
 }
