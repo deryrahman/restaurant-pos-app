@@ -1,26 +1,28 @@
 package com.blibli.future.pos.restaurant;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.io.File;
+import java.io.FileReader;
 
-public class RestaurantServletContextListener implements ServletContextListener {
+public class ServiceServletContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         ServletContext servletContext = sce.getServletContext();
 
         String configFile = servletContext.getRealPath("/WEB-INF/classes/config.json");
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        Gson gson = new Gson();
         try {
-            Config config = objectMapper.readValue(new File(configFile), Config.class);
+            Config config = gson.fromJson(new FileReader(configFile), Config.class);
             servletContext.setAttribute("restaurantConfig", config);
+            MySQLUtility.setDataSource(config);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        ApplicationUtility.setServletContext(servletContext);
     }
 
     @Override
