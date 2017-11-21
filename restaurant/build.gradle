@@ -7,7 +7,10 @@ repositories {
 }
 
 dependencies {
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
-    compile 'javax.servlet:javax.servlet-api:3.1.0'
+    compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.25.1'
+    compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.25.1'
+
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
+    compile group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4'
 }
