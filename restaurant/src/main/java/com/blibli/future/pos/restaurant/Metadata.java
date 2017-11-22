@@ -1,25 +1,25 @@
 package com.blibli.future.pos.restaurant;
 
 public class Metadata {
-    private String count;
-    private String limit;
+    private int count;
+    private int limit;
 
     public Metadata() {
     }
 
-    public String getCount() {
+    public int getCount() {
         return count;
     }
 
-    public void setCount(String count) {
+    public void setCount(int count) {
         this.count = count;
     }
 
-    public String getLimit() {
+    public int getLimit() {
         return limit;
     }
 
-    public void setLimit(String limit) {
+    public void setLimit(int limit) {
         this.limit = limit;
     }
 

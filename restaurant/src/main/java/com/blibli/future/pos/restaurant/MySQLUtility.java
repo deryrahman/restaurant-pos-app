@@ -2,8 +2,6 @@ package com.blibli.future.pos.restaurant;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
-import javax.servlet.ServletContext;
-
 public class MySQLUtility {
     private static BasicDataSource dataSource;
 
