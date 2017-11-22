@@ -1,33 +1,17 @@
 package com.blibli.future.pos.restaurant.dao.util;
 
-import com.blibli.future.pos.restaurant.MySQLUtility;
+public class ErrorHandler{
+    private String msg;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-public class QueryMysql {
-    private Connection conn;
-    private PreparedStatement ps;
-    private ResultSet rs;
-
-    public void open() throws SQLException {
-        if (!isOpened()) {
-            conn = MySQLUtility.getDataSource().getConnection();
-        }
+    public ErrorHandler() {
+        msg = "";
     }
 
-    public void close() throws SQLException {
-        if (isOpened()) {
-            if (ps != null) ps.close();
-            conn.close();
-            conn = null;
-        }
+    public String getMsg() {
+        return msg;
     }
 
-    private boolean isOpened() {
-        return conn != null;
+    public void setMsg(String msg) {
+        this.msg += msg + "\n";
     }
-
 }
