@@ -28,4 +28,8 @@ public class TokenGenerator {
 
         return jwt;
     }
+
+    public static String parseJwt(String jwt) {
+        return "";
+    }
 }
