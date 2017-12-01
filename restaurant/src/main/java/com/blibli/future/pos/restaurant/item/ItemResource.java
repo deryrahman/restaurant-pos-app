@@ -66,7 +66,7 @@ public class ItemResource {
      * Special purpose for nested category
      * @param categoryId
      */
-    public Response getAllByCategoryId(int categoryId){
+    public Response getAll(int categoryId){
         Gson gson = new Gson();
         List<Item> items = itemDAO.getBulk("category_id=" + categoryId);
 
