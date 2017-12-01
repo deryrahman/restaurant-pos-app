@@ -20,7 +20,9 @@ public class MemberDAOMysql extends MysqlDAO implements MemberDAO {
         member.setEmail(rs.getString("email"));
         member.autoSetHref();
     }
-
+/**
+ * Created by dery on 12/1/17.
+ */
     @Override
     public boolean create(Member member) {
         if (!open()) {
