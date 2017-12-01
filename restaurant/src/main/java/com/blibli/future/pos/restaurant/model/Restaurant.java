@@ -8,6 +8,7 @@ public class Restaurant {
     private Timestamp timestampCreated;
     private String address;
     private String phone;
+    private String href;
 
     public Restaurant() {
     }
@@ -42,6 +43,13 @@ public class Restaurant {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    /**
+     * Must trigger after set all variable
+     */
+    public void autoSetHref(){
+        this.href = "/restaurant/" + id;
     }
 
     @Override

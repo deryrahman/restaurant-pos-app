@@ -1,5 +1,6 @@
-package com.blibli.future.pos.restaurant.dao;
+package com.blibli.future.pos.restaurant.dao.item;
 
+import com.blibli.future.pos.restaurant.dao.MysqlDAO;
 import com.blibli.future.pos.restaurant.model.Item;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -132,19 +133,19 @@ public class ItemDAOMysql extends MysqlDAO implements ItemDAO{
         }
         try {
             String query = "UPDATE items SET " +
-                    "id = ?," +
                     "name = ?, " +
                     "price = ?," +
                     "description = ?," +
                     "category_id = ?," +
-                    "status = ?";
+                    "status = ? +" +
+                    "WHERE id = ?";
             ps = conn.prepareStatement(query);
-            ps.setInt(1, id);
-            ps.setString(2, item.getName());
-            ps.setBigDecimal(3, item.getPrice());
-            ps.setString(4, item.getDescription());
-            ps.setInt(5, item.getCategoryId());
-            ps.setString(6, item.getStatus());
+            ps.setString(1, item.getName());
+            ps.setBigDecimal(2, item.getPrice());
+            ps.setString(3, item.getDescription());
+            ps.setInt(4, item.getCategoryId());
+            ps.setString(5, item.getStatus());
+            ps.setInt(6, id);
 
             int affected = ps.executeUpdate();
             if (affected > 0) {

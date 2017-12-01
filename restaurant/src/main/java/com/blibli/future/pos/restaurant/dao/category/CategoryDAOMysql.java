@@ -1,13 +1,8 @@
-package com.blibli.future.pos.restaurant.dao;
+package com.blibli.future.pos.restaurant.dao.category;
 
-import com.blibli.future.pos.restaurant.Metadata;
-import com.blibli.future.pos.restaurant.MySQLUtility;
+import com.blibli.future.pos.restaurant.dao.MysqlDAO;
 import com.blibli.future.pos.restaurant.model.Category;
-import com.blibli.future.pos.restaurant.services.Message;
 
-import javax.ws.rs.QueryParam;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -132,11 +127,11 @@ public class CategoryDAOMysql extends MysqlDAO implements CategoryDAO {
             return false;
         }
         try {
-            String query = "UPDATE categories SET id = ?, name = ?, description = ?";
+            String query = "UPDATE categories SET name = ?, description = ? WHERE id = ?";
             ps = conn.prepareStatement(query);
-            ps.setInt(1, id);
-            ps.setString(2, category.getName());
-            ps.setString(3, category.getDescription());
+            ps.setString(1, category.getName());
+            ps.setString(2, category.getDescription());
+            ps.setInt(3, id);
 
             int affected = ps.executeUpdate();
             if (affected > 0) {

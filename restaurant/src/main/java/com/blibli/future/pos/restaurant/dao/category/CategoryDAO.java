@@ -1,4 +1,4 @@
-package com.blibli.future.pos.restaurant.dao;
+package com.blibli.future.pos.restaurant.dao.category;
 
 import com.blibli.future.pos.restaurant.Metadata;
 import com.blibli.future.pos.restaurant.model.Category;

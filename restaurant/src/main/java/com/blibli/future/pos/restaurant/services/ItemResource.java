@@ -2,7 +2,7 @@ package com.blibli.future.pos.restaurant.services;
 
 
 import com.blibli.future.pos.restaurant.Metadata;
-import com.blibli.future.pos.restaurant.dao.ItemDAOMysql;
+import com.blibli.future.pos.restaurant.dao.item.ItemDAOMysql;
 import com.blibli.future.pos.restaurant.model.Item;
 import com.google.gson.Gson;
 
