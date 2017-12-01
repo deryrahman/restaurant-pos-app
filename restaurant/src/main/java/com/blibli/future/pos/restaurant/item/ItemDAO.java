@@ -9,7 +9,7 @@ public interface ItemDAO {
     /**
      * Create item
      * @param item : only one item will be created
-     * @return true if category is successed to build, false otherwise
+     * @return true if item is successed to build, false otherwise
      */
     public boolean create(Item item);
 
