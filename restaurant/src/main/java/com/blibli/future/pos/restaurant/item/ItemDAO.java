@@ -8,7 +8,7 @@ public interface ItemDAO {
 
     /**
      * Create item
-     * @param item : only one category will be created
+     * @param item : only one item will be created
      * @return true if category is successed to build, false otherwise
      */
     public boolean create(Item item);
@@ -21,7 +21,7 @@ public interface ItemDAO {
     public Item getById(int id);
 
     /**
-     * Get all category with specific limitation
+     * Get all item with specific limitation
      * @param filter : is a WHERE statemtment of mysql query
      *               To get all items, just set filter to "true"
      * @return list of filtered items
