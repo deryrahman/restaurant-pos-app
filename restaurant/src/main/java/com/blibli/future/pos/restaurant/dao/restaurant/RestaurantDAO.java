@@ -5,7 +5,7 @@ import com.blibli.future.pos.restaurant.model.Restaurant;
 
 import java.util.List;
 
-public interface restaurantDAO {
+public interface RestaurantDAO {
 
     /**
      * Create restaurant

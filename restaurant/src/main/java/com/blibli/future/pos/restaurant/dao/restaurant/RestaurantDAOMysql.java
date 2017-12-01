@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("ALL")
-public class restaurantMysqlDAO extends MysqlDAO implements restaurantDAO {
+public class RestaurantDAOMysql extends MysqlDAO implements RestaurantDAO {
 
     private void setRestaurantFromQuery(Restaurant restaurant, ResultSet rs) throws SQLException {
         restaurant.setId(rs.getInt("id"));
