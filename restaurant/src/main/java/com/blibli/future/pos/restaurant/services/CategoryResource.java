@@ -1,6 +1,7 @@
 package com.blibli.future.pos.restaurant.services;
 
 import com.blibli.future.pos.restaurant.Metadata;
+import com.blibli.future.pos.restaurant.dao.CategoryDAO;
 import com.blibli.future.pos.restaurant.dao.CategoryDAOMysql;
 import com.blibli.future.pos.restaurant.model.Category;
 import com.google.gson.Gson;
@@ -14,16 +15,15 @@ import java.util.Map;
 @Path("/categories")
 public class CategoryResource {
     private CategoryDAOMysql categoryDAO;
+    private Gson gson = new Gson();
+    private Message msg = new Message();
 
     public CategoryResource(){
         categoryDAO = new CategoryDAOMysql();
     }
 
     private Response get405Response(){
-        Gson gson = new Gson();
-        Message msg = new Message();
-
-        msg.setMsg("Method not allowed");
+        msg.setMessage("Method not allowed");
         String json = gson.toJson(msg);
         return Response.status(405).entity(json).build();
     }
@@ -31,18 +31,20 @@ public class CategoryResource {
     // ---- BEGIN /categories ----
     @POST
     @Consumes("application/json")
+    @Produces("application/json")
     public Response createCategory(Category category){
         if(categoryDAO.create(category)) {
             return Response.status(201).build();
         }
-        return Response.status(400).build();
+        String json = gson.toJson(categoryDAO.getMessage());
+        return Response.status(400).entity(json).build();
     }
 
     @GET
     @Produces("application/json")
     public Response getAllCategory(){
         Gson gson = new Gson();
-        List<Category> categories = categoryDAO.getAll();
+        List<Category> categories = categoryDAO.getBulk("true");
 
         Map<String, Object> map = new HashMap<>();
         Metadata metadata = new Metadata();
@@ -55,6 +57,9 @@ public class CategoryResource {
         String json = gson.toJson(map);
         return Response.status(200).entity(json).build();
     }
+//    @GET
+//    @Produces("application/json")
+//    public Response getAllWithParam(){}
 
     @DELETE
     @Produces("application/json")
@@ -83,6 +88,7 @@ public class CategoryResource {
 
     @POST
     @Path("/{id}")
+    @Produces("application/json")
     public Response postCategory(@PathParam("id") int id){
         return get405Response();
     }

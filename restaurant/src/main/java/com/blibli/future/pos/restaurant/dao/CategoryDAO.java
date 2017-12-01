@@ -2,6 +2,7 @@ package com.blibli.future.pos.restaurant.dao;
 
 import com.blibli.future.pos.restaurant.Metadata;
 import com.blibli.future.pos.restaurant.model.Category;
+import com.blibli.future.pos.restaurant.services.Message;
 
 import java.util.List;
 
@@ -21,17 +22,12 @@ public interface CategoryDAO {
     public Category getById(int id);
 
     /**
-     * Get all category on database
-     * @return list of category
-     */
-    public List<Category> getAll();
-
-    /**
      * Get all category with specific limitation
-     * @param metadata : have attributes limit and count.
+     * @param filter : is a WHERE statemtment of mysql query
+     *               To get all categories, just set filter to "true"
      * @return list of filtered category
      */
-    public List<Category> getWithMetadata(Metadata metadata);
+    public List<Category> getBulk(String filter);
 
     /**
      * Delete category
@@ -46,4 +42,5 @@ public interface CategoryDAO {
      * @return true if success to update, false otherwise
      */
     public boolean update(int id, Category category);
+
 }

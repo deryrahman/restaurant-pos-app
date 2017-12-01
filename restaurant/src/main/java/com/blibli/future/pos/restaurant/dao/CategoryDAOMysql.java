@@ -2,10 +2,10 @@ package com.blibli.future.pos.restaurant.dao;
 
 import com.blibli.future.pos.restaurant.Metadata;
 import com.blibli.future.pos.restaurant.MySQLUtility;
-import com.blibli.future.pos.restaurant.dao.util.ErrorHandler;
 import com.blibli.future.pos.restaurant.model.Category;
-import org.apache.commons.dbcp.BasicDataSource;
+import com.blibli.future.pos.restaurant.services.Message;
 
+import javax.ws.rs.QueryParam;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,33 +13,39 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryDAOMysql implements CategoryDAO {
+@SuppressWarnings("ALL")
+public class CategoryDAOMysql implements CategoryDAO, DAO {
     private Connection conn = null;
     private PreparedStatement ps = null;
-    private ErrorHandler errorHandler = new ErrorHandler();
+    private Message message = new Message();
 
-    private boolean open() {
+    @Override
+    public boolean open() {
         if (conn != null) return true;
         try {
             conn = MySQLUtility.getDataSource().getConnection();
             return true;
         } catch (SQLException e) {
-//            errorHandler.setMsg("Something wrong on opening connection");
+            message.setMessage("Something wrong on opening connection");
             e.printStackTrace();
         }
         return false;
     }
 
-    private boolean close() {
-        if (conn == null) return true;
+    @Override
+    public void close() {
         try {
             conn.close();
-            return true;
+            ps.close();
         } catch (SQLException e) {
-//            errorHandler.setMsg("Something wrong on closing connection");
+            message.setMessage("Something wrong on closing connection");
             e.printStackTrace();
         }
-        return false;
+    }
+
+    @Override
+    public Message getMessage(){
+        return message;
     }
 
     @Override
@@ -58,10 +64,10 @@ public class CategoryDAOMysql implements CategoryDAO {
             if (affected > 0) {
                 return true;
             } else {
-//                errorHandler.setMsg("No affected query. No category inserting");
+                message.setMessage("No affected query. No category inserting");
             }
         } catch (SQLException e) {
-//            errorHandler.setMsg("Something wrong on create category");
+            message.setMessage("Something wrong on create category");
             e.printStackTrace();
         } finally {
             close();
@@ -87,6 +93,7 @@ public class CategoryDAOMysql implements CategoryDAO {
             category.setDescription(rs.getString("description"));
             return category;
         } catch (SQLException e) {
+            message.setMessage("Something wrong on get category");
             e.printStackTrace();
         } finally {
             close();
@@ -95,13 +102,13 @@ public class CategoryDAOMysql implements CategoryDAO {
     }
 
     @Override
-    public List<Category> getAll() {
-        List<Category> categories = new ArrayList<Category>();
+    public List<Category> getBulk(String filter) {
+        List<Category> categories = new ArrayList<>();
         if (!open()) {
             return categories;
         }
         try {
-            String query = "SELECT * FROM categories";
+            String query = "SELECT * FROM categories WHERE "+filter;
             ps = conn.prepareStatement(query);
 
             ResultSet rs = ps.executeQuery();
@@ -114,6 +121,7 @@ public class CategoryDAOMysql implements CategoryDAO {
             }
             return categories;
         } catch (SQLException e) {
+            message.setMessage("Something wrong on getBulk categories");
             e.printStackTrace();
         } finally {
             close();
@@ -122,17 +130,52 @@ public class CategoryDAOMysql implements CategoryDAO {
     }
 
     @Override
-    public List<Category> getWithMetadata(Metadata metadata) {
-        return new ArrayList<Category>();
-    }
-
-    @Override
     public boolean delete(int id) {
-        return true;
+        if (!open()) {
+            return false;
+        }
+        try {
+            String query = "DELETE FROM categories WHERE id = ?";
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, id);
+
+            int affected = ps.executeUpdate();
+            if (affected > 0) {
+                return true;
+            } else {
+                message.setMessage("No affected query. No category deleted");
+            }
+        } catch (SQLException e) {
+            message.setMessage("Something wrong on delete category");
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+        return false;
     }
 
     @Override
     public boolean update(int id, Category category) {
-        return true;
+        if (!open()) {
+            return false;
+        }
+        try {
+            String query = "UPDATE categories SET id = ?, name = ?, description = ?";
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, id);
+
+            int affected = ps.executeUpdate();
+            if (affected > 0) {
+                return true;
+            } else {
+                message.setMessage("No affected query. No category deleted");
+            }
+        } catch (SQLException e) {
+            message.setMessage("Something wrong on delete category");
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+        return false;
     }
 }
