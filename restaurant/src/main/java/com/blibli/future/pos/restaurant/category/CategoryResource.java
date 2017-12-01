@@ -95,7 +95,7 @@ public class CategoryResource {
     @Produces("application/json")
     public Response getAllItem(@PathParam("categoryId") int categoryId){
         ItemResource itemResource = new ItemResource();
-        return itemResource.getAllByCategoryId(categoryId);
+        return itemResource.getAll(categoryId);
     }
     @GET
     @Path("/{categoryId}/items/{id}")
