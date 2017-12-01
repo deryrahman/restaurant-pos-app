@@ -1,9 +1,11 @@
 package com.blibli.future.pos.restaurant.restaurant;
 
 
+import com.blibli.future.pos.restaurant.common.model.Item;
 import com.blibli.future.pos.restaurant.common.model.Metadata;
 import com.blibli.future.pos.restaurant.common.model.Restaurant;
 import com.blibli.future.pos.restaurant.common.model.Message;
+import com.blibli.future.pos.restaurant.item.ItemResource;
 import com.google.gson.Gson;
 
 import javax.ws.rs.*;
@@ -12,9 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("ALL")
 @Path("/restaurants")
 public class RestaurantResource {
     private RestaurantDAOMysql restaurantDAO = new RestaurantDAOMysql();
+    private RestaurantItemDAOMysql restaurantItemDAO = new RestaurantItemDAOMysql();
     private Gson gson = new Gson();
     private Message msg = new Message();
 
@@ -85,6 +89,43 @@ public class RestaurantResource {
         }
         String json = gson.toJson(restaurant);
         return Response.status(200).entity(json).build();
+    }
+
+    /**
+     * special purpose of nested resources. Like /restaurants/1/items. It will call /items, on itemsResources and its stock for specific restaurant
+     */
+    @GET
+    @Path("/{restaurantId}/items")
+    @Produces("application/json")
+    public Response getAllItem(@PathParam("restaurantId") int restaurantId){
+        Gson gson = new Gson();
+        List<Item> items = restaurantItemDAO.getBulk("true");
+
+        Map<String, Object> map = new HashMap<>();
+        Metadata metadata = new Metadata();
+        metadata.setCount(items.size());
+        metadata.setLimit(items.size());
+
+        map.put("metadata", metadata);
+        map.put("results", items);
+
+        String json = gson.toJson(map);
+        return Response.status(200).entity(json).build();
+    }
+
+    /**
+     * Add item to restaurant. Item id must be guaranteed exist on items table
+     */
+    @POST
+    @Path("/{restaurantId}/items")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response addItem(Item item, @PathParam("restaurantId") int restaurantId){
+        if(restaurantItemDAO.create(item.getId(), restaurantId, item.getStock())){
+            return Response.status(201).build();
+        }
+        String json = gson.toJson(restaurantItemDAO.getMessage());
+        return Response.status(400).entity(json).build();
     }
 
     @POST
