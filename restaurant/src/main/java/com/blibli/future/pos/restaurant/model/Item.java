@@ -1,16 +1,18 @@
 package com.blibli.future.pos.restaurant.model;
 
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class Item {
     private int id;
     private Timestamp timestampCreated;
     private String name;
-    private String price;
+    private BigDecimal price;
     private String description;
     private int categoryId;
     private String status;
+    private String href;
 
     public Item() {
     }
@@ -39,11 +41,11 @@ public class Item {
         this.name = name;
     }
 
-    public String getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -69,6 +71,13 @@ public class Item {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    /**
+     * Must trigger after set all variable
+     */
+    public void autoSetHref(){
+        this.href = "/categories/" + categoryId + "/items/" + id;
     }
 
     @Override
