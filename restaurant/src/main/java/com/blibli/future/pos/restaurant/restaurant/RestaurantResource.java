@@ -1,11 +1,10 @@
 package com.blibli.future.pos.restaurant.restaurant;
 
 
-import com.blibli.future.pos.restaurant.common.model.Item;
-import com.blibli.future.pos.restaurant.common.model.Metadata;
-import com.blibli.future.pos.restaurant.common.model.Restaurant;
-import com.blibli.future.pos.restaurant.common.model.Message;
+import com.blibli.future.pos.restaurant.common.model.*;
 import com.blibli.future.pos.restaurant.item.ItemResource;
+import com.blibli.future.pos.restaurant.user.UserDAOMysql;
+import com.blibli.future.pos.restaurant.user.UserResource;
 import com.google.gson.Gson;
 
 import javax.ws.rs.*;
@@ -128,6 +127,25 @@ public class RestaurantResource {
         return Response.status(400).entity(json).build();
     }
 
+    /**
+     * special purpose of nested resources. Like /restaurants/1/users. It will call /users, on userResource
+     */
+    @GET
+    @Path("/{restaurantId}/users")
+    @Produces("application/json")
+    public Response getAllUser(@PathParam("restaurantId") int restaurantId){
+        UserResource userResource = new UserResource();
+        return userResource.getAll(restaurantId);
+    }
+
+    @GET
+    @Path("/{restaurantId}/users/{id}")
+    @Produces("application/json")
+    public Response getUser(@PathParam("restaurantId") int restaurantId,
+                            @PathParam("id") int id){
+        UserResource userResource = new UserResource();
+        return userResource.get(id, restaurantId);
+    }
     @POST
     @Path("/{id}")
     @Produces("application/json")

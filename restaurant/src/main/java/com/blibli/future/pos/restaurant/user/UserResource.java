@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("ALL")
 @Path("/users")
 public class UserResource {
     private UserDAOMysql userDAO = new UserDAOMysql();
@@ -59,6 +60,25 @@ public class UserResource {
         return Response.status(200).entity(json).build();
     }
 
+    /**
+     * Special purpose for nested restaurant
+     * @param restaurantId
+     */
+    public Response getAll(int restaurantId){
+        Gson gson = new Gson();
+        List<User> users = userDAO.getBulk("restaurant_id="+restaurantId);
+
+        Map<String, Object> map = new HashMap<>();
+        Metadata metadata = new Metadata();
+        metadata.setCount(users.size());
+        metadata.setLimit(users.size());
+
+        map.put("metadata", metadata);
+        map.put("results", users);
+
+        String json = gson.toJson(map);
+        return Response.status(200).entity(json).build();
+    }
     @DELETE
     @Produces("application/json")
     public Response delete(){
@@ -81,6 +101,17 @@ public class UserResource {
         User user = userDAO.getById(id);
 
         if(user == null){
+            return get404Response();
+        }
+
+        String json = gson.toJson(user);
+        return Response.status(200).entity(json).build();
+    }
+    public Response get(int id, int restaurantId){
+        Gson gson = new Gson();
+        User user = userDAO.getById(id);
+
+        if(user.getId()!=id || user == null){
             return get404Response();
         }
 
