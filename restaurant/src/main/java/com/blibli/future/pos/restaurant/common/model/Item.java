@@ -14,6 +14,8 @@ public class Item {
     private String status;
     private String href;
     private String href2;
+    private int restaurantId;
+    private int stock;
 
     public Item() {
     }
@@ -72,6 +74,22 @@ public class Item {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(int restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 
     /**
