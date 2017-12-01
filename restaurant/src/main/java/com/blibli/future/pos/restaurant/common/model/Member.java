@@ -9,6 +9,7 @@ public class Member {
     private String name;
     private String address;
     private String email;
+    private String href;
 
     public Member() {
     }
@@ -53,6 +54,20 @@ public class Member {
         this.email = email;
     }
 
+    public String getHref() {
+        return href;
+    }
+
+    public void setHref(String href) {
+        this.href = href;
+    }
+
+    /**
+     * Must trigger after set all variable
+     */
+    public void autoSetHref() {
+        this.href = "/members/" + id;
+    }
     @Override
     public String toString() {
         return "Member{" +
