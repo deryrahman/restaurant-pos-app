@@ -10,6 +10,8 @@ public class User {
     private String email;
     private String name;
     private String role;
+    private String href;
+    private String href2;
 
     public User() {
     }
@@ -60,6 +62,14 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    /**
+     * Must trigger after set all variable
+     */
+    public void autoSetHref(){
+        this.href = "/users/" + id;
+        this.href2 = "/restaurants/" + restaurantId + "/users/" + id;
     }
 
     @Override
