@@ -5,11 +5,11 @@ import java.sql.Timestamp;
 
 public class Item {
     private int id;
-    private Timestamp date_created;
+    private Timestamp timestampCreated;
     private String name;
     private String price;
     private String description;
-    private int category_id;
+    private int categoryId;
     private String status;
 
     public Item() {
@@ -23,12 +23,12 @@ public class Item {
         this.id = id;
     }
 
-    public Timestamp getDate_created() {
-        return date_created;
+    public Timestamp getTimestampCreated() {
+        return timestampCreated;
     }
 
-    public void setDate_created(Timestamp date_created) {
-        this.date_created = date_created;
+    public void setTimestampCreated(Timestamp timestampCreated) {
+        this.timestampCreated = timestampCreated;
     }
 
     public String getName() {
@@ -55,12 +55,12 @@ public class Item {
         this.description = description;
     }
 
-    public int getCategory_id() {
-        return category_id;
+    public int getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory_id(int category_id) {
-        this.category_id = category_id;
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getStatus() {
@@ -75,11 +75,11 @@ public class Item {
     public String toString() {
         return "Item{" +
                 "id=" + id +
-                ", date_created=" + date_created +
+                ", timestampCreated=" + timestampCreated +
                 ", name='" + name + '\'' +
-                ", price=" + price +
+                ", price='" + price + '\'' +
                 ", description='" + description + '\'' +
-                ", category_id=" + category_id +
+                ", categoryId=" + categoryId +
                 ", status='" + status + '\'' +
                 '}';
     }

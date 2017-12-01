@@ -1,9 +1,12 @@
 package com.blibli.future.pos.restaurant.model;
 
 
+import java.sql.Timestamp;
+
 public class User {
     private int id;
-    private int restaurant_id;
+    private Timestamp timestampCreated;
+    private int restaurantId;
     private String email;
     private String name;
     private String role;
@@ -19,12 +22,20 @@ public class User {
         this.id = id;
     }
 
-    public int getRestaurant_id() {
-        return restaurant_id;
+    public Timestamp getTimestampCreated() {
+        return timestampCreated;
     }
 
-    public void setRestaurant_id(int restaurant_id) {
-        this.restaurant_id = restaurant_id;
+    public void setTimestampCreated(Timestamp timestampCreated) {
+        this.timestampCreated = timestampCreated;
+    }
+
+    public int getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(int restaurantId) {
+        this.restaurantId = restaurantId;
     }
 
     public String getEmail() {
@@ -55,7 +66,8 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", restaurant_id=" + restaurant_id +
+                ", timestampCreated=" + timestampCreated +
+                ", restaurantId=" + restaurantId +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", role='" + role + '\'' +

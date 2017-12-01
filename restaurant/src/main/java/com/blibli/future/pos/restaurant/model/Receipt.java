@@ -4,11 +4,11 @@ import java.sql.Timestamp;
 
 public class Receipt {
     private int id;
-    private int restaurant_id;
-    private int user_id;
-    private int member_id;
-    private Timestamp timestamp;
-    private String total_price;
+    private Timestamp timestampCreated;
+    private int restaurantId;
+    private int userId;
+    private int memberId;
+    private String totalPrice;
     private String text;
 
     public Receipt() {
@@ -22,44 +22,45 @@ public class Receipt {
         this.id = id;
     }
 
-    public int getRestaurant_id() {
-        return restaurant_id;
+    public Timestamp getTimestampCreated() {
+        return timestampCreated;
     }
 
-    public void setRestaurant_id(int restaurant_id) {
-        this.restaurant_id = restaurant_id;
+    public void setTimestampCreated(Timestamp timestampCreated) {
+        this.timestampCreated = timestampCreated;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public int getRestaurantId() {
+        return restaurantId;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setRestaurantId(int restaurantId) {
+        this.restaurantId = restaurantId;
     }
 
-    public int getMember_id() {
-        return member_id;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setMember_id(int member_id) {
-        this.member_id = member_id;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public Timestamp getTimestamp() {
-        return timestamp;
+    public int getMemberId() {
+        return memberId;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
+    public void setMemberId(int memberId) {
+        this.memberId = memberId;
     }
 
-    public String getTotal_price() {
-        return total_price;
+
+    public String getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setTotal_price(String total_price) {
-        this.total_price = total_price;
+    public void setTotalPrice(String totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     public String getText() {
@@ -74,11 +75,11 @@ public class Receipt {
     public String toString() {
         return "Receipt{" +
                 "id=" + id +
-                ", restaurant_id=" + restaurant_id +
-                ", user_id=" + user_id +
-                ", member_id=" + member_id +
-                ", timestamp=" + timestamp +
-                ", total_price='" + total_price + '\'' +
+                ", timestampCreated=" + timestampCreated +
+                ", restaurantId=" + restaurantId +
+                ", userId=" + userId +
+                ", memberId=" + memberId +
+                ", totalPrice='" + totalPrice + '\'' +
                 ", text='" + text + '\'' +
                 '}';
     }

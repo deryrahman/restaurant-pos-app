@@ -1,8 +1,11 @@
 package com.blibli.future.pos.restaurant.model;
 
 
+import java.sql.Timestamp;
+
 public class Restaurant {
     private int id;
+    private Timestamp timestampCreated;
     private String address;
     private String phone;
 
@@ -15,6 +18,14 @@ public class Restaurant {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Timestamp getTimestampCreated() {
+        return timestampCreated;
+    }
+
+    public void setTimestampCreated(Timestamp timestampCreated) {
+        this.timestampCreated = timestampCreated;
     }
 
     public String getAddress() {
@@ -37,6 +48,7 @@ public class Restaurant {
     public String toString() {
         return "Restaurant{" +
                 "id=" + id +
+                ", timestampCreated=" + timestampCreated +
                 ", address='" + address + '\'' +
                 ", phone='" + phone + '\'' +
                 '}';
