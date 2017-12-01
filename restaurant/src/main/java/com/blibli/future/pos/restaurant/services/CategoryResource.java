@@ -14,13 +14,9 @@ import java.util.Map;
 
 @Path("/categories")
 public class CategoryResource {
-    private CategoryDAOMysql categoryDAO;
+    private CategoryDAOMysql categoryDAO = new CategoryDAOMysql();;
     private Gson gson = new Gson();
     private Message msg = new Message();
-
-    public CategoryResource(){
-        categoryDAO = new CategoryDAOMysql();
-    }
 
     private Response get405Response(){
         msg.setMessage("Method not allowed");
@@ -32,7 +28,7 @@ public class CategoryResource {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response createCategory(Category category){
+    public Response create(Category category){
         if(categoryDAO.create(category)) {
             return Response.status(201).build();
         }
@@ -42,7 +38,7 @@ public class CategoryResource {
 
     @GET
     @Produces("application/json")
-    public Response getAllCategory(){
+    public Response getAll(){
         Gson gson = new Gson();
         List<Category> categories = categoryDAO.getBulk("true");
 
@@ -57,9 +53,6 @@ public class CategoryResource {
         String json = gson.toJson(map);
         return Response.status(200).entity(json).build();
     }
-//    @GET
-//    @Produces("application/json")
-//    public Response getAllWithParam(){}
 
     @DELETE
     @Produces("application/json")
@@ -69,7 +62,7 @@ public class CategoryResource {
 
     @PUT
     @Produces("application/json")
-    public Response put(){
+    public Response update(){
         return get405Response();
     }
     // ---- END /categories ----
@@ -78,7 +71,7 @@ public class CategoryResource {
     @GET
     @Path("/{id}")
     @Produces("application/json")
-    public Response getCategory(@PathParam("id") int id){
+    public Response get(@PathParam("id") int id){
         Gson gson = new Gson();
         Category category = categoryDAO.getById(id);
 
@@ -86,16 +79,35 @@ public class CategoryResource {
         return Response.status(200).entity(json).build();
     }
 
+    /**
+     * special purpose of nested resources. Like /categories/1/items. It will call /items, on itemsResources
+     */
+    @GET
+    @Path("/{categoryId}/items")
+    @Produces("application/json")
+    public Response getAllItem(@PathParam("categoryId") int categoryId){
+        ItemResource itemResource = new ItemResource();
+        return itemResource.getAllByCategoryId(categoryId);
+    }
+    @GET
+    @Path("/{categoryId}/items/{id}")
+    @Produces("application/json")
+    public Response getItem(@PathParam("categoryId") int categoryId,
+                            @PathParam("id") int id){
+        ItemResource itemResource = new ItemResource();
+        return itemResource.get(id, categoryId);
+    }
+
     @POST
     @Path("/{id}")
     @Produces("application/json")
-    public Response postCategory(@PathParam("id") int id){
+    public Response create(@PathParam("id") int id){
         return get405Response();
     }
 
     @DELETE
     @Path("/{id}")
-    public Response deleteCategory(@PathParam("id") int id){
+    public Response delete(@PathParam("id") int id){
         if (categoryDAO.delete(id)) {
             return Response.status(204).build();
         }
@@ -105,7 +117,7 @@ public class CategoryResource {
     @PUT
     @Path("/{id}")
     @Consumes("application/json")
-    public Response editCategory(@PathParam("id") int id, Category category){
+    public Response update(@PathParam("id") int id, Category category){
         Gson gson = new Gson();
         gson.toJson(category);
         if(categoryDAO.update(id,category)){
