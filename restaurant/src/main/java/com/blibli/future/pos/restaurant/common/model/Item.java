@@ -14,8 +14,11 @@ public class Item {
     private String status;
     private String href;
     private String href2;
+    // special for restaurant
     private int restaurantId;
     private int stock;
+    // special for receipt
+    private int count;
 
     public Item() {
     }
@@ -90,6 +93,14 @@ public class Item {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     /**
