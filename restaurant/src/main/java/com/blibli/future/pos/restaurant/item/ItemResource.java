@@ -150,5 +150,6 @@ public class ItemResource {
         }
         return Response.status(500).build();
     }
+
     // ---- END /items/{id} ----
 }
