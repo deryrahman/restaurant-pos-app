@@ -1,4 +1,4 @@
-package com.blibli.future.pos.restaurant;
+package com.blibli.future.pos.restaurant.common;
 
 import javax.servlet.ServletContext;
 

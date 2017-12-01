@@ -1,6 +1,5 @@
 package com.blibli.future.pos.restaurant.common;
 
-import com.blibli.future.pos.restaurant.MySQLUtility;
 import com.blibli.future.pos.restaurant.common.model.Message;
 
 import java.sql.Connection;

@@ -1,5 +1,6 @@
-package com.blibli.future.pos.restaurant;
+package com.blibli.future.pos.restaurant.common;
 
+import com.blibli.future.pos.restaurant.common.model.Config;
 import org.apache.commons.dbcp.BasicDataSource;
 
 public class MySQLUtility {

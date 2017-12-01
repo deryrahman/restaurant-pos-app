@@ -1,6 +1,6 @@
-package com.blibli.future.pos.restaurant;
+package com.blibli.future.pos.restaurant.common.model;
 
-class Config {
+public class Config {
     private Jdbc jdbc;
 
     public Config() {
