@@ -1,7 +1,7 @@
-package com.blibli.future.pos.restaurant.dao;
+package com.blibli.future.pos.restaurant.common;
 
 import com.blibli.future.pos.restaurant.MySQLUtility;
-import com.blibli.future.pos.restaurant.services.Message;
+import com.blibli.future.pos.restaurant.common.model.Message;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

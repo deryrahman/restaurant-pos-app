@@ -1,7 +1,6 @@
-package com.blibli.future.pos.restaurant.dao.item;
+package com.blibli.future.pos.restaurant.item;
 
-import com.blibli.future.pos.restaurant.Metadata;
-import com.blibli.future.pos.restaurant.model.Item;
+import com.blibli.future.pos.restaurant.common.model.Item;
 
 import java.util.List;
 

@@ -1,9 +1,9 @@
-package com.blibli.future.pos.restaurant.services;
+package com.blibli.future.pos.restaurant.item;
 
 
-import com.blibli.future.pos.restaurant.Metadata;
-import com.blibli.future.pos.restaurant.dao.item.ItemDAOMysql;
-import com.blibli.future.pos.restaurant.model.Item;
+import com.blibli.future.pos.restaurant.common.model.Metadata;
+import com.blibli.future.pos.restaurant.common.model.Item;
+import com.blibli.future.pos.restaurant.common.model.Message;
 import com.google.gson.Gson;
 
 import javax.ws.rs.*;

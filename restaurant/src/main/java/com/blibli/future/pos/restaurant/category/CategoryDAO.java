@@ -1,8 +1,6 @@
-package com.blibli.future.pos.restaurant.dao.category;
+package com.blibli.future.pos.restaurant.category;
 
-import com.blibli.future.pos.restaurant.Metadata;
-import com.blibli.future.pos.restaurant.model.Category;
-import com.blibli.future.pos.restaurant.services.Message;
+import com.blibli.future.pos.restaurant.common.model.Category;
 
 import java.util.List;
 

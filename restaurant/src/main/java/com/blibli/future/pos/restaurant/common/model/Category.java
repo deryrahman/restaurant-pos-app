@@ -1,4 +1,4 @@
-package com.blibli.future.pos.restaurant.model;
+package com.blibli.future.pos.restaurant.common.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Timestamp;

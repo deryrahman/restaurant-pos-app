@@ -1,6 +1,4 @@
-package com.blibli.future.pos.restaurant.services;
-
-import java.util.Map;
+package com.blibli.future.pos.restaurant.common.model;
 
 public class Message {
 

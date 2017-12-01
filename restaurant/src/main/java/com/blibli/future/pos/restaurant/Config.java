@@ -21,7 +21,7 @@ class Config {
                 '}';
     }
 
-    class Jdbc {
+    public class Jdbc {
         private String url;
         private String username;
         private String password;

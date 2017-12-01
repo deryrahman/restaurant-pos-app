@@ -1,7 +1,7 @@
-package com.blibli.future.pos.restaurant.dao.item;
+package com.blibli.future.pos.restaurant.item;
 
-import com.blibli.future.pos.restaurant.dao.MysqlDAO;
-import com.blibli.future.pos.restaurant.model.Item;
+import com.blibli.future.pos.restaurant.common.MysqlDAO;
+import com.blibli.future.pos.restaurant.common.model.Item;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;

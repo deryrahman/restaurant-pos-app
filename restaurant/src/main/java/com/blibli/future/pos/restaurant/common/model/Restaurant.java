@@ -1,16 +1,16 @@
-package com.blibli.future.pos.restaurant.model;
+package com.blibli.future.pos.restaurant.common.model;
 
 
 import java.sql.Timestamp;
 
-public class Member {
+public class Restaurant {
     private int id;
     private Timestamp timestampCreated;
-    private String name;
     private String address;
-    private String email;
+    private String phone;
+    private String href;
 
-    public Member() {
+    public Restaurant() {
     }
 
     public int getId() {
@@ -29,14 +29,6 @@ public class Member {
         this.timestampCreated = timestampCreated;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getAddress() {
         return address;
     }
@@ -45,22 +37,28 @@ public class Member {
         this.address = address;
     }
 
-    public String getEmail() {
-        return email;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    /**
+     * Must trigger after set all variable
+     */
+    public void autoSetHref(){
+        this.href = "/restaurant/" + id;
     }
 
     @Override
     public String toString() {
-        return "Member{" +
+        return "Restaurant{" +
                 "id=" + id +
                 ", timestampCreated=" + timestampCreated +
-                ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
-                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
                 '}';
     }
 }
