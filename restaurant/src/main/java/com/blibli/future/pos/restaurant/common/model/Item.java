@@ -96,8 +96,8 @@ public class Item {
      * Must trigger after set all variable
      */
     public void autoSetHref(){
-        this.href2 = "/items/" + id;
-        this.href = "/categories/" + categoryId + "/items/" + id;
+        this.href = "/items/" + id;
+        this.href2 = "/categories/" + categoryId + "/items/" + id;
     }
 
     @Override
