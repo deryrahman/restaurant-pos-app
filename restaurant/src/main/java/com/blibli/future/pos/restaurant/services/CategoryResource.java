@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Path("/categories")
 public class CategoryResource {
-    private CategoryDAOMysql categoryDAO = new CategoryDAOMysql();;
+    private CategoryDAOMysql categoryDAO = new CategoryDAOMysql();
     private Gson gson = new Gson();
     private Message msg = new Message();
 
@@ -21,6 +21,12 @@ public class CategoryResource {
         msg.setMessage("Method not allowed");
         String json = gson.toJson(msg);
         return Response.status(405).entity(json).build();
+    }
+
+    private Response get404Response(){
+        msg.setMessage("Not found");
+        String json = gson.toJson(msg);
+        return Response.status(404).entity(json).build();
     }
 
     // ---- BEGIN /categories ----
@@ -73,7 +79,9 @@ public class CategoryResource {
     public Response get(@PathParam("id") int id){
         Gson gson = new Gson();
         Category category = categoryDAO.getById(id);
-
+        if(category == null){
+            return get404Response();
+        }
         String json = gson.toJson(category);
         return Response.status(200).entity(json).build();
     }
