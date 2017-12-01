@@ -17,7 +17,7 @@ public class ItemDAOMysql extends MysqlDAO implements ItemDAO{
         item.setPrice(rs.getBigDecimal("price"));
         item.setDescription(rs.getString("description"));
         item.setCategoryId(rs.getInt("category_id"));
-        item.setStatus("status");
+        item.setStatus(rs.getString("status"));
         item.autoSetHref();
     }
 
@@ -151,10 +151,10 @@ public class ItemDAOMysql extends MysqlDAO implements ItemDAO{
             if (affected > 0) {
                 return true;
             } else {
-                message.setMessage("No affected query. No list update");
+                message.setMessage("No affected query. No item update");
             }
         } catch (SQLException e) {
-            message.setMessage("Something wrong on update list");
+            message.setMessage("Something wrong on update item");
             e.printStackTrace();
         } finally {
             close();
