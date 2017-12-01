@@ -19,20 +19,15 @@ public interface ItemDAO {
      * @param id : integer parameter, id must be valid
      * @return Item object
      */
-    public int getById(int id);
+    public Item getById(int id);
 
     /**
-     * Get all item on database
-     * @return list of item
+     * Get all category with specific limitation
+     * @param filter : is a WHERE statemtment of mysql query
+     *               To get all items, just set filter to "true"
+     * @return list of filtered items
      */
-    public List<Item> getAll();
-
-    /**
-     * Get all item with specific limitation
-     * @param metadata : have attributes limit and count.
-     * @return list of filtered item
-     */
-    public List<Item> getWithMetadata(Metadata metadata);
+    public List<Item> getBulk(String filter);
 
     /**
      * Delete item

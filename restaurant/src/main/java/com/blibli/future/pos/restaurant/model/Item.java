@@ -13,6 +13,7 @@ public class Item {
     private int categoryId;
     private String status;
     private String href;
+    private String href2;
 
     public Item() {
     }
@@ -77,6 +78,7 @@ public class Item {
      * Must trigger after set all variable
      */
     public void autoSetHref(){
+        this.href2 = "/items/" + id;
         this.href = "/categories/" + categoryId + "/items/" + id;
     }
 
@@ -86,10 +88,12 @@ public class Item {
                 "id=" + id +
                 ", timestampCreated=" + timestampCreated +
                 ", name='" + name + '\'' +
-                ", price='" + price + '\'' +
+                ", price=" + price +
                 ", description='" + description + '\'' +
                 ", categoryId=" + categoryId +
                 ", status='" + status + '\'' +
+                ", href='" + href + '\'' +
+                ", href2='" + href2 + '\'' +
                 '}';
     }
 }

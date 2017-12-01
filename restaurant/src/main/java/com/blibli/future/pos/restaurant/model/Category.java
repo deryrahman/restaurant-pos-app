@@ -9,6 +9,8 @@ public class Category {
     private Timestamp timestampCreated;
     private String name;
     private String description;
+    private String href;
+    private String hrefItems;
 
     public Category() {
     }
@@ -45,6 +47,30 @@ public class Category {
         this.description = description;
     }
 
+    public String getHref() {
+        return href;
+    }
+
+    public void setHref(String href) {
+        this.href = href;
+    }
+
+    public String getHrefItems() {
+        return hrefItems;
+    }
+
+    public void setHrefItems(String hrefItems) {
+        this.hrefItems = hrefItems;
+    }
+
+    /**
+     * Must trigger after set all variable
+     */
+    public void autoSetHref(){
+        this.href = "/categories/" + id;
+        this.hrefItems = this.href + "/items";
+    }
+
     @Override
     public String toString() {
         return "Category{" +
@@ -52,6 +78,8 @@ public class Category {
                 ", timestampCreated=" + timestampCreated +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
+                ", href='" + href + '\'' +
+                ", hrefItems='" + hrefItems + '\'' +
                 '}';
     }
 }
