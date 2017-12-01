@@ -14,38 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("ALL")
-public class CategoryDAOMysql implements CategoryDAO, DAO {
-    private Connection conn = null;
-    private PreparedStatement ps = null;
-    private Message message = new Message();
+public class CategoryDAOMysql extends MysqlDAO implements CategoryDAO {
 
-    @Override
-    public boolean open() {
-        if (conn != null) return true;
-        try {
-            conn = MySQLUtility.getDataSource().getConnection();
-            return true;
-        } catch (SQLException e) {
-            message.setMessage("Something wrong on opening connection");
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    @Override
-    public void close() {
-        try {
-            conn.close();
-            ps.close();
-        } catch (SQLException e) {
-            message.setMessage("Something wrong on closing connection");
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public Message getMessage(){
-        return message;
+    private void setCategoryFromQuery(Category category, ResultSet rs) throws SQLException {
+        category.setId(rs.getInt("id"));
+        category.setTimestampCreated(rs.getTimestamp("timestamp_created"));
+        category.setName(rs.getString("name"));
+        category.setDescription(rs.getString("description"));
+        category.autoSetHref();
     }
 
     @Override
@@ -88,9 +64,7 @@ public class CategoryDAOMysql implements CategoryDAO, DAO {
 
             ResultSet rs = ps.executeQuery();
             rs.next();
-            category.setId(rs.getInt("ID"));
-            category.setName(rs.getString("name"));
-            category.setDescription(rs.getString("description"));
+            setCategoryFromQuery(category, rs);
             return category;
         } catch (SQLException e) {
             message.setMessage("Something wrong on get category");
@@ -114,9 +88,7 @@ public class CategoryDAOMysql implements CategoryDAO, DAO {
             ResultSet rs = ps.executeQuery();
             while(rs.next()) {
                 Category category = new Category();
-                category.setId(rs.getInt("ID"));
-                category.setName(rs.getString("name"));
-                category.setDescription(rs.getString("description"));
+                setCategoryFromQuery(category, rs);
                 categories.add(category);
             }
             return categories;
@@ -163,15 +135,17 @@ public class CategoryDAOMysql implements CategoryDAO, DAO {
             String query = "UPDATE categories SET id = ?, name = ?, description = ?";
             ps = conn.prepareStatement(query);
             ps.setInt(1, id);
+            ps.setString(2, category.getName());
+            ps.setString(3, category.getDescription());
 
             int affected = ps.executeUpdate();
             if (affected > 0) {
                 return true;
             } else {
-                message.setMessage("No affected query. No category deleted");
+                message.setMessage("No affected query. No category update");
             }
         } catch (SQLException e) {
-            message.setMessage("Something wrong on delete category");
+            message.setMessage("Something wrong on update category");
             e.printStackTrace();
         } finally {
             close();

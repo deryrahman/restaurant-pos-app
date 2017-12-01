@@ -1,22 +1,52 @@
 package com.blibli.future.pos.restaurant.dao;
 
+import com.blibli.future.pos.restaurant.MySQLUtility;
 import com.blibli.future.pos.restaurant.services.Message;
 
-public interface DAO {
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class MysqlDAO {
+
+    protected Connection conn = null;
+    protected PreparedStatement ps = null;
+    protected Message message = new Message();
+
     /**
      * Open connection from db pool
      * @return true if connection successed, false otherwise
      */
-    public boolean open();
+    protected boolean open() {
+        if (conn != null) return true;
+        try {
+            conn = MySQLUtility.getDataSource().getConnection();
+            return true;
+        } catch (SQLException e) {
+            message.setMessage("Something wrong on opening connection");
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     /**
      * Close connection from db pool, and close prepared statement
      */
-    public void close();
+    protected void close() {
+        try {
+            conn.close();
+            ps.close();
+        } catch (SQLException e) {
+            message.setMessage("Something wrong on closing connection");
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Call message inside DAO, when there are another error, or messages being transfered from dao
      * @return message
      */
-    public Message getMessage();
+    public Message getMessage(){
+        return message;
+    }
 }
