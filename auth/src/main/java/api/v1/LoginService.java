@@ -16,12 +16,14 @@ public class LoginService extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        String userAgent = request.getHeader("Use-Agent");
+        String ipAddress = request.getRemoteAddr();
         String jwt;
 
         PrintWriter output = response.getWriter();
 
-        if (isValid(username)) {
-            jwt = generateJwt(username);
+        if (isValid(username, password)) {
+            jwt = generateJwt(username, ipAddress, userAgent);
             output.write(jwt);
         } else {
             output.write("Invalid username.");
