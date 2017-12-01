@@ -1,5 +1,6 @@
 package com.blibli.future.pos.restaurant.common.model;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class Receipt {
@@ -8,8 +9,10 @@ public class Receipt {
     private int restaurantId;
     private int userId;
     private int memberId;
-    private String totalPrice;
-    private String text;
+    private BigDecimal totalPrice;
+    private String note;
+    private String href;
+    private String href2;
 
     public Receipt() {
     }
@@ -55,20 +58,25 @@ public class Receipt {
     }
 
 
-    public String getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(String totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 
-    public String getText() {
-        return text;
+    public String getNote() {
+        return note;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public void autoSetHref(){
+        this.href = "/receipts/" + id;
+        this.href2 = "/restaurants/" + restaurantId + this.href;
     }
 
     @Override
@@ -80,7 +88,7 @@ public class Receipt {
                 ", userId=" + userId +
                 ", memberId=" + memberId +
                 ", totalPrice='" + totalPrice + '\'' +
-                ", text='" + text + '\'' +
+                ", note='" + note + '\'' +
                 '}';
     }
 }
