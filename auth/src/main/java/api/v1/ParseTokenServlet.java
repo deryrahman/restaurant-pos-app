@@ -16,6 +16,7 @@ public class ParseTokenServlet extends HttpServlet {
         String token = request.getParameter("token");
         String parsedToken = parseToken(token);
 
+        response.setContentType("application/json");
         PrintWriter output = response.getWriter();
         output.write(parsedToken);
         output.close();
