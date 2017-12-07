@@ -16,7 +16,7 @@ public class LoginService extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        String userAgent = request.getHeader("Use-Agent");
+        String userAgent = request.getHeader("User-Agent");
         String ipAddress = request.getRemoteAddr();
         String jwt;
 
