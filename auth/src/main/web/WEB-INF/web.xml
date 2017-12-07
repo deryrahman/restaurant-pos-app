@@ -3,29 +3,31 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
-    
-    <servlet>
-        <servlet-name>AuthServlet</servlet-name>
-        <servlet-class>api.v1.AuthServlet</servlet-class>
-    </servlet>
+
     <servlet>
         <servlet-name>LoginService</servlet-name>
         <servlet-class>api.v1.LoginService</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ValidationService</servlet-name>
-        <servlet-class>api.v1.ValidationService</servlet-class>
+        <servlet-name>GenerateTokenServlet</servlet-name>
+        <servlet-class>api.v1.GenerateTokenServlet</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>AuthServlet</servlet-name>
-        <url-pattern>/authentication</url-pattern>
-    </servlet-mapping>
+    <servlet>
+        <servlet-name>ParsedTokenServlet</servlet-name>
+        <servlet-class>api.v1.ParseTokenServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>LoginService</servlet-name>
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ValidationService</servlet-name>
-        <url-pattern>/validation</url-pattern>
+        <servlet-name>GenerateTokenServlet</servlet-name>
+        <url-pattern>/getToken</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ParsedTokenServlet</servlet-name>
+        <url-pattern>/parseToken</url-pattern>
+    </servlet-mapping>
+
 </web-app>

@@ -33,7 +33,4 @@ public class LoginService extends HttpServlet {
         output.close();
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-    }
 }
