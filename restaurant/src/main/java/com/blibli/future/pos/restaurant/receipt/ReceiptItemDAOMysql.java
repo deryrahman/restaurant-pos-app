@@ -24,9 +24,7 @@ public class ReceiptItemDAOMysql extends MysqlDAO implements ReceiptItemDAO {
     }
     @Override
     public boolean createBulk(int receiptId, List<Item> items) {
-        if (!open()) {
-            return false;
-        }
+
         try {
             String query = "INSERT INTO receipt_item(receipt_id, item_id, count_item)" +
                     " VALUES(?, ?, ?)";
@@ -54,8 +52,6 @@ public class ReceiptItemDAOMysql extends MysqlDAO implements ReceiptItemDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on create receipt");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }
@@ -80,8 +76,6 @@ public class ReceiptItemDAOMysql extends MysqlDAO implements ReceiptItemDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on getBulk items");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return items;
     }

@@ -1,13 +1,17 @@
 package com.blibli.future.pos.restaurant.user;
 
 
+import com.blibli.future.pos.restaurant.common.TransactionUtility;
 import com.blibli.future.pos.restaurant.common.model.Message;
 import com.blibli.future.pos.restaurant.common.model.Metadata;
 import com.blibli.future.pos.restaurant.common.model.User;
 import com.google.gson.Gson;
+import org.apache.log4j.MDC;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +19,7 @@ import java.util.Map;
 @SuppressWarnings("ALL")
 @Path("/users")
 public class UserResource {
-    private UserDAOMysql userDAO = new UserDAOMysql();
+    private static UserDAOMysql userDAO = new UserDAOMysql();
     private Gson gson = new Gson();
     private Message msg = new Message();
 
@@ -35,8 +39,10 @@ public class UserResource {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response create(User user){
+    public Response create(User user) throws SQLException {
+        TransactionUtility.createTransaction();
         if(userDAO.create(user)) {
+            TransactionUtility.commitTransaction();
             return Response.status(201).build();
         }
         String json = gson.toJson(userDAO.getMessage());
@@ -44,20 +50,23 @@ public class UserResource {
     }
     @GET
     @Produces("application/json")
-    public Response getAll(){
-        Gson gson = new Gson();
-        List<User> users = userDAO.getBulk("true");
-
-        Map<String, Object> map = new HashMap<>();
-        Metadata metadata = new Metadata();
-        metadata.setCount(users.size());
-        metadata.setLimit(users.size());
-
-        map.put("metadata", metadata);
-        map.put("results", users);
-
-        String json = gson.toJson(map);
-        return Response.status(200).entity(json).build();
+    public Response getAll() throws SQLException {
+        throw new SQLException();
+//        TransactionUtility.createTransaction();
+//        Gson gson = new Gson();
+//        List<User> users = userDAO.getBulk("true");
+//
+//        Map<String, Object> map = new HashMap<>();
+//        Metadata metadata = new Metadata();
+//        metadata.setCount(users.size());
+//        metadata.setLimit(users.size());
+//
+//        map.put("metadata", metadata);
+//        map.put("results", users);
+//
+//        String json = gson.toJson(map);
+//        TransactionUtility.commitTransaction();
+//        return Response.status(200).entity(json).build();
     }
 
     /**

@@ -21,9 +21,6 @@ public class RestaurantDAOMysql extends MysqlDAO implements RestaurantDAO {
 
     @Override
     public boolean create(Restaurant restaurant) {
-        if (!open()) {
-            return false;
-        }
         try {
             String query = "INSERT INTO restaurants(address, phone)" +
                     " VALUES(?, ?)";
@@ -40,8 +37,6 @@ public class RestaurantDAOMysql extends MysqlDAO implements RestaurantDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on create restaurant");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }
@@ -64,8 +59,6 @@ public class RestaurantDAOMysql extends MysqlDAO implements RestaurantDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on get restaurant");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return restaurant;
     }
@@ -90,17 +83,13 @@ public class RestaurantDAOMysql extends MysqlDAO implements RestaurantDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on getBulk restaurants");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return restaurants;
     }
 
     @Override
     public boolean delete(int id) {
-        if (!open()) {
-            return false;
-        }
+
         try {
             String query = "DELETE FROM restaurants WHERE id = ?";
             ps = conn.prepareStatement(query);
@@ -115,17 +104,13 @@ public class RestaurantDAOMysql extends MysqlDAO implements RestaurantDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on delete restaurant");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }
 
     @Override
     public boolean update(int id, Restaurant restaurant) {
-        if (!open()) {
-            return false;
-        }
+
         try {
             String query = "UPDATE categories SET id = ?, address = ?, phone = ? WHERE id = ?";
             ps = conn.prepareStatement(query);
@@ -142,8 +127,6 @@ public class RestaurantDAOMysql extends MysqlDAO implements RestaurantDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on update restaurant");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }

@@ -2,6 +2,7 @@ package com.blibli.future.pos.restaurant.user;
 
 
 import com.blibli.future.pos.restaurant.common.MysqlDAO;
+import com.blibli.future.pos.restaurant.common.TransactionUtility;
 import com.blibli.future.pos.restaurant.common.model.User;
 
 import java.sql.ResultSet;
@@ -23,13 +24,10 @@ public class UserDAOMysql extends MysqlDAO implements UserDAO{
 
     @Override
     public boolean create(User user) {
-        if (!open()) {
-            return false;
-        }
         try {
             String query = "INSERT INTO users(name, restaurant_id, email, role)" +
                     " VALUES(?, ?, ?, ?)";
-            ps = conn.prepareStatement(query);
+            ps = TransactionUtility.getConnection().prepareStatement(query);
             ps.setString(1, user.getName());
             ps.setInt(2, user.getRestaurantId());
             ps.setString(3, user.getEmail());
@@ -44,8 +42,6 @@ public class UserDAOMysql extends MysqlDAO implements UserDAO{
         } catch (SQLException e) {
             message.setMessage("Something wrong on create user");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }
@@ -53,12 +49,9 @@ public class UserDAOMysql extends MysqlDAO implements UserDAO{
     @Override
     public User getById(int id) {
         User user = new User();
-        if (!open()) {
-            return user;
-        }
         try {
             String query = "SELECT * FROM users WHERE id = ?";
-            ps = conn.prepareStatement(query);
+            ps = TransactionUtility.getConnection().prepareStatement(query);
             ps.setInt(1, id);
 
             ResultSet rs = ps.executeQuery();
@@ -68,8 +61,6 @@ public class UserDAOMysql extends MysqlDAO implements UserDAO{
         } catch (SQLException e) {
             message.setMessage("Something wrong on get user");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return user;
     }
@@ -77,12 +68,9 @@ public class UserDAOMysql extends MysqlDAO implements UserDAO{
     @Override
     public List<User> getBulk(String filter) {
         List<User> users = new ArrayList<>();
-        if (!open()) {
-            return users;
-        }
         try {
             String query = "SELECT * FROM users WHERE "+filter;
-            ps = conn.prepareStatement(query);
+            ps = TransactionUtility.getConnection().prepareStatement(query);
 
             ResultSet rs = ps.executeQuery();
             while(rs.next()) {
@@ -94,20 +82,15 @@ public class UserDAOMysql extends MysqlDAO implements UserDAO{
         } catch (SQLException e) {
             message.setMessage("Something wrong on getBulk users");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return users;
     }
 
     @Override
     public boolean delete(int id) {
-        if (!open()) {
-            return false;
-        }
         try {
             String query = "DELETE FROM users WHERE id = ?";
-            ps = conn.prepareStatement(query);
+            ps = TransactionUtility.getConnection().prepareStatement(query);
             ps.setInt(1, id);
 
             int affected = ps.executeUpdate();
@@ -119,17 +102,12 @@ public class UserDAOMysql extends MysqlDAO implements UserDAO{
         } catch (SQLException e) {
             message.setMessage("Something wrong on delete user");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }
 
     @Override
     public boolean update(int id, User user) {
-        if (!open()) {
-            return false;
-        }
         try {
             String query = "UPDATE users SET " +
                     "name = ?, " +
@@ -137,7 +115,7 @@ public class UserDAOMysql extends MysqlDAO implements UserDAO{
                     "email = ?," +
                     "role = ?" +
                     "WHERE id = ?";
-            ps = conn.prepareStatement(query);
+            ps = TransactionUtility.getConnection().prepareStatement(query);
             ps.setString(1, user.getName());
             ps.setInt(2, user.getRestaurantId());
             ps.setString(3, user.getEmail());
@@ -153,8 +131,6 @@ public class UserDAOMysql extends MysqlDAO implements UserDAO{
         } catch (SQLException e) {
             message.setMessage("Something wrong on update user");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }

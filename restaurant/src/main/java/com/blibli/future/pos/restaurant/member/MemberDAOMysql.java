@@ -23,9 +23,7 @@ public class MemberDAOMysql extends MysqlDAO implements MemberDAO {
 
     @Override
     public boolean create(Member member) {
-        if (!open()) {
-            return false;
-        }
+
         try {
             String query = "INSERT INTO members(name, address, email)" +
                     " VALUES(?, ?, ?)";
@@ -43,8 +41,6 @@ public class MemberDAOMysql extends MysqlDAO implements MemberDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on create member");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }
@@ -67,8 +63,6 @@ public class MemberDAOMysql extends MysqlDAO implements MemberDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on get member");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return member;
     }
@@ -93,17 +87,13 @@ public class MemberDAOMysql extends MysqlDAO implements MemberDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on getBulk members");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return members;
     }
 
     @Override
     public boolean delete(int id) {
-        if (!open()) {
-            return false;
-        }
+
         try {
             String query = "DELETE FROM members WHERE id = ?";
             ps = conn.prepareStatement(query);
@@ -118,17 +108,13 @@ public class MemberDAOMysql extends MysqlDAO implements MemberDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on delete member");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }
 
     @Override
     public boolean update(int id, Member member) {
-        if (!open()) {
-            return false;
-        }
+
         try {
             String query = "UPDATE members SET " +
                     "name = ?, " +
@@ -150,8 +136,6 @@ public class MemberDAOMysql extends MysqlDAO implements MemberDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on update member");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }

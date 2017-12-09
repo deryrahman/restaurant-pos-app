@@ -1,6 +1,7 @@
 package com.blibli.future.pos.restaurant.common;
 
 import com.blibli.future.pos.restaurant.common.model.Message;
+import org.apache.log4j.MDC;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,7 +9,7 @@ import java.sql.SQLException;
 
 public class MysqlDAO {
 
-    protected Connection conn = null;
+    protected Connection conn = TransactionUtility.getConnection();
     protected PreparedStatement ps = null;
     protected Message message = new Message();
 
@@ -18,27 +19,15 @@ public class MysqlDAO {
      */
     protected boolean open() {
         if (conn != null) return true;
-        try {
-            conn = MySQLUtility.getDataSource().getConnection();
-            return true;
-        } catch (SQLException e) {
-            message.setMessage("Something wrong on opening connection");
-            e.printStackTrace();
-        }
-        return false;
+        conn = TransactionUtility.getConnection();
+        return true;
     }
 
     /**
      * Close connection from db pool, and close prepared statement
      */
-    protected void close() {
-        try {
-            conn.close();
-            ps.close();
-        } catch (SQLException e) {
-            message.setMessage("Something wrong on closing connection");
-            e.printStackTrace();
-        }
+    protected void close() throws SQLException {
+        TransactionUtility.commitTransaction();
     }
 
     /**

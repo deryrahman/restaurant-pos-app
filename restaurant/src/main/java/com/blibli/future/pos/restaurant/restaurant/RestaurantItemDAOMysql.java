@@ -24,9 +24,7 @@ public class RestaurantItemDAOMysql extends MysqlDAO implements RestaurantItemDA
     }
     @Override
     public boolean create(int itemId, int restaurantId, int stock) {
-        if (!open()) {
-            return false;
-        }
+
         try {
             String query = "INSERT INTO restaurant_item(restaurant_id, item_id, stock)" +
                     " VALUES(?, ?, ?)";
@@ -44,8 +42,6 @@ public class RestaurantItemDAOMysql extends MysqlDAO implements RestaurantItemDA
         } catch (SQLException e) {
             message.setMessage("Something wrong on create restaurantItem");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }
@@ -70,17 +66,13 @@ public class RestaurantItemDAOMysql extends MysqlDAO implements RestaurantItemDA
         } catch (SQLException e) {
             message.setMessage("Something wrong on getBulk items");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return items;
     }
 
     @Override
     public boolean update(int itemId, int restaurantId, int stock) {
-        if (!open()) {
-            return false;
-        }
+
         try {
             String query = "UPDATE restaurant_item SET " +
                     "stock = ? +" +
@@ -100,8 +92,6 @@ public class RestaurantItemDAOMysql extends MysqlDAO implements RestaurantItemDA
         } catch (SQLException e) {
             message.setMessage("Something wrong on update restaurant item");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }

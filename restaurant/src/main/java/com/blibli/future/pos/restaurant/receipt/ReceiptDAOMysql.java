@@ -49,8 +49,6 @@ public class ReceiptDAOMysql extends MysqlDAO implements ReceiptDAO{
         } catch (SQLException e) {
             message.setMessage("Something wrong on create receipt");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return 0;
     }
@@ -73,8 +71,6 @@ public class ReceiptDAOMysql extends MysqlDAO implements ReceiptDAO{
         } catch (SQLException e) {
             message.setMessage("Something wrong on get receipt");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return receipt;
     }
@@ -99,17 +95,13 @@ public class ReceiptDAOMysql extends MysqlDAO implements ReceiptDAO{
         } catch (SQLException e) {
             message.setMessage("Something wrong on getBulk receipts");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return receipts;
     }
 
     @Override
     public boolean delete(int id) {
-        if (!open()) {
-            return false;
-        }
+
         try {
             String query = "DELETE FROM receipts WHERE id = ?";
             ps = conn.prepareStatement(query);
@@ -124,17 +116,13 @@ public class ReceiptDAOMysql extends MysqlDAO implements ReceiptDAO{
         } catch (SQLException e) {
             message.setMessage("Something wrong on delete receipt");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }
 
     @Override
     public boolean update(int id, Receipt receipt) {
-        if (!open()) {
-            return false;
-        }
+
         try {
             String query = "UPDATE receipts SET " +
                     "restaurant_id = ?, " +
@@ -160,8 +148,6 @@ public class ReceiptDAOMysql extends MysqlDAO implements ReceiptDAO{
         } catch (SQLException e) {
             message.setMessage("Something wrong on update receipt");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }

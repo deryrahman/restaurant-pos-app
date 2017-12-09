@@ -21,9 +21,6 @@ public class CategoryDAOMysql extends MysqlDAO implements CategoryDAO {
 
     @Override
     public boolean create(Category category) {
-        if (!open()) {
-            return false;
-        }
         try {
             String query = "INSERT INTO categories(name, description)" +
                     " VALUES(?, ?)";
@@ -40,8 +37,6 @@ public class CategoryDAOMysql extends MysqlDAO implements CategoryDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on create category");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }
@@ -49,9 +44,6 @@ public class CategoryDAOMysql extends MysqlDAO implements CategoryDAO {
     @Override
     public Category getById(int id) {
         Category category = new Category();
-        if (!open()) {
-            return category;
-        }
         try {
             String query = "SELECT * FROM categories WHERE id = ?";
             ps = conn.prepareStatement(query);
@@ -64,8 +56,6 @@ public class CategoryDAOMysql extends MysqlDAO implements CategoryDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on get category");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return category;
     }
@@ -73,9 +63,6 @@ public class CategoryDAOMysql extends MysqlDAO implements CategoryDAO {
     @Override
     public List<Category> getBulk(String filter) {
         List<Category> categories = new ArrayList<>();
-        if (!open()) {
-            return categories;
-        }
         try {
             String query = "SELECT * FROM categories WHERE "+filter;
             ps = conn.prepareStatement(query);
@@ -90,17 +77,12 @@ public class CategoryDAOMysql extends MysqlDAO implements CategoryDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on getBulk categories");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return categories;
     }
 
     @Override
     public boolean delete(int id) {
-        if (!open()) {
-            return false;
-        }
         try {
             String query = "DELETE FROM categories WHERE id = ?";
             ps = conn.prepareStatement(query);
@@ -115,17 +97,12 @@ public class CategoryDAOMysql extends MysqlDAO implements CategoryDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on delete category");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }
 
     @Override
     public boolean update(int id, Category category) {
-        if (!open()) {
-            return false;
-        }
         try {
             String query = "UPDATE categories SET name = ?, description = ? WHERE id = ?";
             ps = conn.prepareStatement(query);
@@ -142,8 +119,6 @@ public class CategoryDAOMysql extends MysqlDAO implements CategoryDAO {
         } catch (SQLException e) {
             message.setMessage("Something wrong on update category");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }

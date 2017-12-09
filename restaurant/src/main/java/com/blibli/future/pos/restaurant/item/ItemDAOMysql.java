@@ -23,9 +23,7 @@ public class ItemDAOMysql extends MysqlDAO implements ItemDAO{
 
     @Override
     public boolean create(Item item) {
-        if (!open()) {
-            return false;
-        }
+
         try {
             String query = "INSERT INTO items(name, price, description, category_id, status)" +
                     " VALUES(?, ?, ?, ?, ?)";
@@ -45,8 +43,6 @@ public class ItemDAOMysql extends MysqlDAO implements ItemDAO{
         } catch (SQLException e) {
             message.setMessage("Something wrong on create item");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }
@@ -69,8 +65,6 @@ public class ItemDAOMysql extends MysqlDAO implements ItemDAO{
         } catch (SQLException e) {
             message.setMessage("Something wrong on get item");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return item;
     }
@@ -95,17 +89,13 @@ public class ItemDAOMysql extends MysqlDAO implements ItemDAO{
         } catch (SQLException e) {
             message.setMessage("Something wrong on getBulk items");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return items;
     }
 
     @Override
     public boolean delete(int id) {
-        if (!open()) {
-            return false;
-        }
+
         try {
             String query = "DELETE FROM items WHERE id = ?";
             ps = conn.prepareStatement(query);
@@ -120,17 +110,13 @@ public class ItemDAOMysql extends MysqlDAO implements ItemDAO{
         } catch (SQLException e) {
             message.setMessage("Something wrong on delete item");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }
 
     @Override
     public boolean update(int id, Item item) {
-        if (!open()) {
-            return false;
-        }
+
         try {
             String query = "UPDATE items SET " +
                     "name = ?, " +
@@ -156,8 +142,6 @@ public class ItemDAOMysql extends MysqlDAO implements ItemDAO{
         } catch (SQLException e) {
             message.setMessage("Something wrong on update item");
             e.printStackTrace();
-        } finally {
-            close();
         }
         return false;
     }
