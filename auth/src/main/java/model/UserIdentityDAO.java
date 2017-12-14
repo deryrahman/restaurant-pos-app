@@ -24,7 +24,8 @@ public class UserIdentityDAO {
             while (rs.next()) {
                 UserIdentity user = new UserIdentity(rs.getLong("id"),
                                                      rs.getString("username"),
-                                                     rs.getString("password"));
+                                                     rs.getString("password"),
+                                                     rs.getString("role"));
                 userIdentities.add(user);
             }
 
