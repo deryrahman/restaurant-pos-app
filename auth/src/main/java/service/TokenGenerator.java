@@ -43,6 +43,8 @@ public class TokenGenerator {
                                      String userAgent) {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
+        String role = UserService.getRole(username);
+
         long nowMillis = System.currentTimeMillis();
         long expMillis = nowMillis + ttlMillis;
         Date now = new Date(nowMillis);
@@ -51,6 +53,7 @@ public class TokenGenerator {
         Map<String, Object> customClaims = new HashMap<>();
         customClaims.put("ipa", ipAddres);
         customClaims.put("uag", userAgent);
+        customClaims.put("role", role);
         String jwt = Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(now)
@@ -64,9 +67,7 @@ public class TokenGenerator {
 
     public static String parseJwt(String jwt) {
         String status;
-        String username = "";
-        String ipAddress = "";
-        String userAgent = "";
+        Map<String, Object> payload = new HashMap<>();
 
         Claims claims;
         try {
@@ -78,31 +79,37 @@ public class TokenGenerator {
                 status = "expired";
             } else {
                 status = "ok";
-                username = claims.getSubject();
-                ipAddress = claims.get("ipa", String.class);
-                userAgent = claims.get("uag", String.class);
+                String username = claims.getSubject();
+                String ipAddress = claims.get("ipa", String.class);
+                String userAgent = claims.get("uag", String.class);
+                String role = claims.get("role", String.class);
+
+                payload.put("username", username);
+                payload.put("ipAddress", ipAddress);
+                payload.put("userAgent", userAgent);
+                payload.put("role", role);
             }
         } catch (SignatureException e) {
             e.printStackTrace();
             return "{\"status\":\"invalid\"}";
         }
 
-
-        Map<String, String> parsedInfo = new HashMap<>();
+        Map<String, Object> parsedInfo = new HashMap<>();
         parsedInfo.put("status", status);
-        parsedInfo.put("username", username);
-        parsedInfo.put("ipAddress", ipAddress);
-        parsedInfo.put("userAgent", userAgent);
+        parsedInfo.put("payload", payload);
 
+        return mapToJson(parsedInfo);
+    }
+
+    private static String mapToJson(Map<String, Object> map) {
         String parsedJson;
         try {
             ObjectMapper mapper = new ObjectMapper();
-            parsedJson = mapper.writeValueAsString(parsedInfo);
+            parsedJson = mapper.writeValueAsString(map);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return "Failed to parse token. \nError: " + e.getMessage();
         }
-
         return parsedJson;
     }
 

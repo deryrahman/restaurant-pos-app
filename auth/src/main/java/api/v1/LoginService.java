@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import static service.TokenGenerator.generateJwt;
-import static service.UserValidator.isValid;
+import static service.UserService.isValid;
 
 @WebServlet(name = "LoginService")
 public class LoginService extends HttpServlet {
