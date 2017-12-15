@@ -20,36 +20,43 @@ import java.util.stream.Collectors;
 @WebServlet(name = "GenerateTokenServlet")
 public class GenerateTokenServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String requestBody = getBody(request);
-
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> body;
-
         PrintWriter output = response.getWriter();
-        if (!requestBody.isEmpty()) {
-            body = mapper.readValue(requestBody, new TypeReference<Map<String, Object>>(){});
-            Map<String, String> userInfo = (LinkedHashMap<String, String>) body.get("payload");
 
-            try {
-                String token = TokenGenerator.generateJwtFromMap(userInfo);
-                output.write(token);
-            } catch (InvalidTokenRequestException e) {
-                output.write(e.getMessage());
-            }
-        } else {
-            response.setStatus(400);
-            output.write("Empty request body.");
+        try {
+            String requestBody = getBody(request);
+
+            Map<String, String> userInfo = extractPayloadFromRequestBody(requestBody);
+
+            String token = TokenGenerator.generateJwtFromMap(userInfo);
+            output.write(token);
+        } catch (InvalidTokenRequestException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            output.write(e.getMessage());
         }
-
 
         output.close();
     }
 
-    private String getBody(HttpServletRequest request) throws IOException{
-        if ("POST".equals(request.getMethod())) {
-            return request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+    private Map<String, String> extractPayloadFromRequestBody(String requestBody) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> body = mapper.readValue(requestBody, new TypeReference<Map<String, Object>>(){});
+        if (body.get("payload") instanceof Map) {
+            return (Map<String, String>) body.get("payload");
         } else {
-            return "";
+            return new HashMap<>();
+        }
+    }
+
+    private String getBody(HttpServletRequest request) throws IOException, InvalidTokenRequestException {
+        if (request.getContentType().equals("application/json")) {
+            String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+            if (body.equals("")) {
+                throw new InvalidTokenRequestException("Empty request body.");
+            } else {
+                return body;
+            }
+        } else {
+            throw new InvalidTokenRequestException("Invalid content type.");
         }
     }
 
