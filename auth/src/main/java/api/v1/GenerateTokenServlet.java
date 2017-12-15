@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -22,11 +23,13 @@ public class GenerateTokenServlet extends HttpServlet {
         String requestBody = getBody(request);
 
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, String> userInfo;
+        Map<String, Object> body;
 
         PrintWriter output = response.getWriter();
         if (!requestBody.isEmpty()) {
-            userInfo = mapper.readValue(requestBody, new TypeReference<Map<String, String>>(){});
+            body = mapper.readValue(requestBody, new TypeReference<Map<String, Object>>(){});
+            Map<String, String> userInfo = (LinkedHashMap<String, String>) body.get("payload");
+
             try {
                 String token = TokenGenerator.generateJwtFromMap(userInfo);
                 output.write(token);
