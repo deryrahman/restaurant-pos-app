@@ -3,10 +3,7 @@ package service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import exception.InvalidTokenRequestException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 
 import java.security.Key;
@@ -15,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TokenGenerator {
-    private final static long ttlMillis = 600000;
+    private final static long ttlMillis = 60000;
     static Key key = MacProvider.generateKey();
 
     public static String generateJwtFromMap (Map<String, String> userInfo) throws InvalidTokenRequestException {
@@ -66,8 +63,9 @@ public class TokenGenerator {
     }
 
     public static String parseJwt(String jwt) {
-        String status;
+        String status = "";
         Map<String, Object> payload = new HashMap<>();
+        Map<String, Object> parsedInfo = new HashMap<>();
 
         Claims claims;
         try {
@@ -75,30 +73,43 @@ public class TokenGenerator {
                     .setSigningKey(key)
                     .parseClaimsJws(jwt)
                     .getBody();
-            if (isExpired(claims.getExpiration())) {
-                status = "expired";
-            } else {
-                status = "ok";
-                String username = claims.getSubject();
-                String ipAddress = claims.get("ipa", String.class);
-                String userAgent = claims.get("uag", String.class);
-                String role = claims.get("role", String.class);
 
-                payload.put("username", username);
-                payload.put("ipAddress", ipAddress);
-                payload.put("userAgent", userAgent);
-                payload.put("role", role);
-            }
+            status = "ok";
+            payload = generatePayloadFromClaims(claims);
+
         } catch (SignatureException e) {
-            e.printStackTrace();
-            return "{\"status\":\"invalid\"}";
+            status = "invalid";
+
+        } catch (ExpiredJwtException e) {
+            status = "expired";
+
+        } catch (JwtException e) {
+            status = "unknown";
+
+        } finally {
+            parsedInfo.put("status", status);
+            parsedInfo.put("payload", payload);
         }
 
-        Map<String, Object> parsedInfo = new HashMap<>();
-        parsedInfo.put("status", status);
-        parsedInfo.put("payload", payload);
-
         return mapToJson(parsedInfo);
+    }
+
+    private static Map<String, Object> generatePayloadFromClaims(Claims claims) {
+        Map<String, Object> payload = new HashMap<>();
+
+        String username = claims.getSubject();
+        String ipAddress = claims.get("ipa", String.class);
+        String userAgent = claims.get("uag", String.class);
+        String role = claims.get("role", String.class);
+        String refreshToken = generateJwt(username, ipAddress, userAgent);
+
+        payload.put("username", username);
+        payload.put("ipAddress", ipAddress);
+        payload.put("userAgent", userAgent);
+        payload.put("role", role);
+        payload.put("refreshToken", refreshToken);
+
+        return payload;
     }
 
     private static String mapToJson(Map<String, Object> map) {
@@ -113,9 +124,4 @@ public class TokenGenerator {
         return parsedJson;
     }
 
-    private static boolean isExpired(Date expiration) {
-        long nowMillis = System.currentTimeMillis();
-        Date now = new Date(nowMillis);
-        return expiration.before(now);
-    }
 }
