@@ -12,13 +12,13 @@ public class Item {
     private String description;
     private int categoryId;
     private String status;
-    private String href;
-    private String href2;
+//    private String href;
+//    private String href2;
     // special for restaurant
-    private int restaurantId;
-    private int stock;
+//    private int restaurantId;
+//    private int stock;
     // special for receipt
-    private int count;
+//    private int count;
 
     public Item() {
     }
@@ -78,38 +78,38 @@ public class Item {
     public void setStatus(String status) {
         this.status = status;
     }
-
-    public int getRestaurantId() {
-        return restaurantId;
-    }
-
-    public void setRestaurantId(int restaurantId) {
-        this.restaurantId = restaurantId;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
+//
+//    public int getRestaurantId() {
+//        return restaurantId;
+//    }
+//
+//    public void setRestaurantId(int restaurantId) {
+//        this.restaurantId = restaurantId;
+//    }
+//
+//    public int getStock() {
+//        return stock;
+//    }
+//
+//    public void setStock(int stock) {
+//        this.stock = stock;
+//    }
+//
+//    public int getCount() {
+//        return count;
+//    }
+//
+//    public void setCount(int count) {
+//        this.count = count;
+//    }
 
     /**
      * Must trigger after set all variable
      */
-    public void autoSetHref(){
-        this.href = "/items/" + id;
-        this.href2 = "/categories/" + categoryId + "/items/" + id;
-    }
+//    public void autoSetHref(){
+//        this.href = "/items/" + id;
+//        this.href2 = "/categories/" + categoryId + "/items/" + id;
+//    }
 
     @Override
     public String toString() {
@@ -121,8 +121,6 @@ public class Item {
                 ", description='" + description + '\'' +
                 ", categoryId=" + categoryId +
                 ", status='" + status + '\'' +
-                ", href='" + href + '\'' +
-                ", href2='" + href2 + '\'' +
                 '}';
     }
 }

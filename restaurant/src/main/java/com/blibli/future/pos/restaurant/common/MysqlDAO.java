@@ -5,36 +5,16 @@ import org.apache.log4j.MDC;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MysqlDAO {
-
-    protected Connection conn = TransactionUtility.getConnection();
+public abstract class MysqlDAO<T>  {
+    protected Connection conn;
     protected PreparedStatement ps = null;
-    protected Message message = new Message();
 
-    /**
-     * Open connection from db pool
-     * @return true if connection successed, false otherwise
-     */
-    protected boolean open() {
-        if (conn != null) return true;
-        conn = TransactionUtility.getConnection();
-        return true;
-    }
-
-    /**
-     * Close connection from db pool, and close prepared statement
-     */
-    protected void close() throws SQLException {
-        TransactionUtility.commitTransaction();
-    }
-
-    /**
-     * Call message inside DAO, when there are another error, or messages being transfered from dao
-     * @return message
-     */
-    public Message getMessage(){
-        return message;
-    }
+    protected abstract void mappingObject(T obj, ResultSet rs) throws SQLException;
+//
+//    public MysqlDAO(){
+//        conn = TransactionUtility.getConnection();
+//    }
 }

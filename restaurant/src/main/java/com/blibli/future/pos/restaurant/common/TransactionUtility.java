@@ -1,27 +1,37 @@
 package com.blibli.future.pos.restaurant.common;
 
-import org.apache.log4j.MDC;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class TransactionUtility {
-    public static final String connKey = "thread";
+//    private static final String LOG_CONNECTION = "connection";
+//
+//    public static Connection getConnection() {
+//        return (Connection) MDC.get(LOG_CONNECTION);
+//    }
+//
+//    public static void beginTransaction() throws SQLException {
+//        MDC.put(LOG_CONNECTION, DataSource.getConnection());
+//    }
+//
+//    public static void commitTransaction() throws SQLException {
+//        Connection conn = getConnection();
+//        conn.commit();
+//        conn.close();
+//    }
+    private static Connection conn;
 
-    public static void createTransaction() throws SQLException {
-        Connection conn = MySQLUtility.getDataSource().getConnection();
-        conn.setAutoCommit(false);
-        MDC.put(connKey, conn);
+    public static Connection getConnection() throws SQLException {
+        if(conn == null) beginTransaction();
+        return conn;
     }
 
-    public static Connection getConnection(){
-        return (Connection) MDC.get(connKey);
+    public static void beginTransaction() throws SQLException {
+        conn = DataSource.getConnection();
     }
 
     public static void commitTransaction() throws SQLException {
-        Connection conn = getConnection();
         conn.commit();
         conn.close();
     }
-
 }

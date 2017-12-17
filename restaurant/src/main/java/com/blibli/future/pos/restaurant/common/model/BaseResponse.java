@@ -3,6 +3,7 @@ package com.blibli.future.pos.restaurant.common.model;
 public class BaseResponse {
     private boolean success;
     private String message;
+    private String errorCode;
     private Object payload;
 
     public boolean isSuccess() {
@@ -11,6 +12,14 @@ public class BaseResponse {
 
     public void setSuccess(boolean success) {
         this.success = success;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
     }
 
     public Object getPayload() {
