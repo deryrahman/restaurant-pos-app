@@ -12,13 +12,17 @@ function login(form) {
 }
 
 var loginHandler = function () {
-    console.log("Onload function called.");
     if (this.status === 200) {
         userToken = this.responseText;
         alert(userToken);
     } else if (this.status === 401) {
-        alert(this.responseText);
+        console.log(this.responseText);
+        invalidCredentialsHandler();
     } else {
         alert("Unknown error occurred.");
     }
+};
+
+var invalidCredentialsHandler = function () {
+    document.getElementById("credential-warning").style.display = "block";
 };

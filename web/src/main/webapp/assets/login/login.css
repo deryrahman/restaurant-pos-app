@@ -97,3 +97,9 @@ body {
     background-color: #ff4927;
     border-color: #ff4927;
 }
+
+#credential-warning {
+    color: red;
+    display: none;
+    margin-bottom: 15px;
+}
