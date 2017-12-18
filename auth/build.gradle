@@ -12,4 +12,5 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile 'io.jsonwebtoken:jjwt:0.9.0'
     compile 'mysql:mysql-connector-java:5.1.6'
+    compile 'javax.servlet:javax.servlet-api:3.1.0'
 }
