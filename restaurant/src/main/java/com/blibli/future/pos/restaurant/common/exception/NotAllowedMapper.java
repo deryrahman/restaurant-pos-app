@@ -1,18 +1,17 @@
 package com.blibli.future.pos.restaurant.common.exception;
 
+import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.ext.Provider;
-import java.sql.SQLException;
 
 @Provider
-public class SQLMapper extends BaseExceptionMapper<SQLException> {
-
+public class NotAllowedMapper extends BaseExceptionMapper<NotAllowedException> {
     @Override
     public int generateStatus() {
-        return 500;
+        return 405;
     }
 
     @Override
     public String getExceptionName() {
-        return "SQL Exception";
+        return "Not Allowed Exception";
     }
 }

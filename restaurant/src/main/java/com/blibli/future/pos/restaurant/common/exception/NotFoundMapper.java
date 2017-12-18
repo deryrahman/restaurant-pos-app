@@ -1,18 +1,17 @@
 package com.blibli.future.pos.restaurant.common.exception;
 
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ext.Provider;
-import java.sql.SQLException;
 
 @Provider
-public class SQLMapper extends BaseExceptionMapper<SQLException> {
-
+public class NotFoundMapper extends BaseExceptionMapper<NotFoundException> {
     @Override
     public int generateStatus() {
-        return 500;
+        return 404;
     }
 
     @Override
     public String getExceptionName() {
-        return "SQL Exception";
+        return "Not Found Exception";
     }
 }
