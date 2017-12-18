@@ -4,19 +4,17 @@ package com.blibli.future.pos.restaurant.common.model;
 import java.sql.Timestamp;
 
 public class User {
-    private int id;
+    private Integer id;
     private Timestamp timestampCreated;
-    private int restaurantId;
+    private Integer restaurantId;
     private String email;
     private String name;
     private String role;
-    private String href;
-    private String href2;
 
     public User() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -32,7 +30,7 @@ public class User {
         this.timestampCreated = timestampCreated;
     }
 
-    public int getRestaurantId() {
+    public Integer getRestaurantId() {
         return restaurantId;
     }
 
@@ -67,10 +65,10 @@ public class User {
     /**
      * Must trigger after set all variable
      */
-    public void autoSetHref(){
-        this.href = "/users/" + id;
-        this.href2 = "/restaurants/" + restaurantId + "/users/" + id;
-    }
+//    public void autoSetHref(){
+//        this.href = "/users/" + id;
+//        this.href2 = "/restaurants/" + restaurantId + "/users/" + id;
+//    }
 
     @Override
     public String toString() {
@@ -82,5 +80,9 @@ public class User {
                 ", name='" + name + '\'' +
                 ", role='" + role + '\'' +
                 '}';
+    }
+
+    public boolean isEmpty() {
+        return (id == null && timestampCreated == null && restaurantId == null && email == null && name == null && role == null);
     }
 }
