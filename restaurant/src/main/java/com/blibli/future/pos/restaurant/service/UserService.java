@@ -34,7 +34,7 @@ public class UserService {
     @Produces("application/json")
     public Response getAll() throws Exception {
         TransactionUtility.beginTransaction();
-        List<User> users = userDAO.getBulk("true");
+        List<User> users = userDAO.find("true");
         TransactionUtility.commitTransaction();
 
         Map<String, Object> map = new HashMap<>();
@@ -52,13 +52,13 @@ public class UserService {
     @DELETE
     @Produces("application/json")
     public Response delete() throws Exception {
-        throw new Exception("Method not allowed");
+        throw new NotAllowedException("DELETE method not allowed");
     }
 
     @PUT
     @Produces("application/json")
     public Response update() throws Exception {
-        throw new Exception("Method not allowed");
+        throw new NotAllowedException("PUT method not allowed");
     }
     // ---- END /users ----
 
@@ -68,10 +68,10 @@ public class UserService {
     @Produces("application/json")
     public Response get(@PathParam("id") int id) throws Exception {
         TransactionUtility.beginTransaction();
-        User user = userDAO.getById(id);
+        User user = userDAO.findById(id);
         TransactionUtility.commitTransaction();
-        if(user == null){
-            throw new Exception("Not found");
+        if(user.isEmpty()){
+            throw new NotFoundException("User not found");
         }
 
         String json = gson.toJson(user);

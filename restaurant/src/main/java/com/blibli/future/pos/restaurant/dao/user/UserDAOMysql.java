@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAOMysql extends MysqlDAO<User> implements UserDAO {
+    private List<User> users;
+    private User user;
+
     @Override
     protected void mappingObject(User user, ResultSet rs) throws SQLException {
         user.setId(rs.getInt("id"));
@@ -38,21 +41,18 @@ public class UserDAOMysql extends MysqlDAO<User> implements UserDAO {
     }
 
     @Override
-    public User getById(int id) throws SQLException  {
-        User user = new User();
-        String query = "SELECT * FROM users WHERE id = ?";
-        ps = TransactionUtility.getConnection().prepareStatement(query);
-        ps.setInt(1, id);
-
-        ResultSet rs = ps.executeQuery();
-        rs.next();
-        mappingObject(user, rs);
+    public User findById(int id) throws SQLException  {
+        user = new User();
+        users = find("id = "+id);
+        if(users.size()>0){
+            user = users.get(0);
+        }
         return user;
     }
 
     @Override
-    public List<User> getBulk(String filter) throws SQLException  {
-        List<User> users = new ArrayList<>();
+    public List<User> find(String filter) throws SQLException  {
+        users = new ArrayList<>();
         String query = "SELECT * FROM users WHERE "+filter;
         ps = TransactionUtility.getConnection().prepareStatement(query);
 

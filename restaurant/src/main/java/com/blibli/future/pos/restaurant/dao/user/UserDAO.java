@@ -17,7 +17,7 @@ public interface UserDAO {
      * @param id : integer parameter, id must be valid
      * @return User object
      */
-    public User getById(int id) throws SQLException;
+    public User findById(int id) throws SQLException;
 
     /**
      * Get all user with specific limitation
@@ -25,7 +25,7 @@ public interface UserDAO {
      *               To get all users, just set filter to "true"
      * @return list of filtered users
      */
-    public List<User> getBulk(String filter) throws SQLException;
+    public List<User> find(String filter) throws SQLException;
 
     /**
      * Delete user
