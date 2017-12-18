@@ -20,7 +20,7 @@ public class UserService {
                 return user;
             }
         }
-        throw new InvalidCredentialsException("Username not found");
+        throw new InvalidCredentialsException("Username not found.");
     }
 
     public static String getRole(String username) {
