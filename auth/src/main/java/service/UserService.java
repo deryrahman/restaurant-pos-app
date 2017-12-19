@@ -14,6 +14,14 @@ public class UserService {
         return getUserIdentity(username).getPassword().equals(password);
     }
 
+    public static String getRole(String username) {
+        try {
+            return getUserIdentity(username).getRole();
+        } catch (InvalidCredentialsException e) {
+            return "";
+        }
+    }
+
     public static UserIdentity getUserIdentity(String username) throws InvalidCredentialsException {
         for (UserIdentity user : userIdentities) {
             if (user.getUsername().equals(username)) {
@@ -21,13 +29,5 @@ public class UserService {
             }
         }
         throw new InvalidCredentialsException("Username not found.");
-    }
-
-    public static String getRole(String username) {
-        try {
-            return getUserIdentity(username).getRole();
-        } catch (InvalidCredentialsException e) {
-            return "";
-        }
     }
 }

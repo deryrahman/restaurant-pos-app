@@ -2,10 +2,7 @@ package model;
 
 import util.MySQLConnection;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,5 +36,53 @@ public class UserIdentityDAO {
         }
 
         return userIdentities;
+    }
+
+    public void createUserIdentity(UserIdentity newUserIdentity) {
+        try {
+            connection = MySQLConnection.getConnection();
+            String query = "INSERT INTO users_identity" +
+                    "(id, `username`, `password`, role) VALUES" +
+                    "(?,?,?,?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+            preparedStatement.setLong(1, newUserIdentity.getId());
+            preparedStatement.setString(2, newUserIdentity.getUsername());
+            preparedStatement.setString(3, newUserIdentity.getPassword());
+            preparedStatement.setString(4, newUserIdentity.getRole());
+
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+            connection.close();
+
+            System.out.println("Successfully created UserIdentity.");
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void updateUserIdentity(UserIdentity userIdentity) {
+        try {
+            connection = MySQLConnection.getConnection();
+            String query = "UPDATE users_identity SET" +
+                    "`username` = ?, `password` = ?, role = ?" +
+                    "WHERE id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+            preparedStatement.setString(1, userIdentity.getUsername());
+            preparedStatement.setString(2, userIdentity.getPassword());
+            preparedStatement.setString(3, userIdentity.getRole());
+            preparedStatement.setLong(4, userIdentity.getId());
+
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+            connection.close();
+
+            System.out.println("Successfully updated UserIdentity with id = " + userIdentity.getId());
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
