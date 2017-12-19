@@ -1,5 +1,7 @@
 package model;
 
+import exception.DatabaseFailureException;
+import exception.FailedCRUDOperationException;
 import util.MySQLConnection;
 
 import java.sql.*;
@@ -38,7 +40,7 @@ public class UserIdentityDAO {
         return userIdentities;
     }
 
-    public void createUserIdentity(UserIdentity newUserIdentity) {
+    public void createUserIdentity(UserIdentity newUserIdentity) throws FailedCRUDOperationException {
         try {
             connection = MySQLConnection.getConnection();
             String query = "INSERT INTO users_identity" +
@@ -59,10 +61,11 @@ public class UserIdentityDAO {
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
+            throw new DatabaseFailureException("Failed to create user.");
         }
     }
 
-    public void updateUserIdentity(UserIdentity userIdentity) {
+    public void updateUserIdentity(UserIdentity userIdentity) throws FailedCRUDOperationException {
         try {
             connection = MySQLConnection.getConnection();
             String query = "UPDATE users_identity SET" +
@@ -83,6 +86,8 @@ public class UserIdentityDAO {
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
+            throw new DatabaseFailureException("Failed to update user with id " +
+                    userIdentity.getId() + ".");
         }
     }
 }
