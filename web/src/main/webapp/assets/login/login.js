@@ -15,4 +15,8 @@ $(function() {
         e.preventDefault();
     });
 
+    $('#login-form').submit(function (e) {
+        e.preventDefault();
+    });
+
 });
