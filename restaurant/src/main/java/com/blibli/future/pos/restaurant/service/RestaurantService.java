@@ -13,9 +13,12 @@ import com.blibli.future.pos.restaurant.dao.custom.receiptwithitem.ReceiptWithIt
 import com.blibli.future.pos.restaurant.dao.restaurant.RestaurantDAOMysql;
 import com.blibli.future.pos.restaurant.dao.user.UserDAOMysql;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("ALL")
@@ -242,8 +245,10 @@ public class RestaurantService extends BaseRESTService {
             }
             return receipts;
         });
+
         baseResponse = new BaseResponse(true,200, receipts);
-        json = objectMapper.writeValueAsString(baseResponse);
+
+        json = objectMapper.writeValueAsString(receipts);
         return Response.status(200).entity(json).build();
     }
 
@@ -270,13 +275,21 @@ public class RestaurantService extends BaseRESTService {
     public void insertReceipt(Integer restaurantId, ReceiptWithItem receiptWithItem) throws Exception {
         th.runTransaction(conn -> {
             // Check if item on receipt is valid
-            for (ItemOnReceipt item : receiptWithItem.getItems()) {
-                if(item.notValidAttribute()){
+            BigDecimal total = BigDecimal.ZERO;
+            for(int i = 0; i < receiptWithItem.getItems().size(); i++){
+                ItemOnReceipt item = receiptWithItem.getItems().get(i);
+                if(item.notValidAttribute() || item.getCount() == 0){
                     throw new BadRequestException(ErrorMessage.requiredValue(item));
                 }
-                if(itemDAO.findById(item.getItemId()).isEmpty()){
+                Item item1 = itemDAO.findById(item.getItemId());
+                if(item1.isEmpty()){
                     throw new NotFoundException(ErrorMessage.NotFoundFrom(item));
                 }
+                item.setItemName(item1.getName());
+                BigDecimal decimal = item1.getPrice();
+                BigDecimal subtotal = decimal.multiply(BigDecimal.valueOf(item1.getPrice().longValue()));
+                item.setSubTotal(subtotal);
+                total = total.add(subtotal);
             }
 
             // Check if receipt id is valid
@@ -288,12 +301,13 @@ public class RestaurantService extends BaseRESTService {
             receipt = new Receipt();
             receipt.setId(receiptWithItem.getReceiptId());
             receipt.setRestaurantId(restaurantId);
+            receipt.setTotalPrice(total);
             // Temporary 1
             receipt.setUserId(1);
 
             // Create receipt first
             receiptDAO.create(receipt);
-
+            receiptWithItem.setReceiptId(receipt.getId());
             // create receipt with item
             receiptWithItemDAO.create(receiptWithItem);
             return null;
