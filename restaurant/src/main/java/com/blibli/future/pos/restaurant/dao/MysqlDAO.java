@@ -1,4 +1,4 @@
-package com.blibli.future.pos.restaurant.common;
+package com.blibli.future.pos.restaurant.dao;
 
 import com.blibli.future.pos.restaurant.common.model.Message;
 import org.apache.log4j.MDC;
@@ -15,6 +15,6 @@ public abstract class MysqlDAO<T>  {
     protected abstract void mappingObject(T obj, ResultSet rs) throws SQLException;
 //
 //    public MysqlDAO(){
-//        conn = TransactionUtility.getConnection();
+//        conn = TransactionHelper.getConnection();
 //    }
 }
