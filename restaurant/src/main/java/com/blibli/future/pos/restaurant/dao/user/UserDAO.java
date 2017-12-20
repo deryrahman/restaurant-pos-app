@@ -20,6 +20,13 @@ public interface UserDAO {
     public User findById(int id) throws SQLException;
 
     /**
+     * Get user by id
+     * @param id : string parameter, id must be valid
+     * @return User object
+     */
+    public User findById(String id) throws SQLException;
+
+    /**
      * Get all user with specific limitation
      * @param filter : is a WHERE statemtment of mysql query
      *               To get all users, just set filter to "true"

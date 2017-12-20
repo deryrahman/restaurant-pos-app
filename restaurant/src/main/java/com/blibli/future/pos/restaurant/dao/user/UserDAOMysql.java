@@ -1,8 +1,8 @@
 package com.blibli.future.pos.restaurant.dao.user;
 
 
-import com.blibli.future.pos.restaurant.common.MysqlDAO;
-import com.blibli.future.pos.restaurant.common.TransactionUtility;
+import com.blibli.future.pos.restaurant.dao.MysqlDAO;
+import com.blibli.future.pos.restaurant.common.TransactionHelper;
 import com.blibli.future.pos.restaurant.common.model.User;
 
 import java.sql.ResultSet;
@@ -28,14 +28,19 @@ public class UserDAOMysql extends MysqlDAO<User> implements UserDAO {
     public void create(User user) throws SQLException {
         String query = "INSERT INTO users(name, restaurant_id, email, role)" +
                 " VALUES(?, ?, ?, ?)";
-        ps = TransactionUtility.getConnection().prepareStatement(query);
+        ps = TransactionHelper.getConnection().prepareStatement(query);
         ps.setString(1, user.getName());
         ps.setInt(2, user.getRestaurantId());
         ps.setString(3, user.getEmail());
         ps.setString(4, user.getRole());
 
         int affected = ps.executeUpdate();
-        if (affected <= 0) {
+        if (affected > 0) {
+            ResultSet rs = ps.getGeneratedKeys();
+            if(rs.next()){
+                user.setId(rs.getInt(1));
+            }
+        } else {
             throw new SQLException("No affected query. No user inserting");
         }
     }
@@ -51,10 +56,20 @@ public class UserDAOMysql extends MysqlDAO<User> implements UserDAO {
     }
 
     @Override
+    public User findById(String id) throws SQLException {
+        user = new User();
+        users = find("email = '"+ id + "'");
+        if(users.size()>0){
+            user = users.get(0);
+        }
+        return user;
+    }
+
+    @Override
     public List<User> find(String filter) throws SQLException  {
         users = new ArrayList<>();
         String query = "SELECT * FROM users WHERE "+filter;
-        ps = TransactionUtility.getConnection().prepareStatement(query);
+        ps = TransactionHelper.getConnection().prepareStatement(query);
 
         ResultSet rs = ps.executeQuery();
         while(rs.next()) {
@@ -68,7 +83,7 @@ public class UserDAOMysql extends MysqlDAO<User> implements UserDAO {
     @Override
     public void delete(int id) throws SQLException {
         String query = "DELETE FROM users WHERE id = ?";
-        ps = TransactionUtility.getConnection().prepareStatement(query);
+        ps = TransactionHelper.getConnection().prepareStatement(query);
         ps.setInt(1, id);
 
         int affected = ps.executeUpdate();
@@ -85,7 +100,7 @@ public class UserDAOMysql extends MysqlDAO<User> implements UserDAO {
                 "email = ?," +
                 "role = ?" +
                 "WHERE id = ?";
-        ps = TransactionUtility.getConnection().prepareStatement(query);
+        ps = TransactionHelper.getConnection().prepareStatement(query);
         ps.setString(1, user.getName());
         ps.setInt(2, user.getRestaurantId());
         ps.setString(3, user.getEmail());

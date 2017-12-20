@@ -1,9 +1,12 @@
 package com.blibli.future.pos.restaurant.common.model;
 
 
+import java.lang.reflect.Field;
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
-public class User {
+public class User extends BaseResource{
     private Integer id;
     private Timestamp timestampCreated;
     private Integer restaurantId;
@@ -82,7 +85,22 @@ public class User {
                 '}';
     }
 
-    public boolean isEmpty() {
-        return (id == null && timestampCreated == null && restaurantId == null && email == null && name == null && role == null);
+    @Override
+    public Boolean isEmpty() {
+        return (id == null || timestampCreated == null || restaurantId == null || email == null || name == null);
+    }
+
+    @Override
+    public Boolean notValidAttribute() {
+        return (restaurantId == null || email == null || name == null);
+    }
+
+    @Override
+    public Map<String,String> requiredAttribute(){
+        Map<String, String> required = new HashMap<>();
+        if(email == null) required.put("email", "String");
+        if(name == null) required.put("name", "String");
+        if(restaurantId == null) required.put("restaurantId", "Integer");
+        return required;
     }
 }
