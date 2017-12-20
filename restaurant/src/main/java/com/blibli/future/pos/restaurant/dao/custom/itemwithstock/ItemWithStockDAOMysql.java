@@ -1,4 +1,4 @@
-package com.blibli.future.pos.restaurant.dao.itemwithstock;
+package com.blibli.future.pos.restaurant.dao.custom.itemwithstock;
 
 import com.blibli.future.pos.restaurant.common.TransactionHelper;
 import com.blibli.future.pos.restaurant.common.model.Item;

@@ -1,4 +1,4 @@
-package com.blibli.future.pos.restaurant.dao.receiptwithitem;
+package com.blibli.future.pos.restaurant.dao.custom.receiptwithitem;
 
 import com.blibli.future.pos.restaurant.common.model.custom.ReceiptWithItem;
 
