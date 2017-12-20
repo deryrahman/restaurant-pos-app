@@ -89,24 +89,20 @@ public class ReceiptService extends BaseRESTService{
     @Path("/{id}")
     @Produces("application/json")
     public Response create(@PathParam("id") int id) throws Exception {
-        throw new Exception("Method not allowed");
+        throw new NotAllowedException(ErrorMessage.DELETE_NOT_ALLOWED, Response.status(405).build());
     }
 
     @DELETE
     @Path("/{id}")
-    public Response delete(@PathParam("id") int id) throws SQLException {
-        receiptDAO.delete(id);
-        return Response.status(204).build();
+    public Response delete(@PathParam("id") int id) throws Exception {
+        throw new NotAllowedException(ErrorMessage.DELETE_NOT_ALLOWED, Response.status(405).build());
     }
 
     @PUT
     @Path("/{id}")
     @Consumes("application/json")
-    public Response update(@PathParam("id") int id, Receipt receipt) throws SQLException {
-        Gson gson = new Gson();
-        gson.toJson(receipt);
-        receiptDAO.update(id,receipt);
-        return Response.status(204).build();
+    public Response update(@PathParam("id") int id, Receipt receipt) throws Exception {
+        throw new NotAllowedException(ErrorMessage.PUT_NOT_ALLOWED, Response.status(405).build());
     }
 
     // ---- END /receipts/{id} ----
