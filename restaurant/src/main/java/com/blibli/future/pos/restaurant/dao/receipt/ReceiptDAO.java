@@ -19,7 +19,7 @@ public interface ReceiptDAO {
      * @param id : integer parameter, id must be valid
      * @return Receipt object
      */
-    public Receipt getById(int id) throws SQLException;
+    public Receipt findById(Integer id) throws SQLException;
 
     /**
      * Get all receipt with specific limitation
@@ -27,7 +27,7 @@ public interface ReceiptDAO {
      *               To get all receipts, just set filter to "true"
      * @return list of filtered receipts
      */
-    public List<Receipt> getBulk(String filter) throws SQLException;
+    public List<Receipt> find(String filter) throws SQLException;
 
     /**
      * Delete receipt
