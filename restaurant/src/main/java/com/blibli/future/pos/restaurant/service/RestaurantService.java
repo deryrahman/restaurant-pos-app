@@ -5,13 +5,13 @@ import com.blibli.future.pos.restaurant.common.model.*;
 import com.blibli.future.pos.restaurant.common.model.custom.ItemOnReceipt;
 import com.blibli.future.pos.restaurant.common.model.custom.ItemWithStock;
 import com.blibli.future.pos.restaurant.common.model.custom.ReceiptWithItem;
+import com.blibli.future.pos.restaurant.dao.item.ItemDAO;
 import com.blibli.future.pos.restaurant.dao.item.ItemDAOMysql;
-import com.blibli.future.pos.restaurant.dao.itemwithstock.ItemWithStockDAOMysql;
+import com.blibli.future.pos.restaurant.dao.custom.itemwithstock.ItemWithStockDAOMysql;
 import com.blibli.future.pos.restaurant.dao.receipt.ReceiptDAOMysql;
-import com.blibli.future.pos.restaurant.dao.receiptwithitem.ReceiptWithItemDAOMysql;
+import com.blibli.future.pos.restaurant.dao.custom.receiptwithitem.ReceiptWithItemDAOMysql;
 import com.blibli.future.pos.restaurant.dao.restaurant.RestaurantDAOMysql;
 import com.blibli.future.pos.restaurant.dao.user.UserDAOMysql;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -26,11 +26,12 @@ public class RestaurantService extends BaseRESTService {
     private static ReceiptDAOMysql receiptDAO = new ReceiptDAOMysql();
     private static ReceiptWithItemDAOMysql receiptWithItemDAO = new ReceiptWithItemDAOMysql();
     private static UserDAOMysql userDAO = new UserDAOMysql();
+
     private Restaurant restaurant;
+    private Receipt receipt;
     private List<Restaurant> restaurants;
     private List<ItemWithStock> itemWithStockList;
     private List<User> users;
-    private Receipt receipt;
     private List<Receipt> receipts;
 
     // ---- BEGIN /restaurants ----
@@ -165,6 +166,36 @@ public class RestaurantService extends BaseRESTService {
         return Response.status(200).entity(json).build();
     }
 
+    @POST
+    @Path("/{restaurantId}/items")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response addItem(ItemWithStock itemWithStock, @PathParam("restaurantId") int restaurantId) throws Exception {
+        // Check item valid
+        itemWithStock.setRestaurantId(restaurantId);
+        if(itemWithStock.notValidAttribute()){
+            throw new BadRequestException(ErrorMessage.requiredValue(itemWithStock));
+        }
+
+        th.runTransaction(conn -> {
+            // Check restaturant valid
+            Restaurant restaurant = restaurantDAO.findById(restaurantId);
+            if(restaurant.isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(restaurant));
+            }
+
+            if(itemDAO.findById(itemWithStock.getItemId()).isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Item()));
+            }
+            // Temporary 0
+            itemWithStockDAO.create(restaurantId, itemWithStock.getItemId(), itemWithStock.getStock());
+            return null;
+        });
+
+        baseResponse = new BaseResponse(true, 201);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(201).entity(json).build();
+    }
 
     @GET
     @Path("/{restaurantId}/users")
@@ -205,53 +236,49 @@ public class RestaurantService extends BaseRESTService {
     @Path("/{restaurantId}/receipts")
     @Consumes("application/json")
     @Produces("application/json")
-    public Response createReceipt(@PathParam("restaurantId") Integer restaurantId, ReceiptWithItem receiptWithItem) throws Exception {
-//        if(receiptWithItem.notValidAttribute()){
-//            throw new BadRequestException(ErrorMessage.requiredValue(receiptWithItem));
-//        }
-//
-//        for (ItemOnReceipt item : receiptWithItem.getItems()) {
-//            if(item.notValidAttribute()){
-//                throw new BadRequestException(ErrorMessage.requiredValue(item));
-//            }
-//            if(itemDAO.findById(item.getItemId()).isEmpty()){
-//                throw new NotFoundException(ErrorMessage.NotFoundFrom(item));
-//            }
-//        }
-//
-//        th.runTransaction(conn -> {
-//            if(!receiptWithItemDAO.findById(receiptWithItem.getReceiptId()).isEmpty()){
-//                throw new BadRequestException("Id already taken");
-//            }
-//            receipt = new Receipt();
-//            receipt.setId(receiptWithItem.getReceiptId());
-//            receipt.setRestaurantId();
-//            receiptDAO.create(receipt);
-//            receiptWithItemDAO.create(receiptWithItem);
-//            return null;
-//        });
+    public Response addReceipt(@PathParam("restaurantId") Integer restaurantId, ReceiptWithItem receiptWithItem) throws Exception {
+        if(receiptWithItem.notValidAttribute()){
+            throw new BadRequestException(ErrorMessage.requiredValue(receiptWithItem));
+        }
+
+        th.runTransaction(conn -> {
+
+            // Check if item on receipt is valid
+            for (ItemOnReceipt item : receiptWithItem.getItems()) {
+                if(item.notValidAttribute()){
+                    throw new BadRequestException(ErrorMessage.requiredValue(item));
+                }
+                if(itemDAO.findById(item.getItemId()).isEmpty()){
+                    throw new NotFoundException(ErrorMessage.NotFoundFrom(item));
+                }
+            }
+
+            // Check if receipt id is valid
+            if(!receiptWithItemDAO.findById(receiptWithItem.getReceiptId()).isEmpty()){
+                throw new BadRequestException("Id already taken");
+            }
+
+            // Create new receipt
+            receipt = new Receipt();
+            receipt.setId(receiptWithItem.getReceiptId());
+            receipt.setRestaurantId(restaurantId);
+            // Temporary 1
+            receipt.setUserId(1);
+
+            // Create receipt first
+            receiptDAO.create(receipt);
+
+            // create receipt with item
+            receiptWithItemDAO.create(receiptWithItem);
+            return null;
+        });
 
         baseResponse = new BaseResponse(true, 201);
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(201).entity(json).build();
     }
 //
-//    /**
-//     * Add item to restaurant. Item id must be guaranteed exist on items table
-//     */
-//    @POST
-//    @Path("/{restaurantId}/items")
-//    @Consumes("application/json")
-//    @Produces("application/json")
-//    public Response addItem(Item item, @PathParam("restaurantId") int restaurantId) throws Exception {
-//        tx.init();
-//        if(itemDAO.find("name = " + item.getName()).size() == 0){
-//            itemDAO.create(item);
-//        }
-//        restaurantDAO.addRelationRestaurantItem(item.getId(), restaurantId, 0);
-//        tx.commit();
-//        return Response.status(201).build();
-//    }
+
 //
 //    /**
 //     * special purpose of nested resources. Like /restaurants/1/users. It will call /users, on userResource

@@ -2,22 +2,23 @@ package com.blibli.future.pos.restaurant.common.model;
 
 
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Restaurant {
-    private int id;
+public class Restaurant extends BaseResource{
+    private Integer id;
     private Timestamp timestampCreated;
     private String address;
     private String phone;
-    private String href;
 
     public Restaurant() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -45,21 +46,6 @@ public class Restaurant {
         this.phone = phone;
     }
 
-    public String getHref() {
-        return href;
-    }
-
-    public void setHref(String href) {
-        this.href = href;
-    }
-
-    /**
-     * Must trigger after set all variable
-     */
-    public void autoSetHref(){
-        this.href = "/restaurant/" + id;
-    }
-
     @Override
     public String toString() {
         return "Restaurant{" +
@@ -68,5 +54,23 @@ public class Restaurant {
                 ", address='" + address + '\'' +
                 ", phone='" + phone + '\'' +
                 '}';
+    }
+
+    @Override
+    public Boolean isEmpty() {
+        return (id == null || timestampCreated == null || notValidAttribute());
+    }
+
+    @Override
+    public Boolean notValidAttribute() {
+        return (address == null || phone == null);
+    }
+
+    @Override
+    public Map<String, String> requiredAttribute() {
+        Map<String, String> required = new HashMap<>();
+        if(address == null) required.put("address", "String");
+        if(phone == null) required.put("phone", "String");
+        return required;
     }
 }
