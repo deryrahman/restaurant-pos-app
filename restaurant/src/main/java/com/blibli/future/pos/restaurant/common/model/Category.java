@@ -2,24 +2,24 @@ package com.blibli.future.pos.restaurant.common.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 @XmlRootElement
-public class Category {
-    private int id;
+public class Category extends BaseResource {
+    private Integer id;
     private Timestamp timestampCreated;
     private String name;
     private String description;
-    private String href;
-    private String hrefItems;
 
     public Category() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -47,30 +47,6 @@ public class Category {
         this.description = description;
     }
 
-    public String getHref() {
-        return href;
-    }
-
-    public void setHref(String href) {
-        this.href = href;
-    }
-
-    public String getHrefItems() {
-        return hrefItems;
-    }
-
-    public void setHrefItems(String hrefItems) {
-        this.hrefItems = hrefItems;
-    }
-
-    /**
-     * Must trigger after set all variable
-     */
-    public void autoSetHref(){
-        this.href = "/categories/" + id;
-        this.hrefItems = this.href + "/items";
-    }
-
     @Override
     public String toString() {
         return "Category{" +
@@ -78,8 +54,23 @@ public class Category {
                 ", timestampCreated=" + timestampCreated +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", href='" + href + '\'' +
-                ", hrefItems='" + hrefItems + '\'' +
                 '}';
+    }
+
+    @Override
+    public Boolean isEmpty() {
+        return id == null;
+    }
+
+    @Override
+    public Boolean notValidAttribute() {
+        return name == null;
+    }
+
+    @Override
+    public Map<String, String> requiredAttribute() {
+        Map<String, String> required = new HashMap<>();
+        if(name == null) required.put("name", "String");
+        return required;
     }
 }

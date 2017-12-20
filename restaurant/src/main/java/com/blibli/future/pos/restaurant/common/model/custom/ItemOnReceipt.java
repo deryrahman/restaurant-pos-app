@@ -2,6 +2,7 @@ package com.blibli.future.pos.restaurant.common.model.custom;
 
 import com.blibli.future.pos.restaurant.common.model.BaseResource;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +10,7 @@ public class ItemOnReceipt extends BaseResource {
     private Integer itemId;
     private String itemName;
     private Integer count;
-    private Integer subTotal;
+    private BigDecimal subTotal;
 
     public ItemOnReceipt() {
     }
@@ -38,11 +39,11 @@ public class ItemOnReceipt extends BaseResource {
         this.count = count;
     }
 
-    public Integer getSubTotal() {
+    public BigDecimal getSubTotal() {
         return subTotal;
     }
 
-    public void setSubTotal(Integer subTotal) {
+    public void setSubTotal(BigDecimal subTotal) {
         this.subTotal = subTotal;
     }
 
@@ -63,15 +64,14 @@ public class ItemOnReceipt extends BaseResource {
 
     @Override
     public Boolean notValidAttribute() {
-        return (itemName == null || count == null || subTotal == null);
+        return (itemId == null || count == null);
     }
 
     @Override
     public Map<String, String> requiredAttribute() {
         Map<String, String> required = new HashMap<>();
-        if(itemName == null) required.put("itemName", "String");
+        if(itemId == null) required.put("itemId", "Integer");
         if(count == null) required.put("count", "Integer");
-        if(subTotal == null) required.put("subTotal", "Decimal");
         return required;
     }
 }

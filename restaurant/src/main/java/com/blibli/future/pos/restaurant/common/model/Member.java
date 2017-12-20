@@ -2,23 +2,24 @@ package com.blibli.future.pos.restaurant.common.model;
 
 
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Member {
-    private int id;
+public class Member extends BaseResource {
+    private Integer id;
     private Timestamp timestampCreated;
     private String name;
     private String address;
     private String email;
-    private String href;
 
     public Member() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -54,20 +55,6 @@ public class Member {
         this.email = email;
     }
 
-    public String getHref() {
-        return href;
-    }
-
-    public void setHref(String href) {
-        this.href = href;
-    }
-
-    /**
-     * Must trigger after set all variable
-     */
-    public void autoSetHref() {
-        this.href = "/members/" + id;
-    }
     @Override
     public String toString() {
         return "Member{" +
@@ -77,5 +64,24 @@ public class Member {
                 ", address='" + address + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    @Override
+    public Boolean isEmpty() {
+        return id == null;
+    }
+
+    @Override
+    public Boolean notValidAttribute() {
+        return name == null || address == null || email == null;
+    }
+
+    @Override
+    public Map<String, String> requiredAttribute() {
+        Map<String, String> required = new HashMap<>();
+        if(name == null) required.put("name", "String");
+        if(address == null) required.put("address", "String");
+        if(email == null) required.put("email", "String");
+        return required;
     }
 }

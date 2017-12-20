@@ -44,13 +44,12 @@ public class ReceiptWithItem extends BaseResource {
 
     @Override
     public Boolean notValidAttribute() {
-        return receiptId == null || items == null;
+        return items == null;
     }
 
     @Override
     public Map<String, String> requiredAttribute() {
         Map<String, String> required = new HashMap<>();
-        if(receiptId == null) required.put("receiptId", "Integer");
         if(items == null) required.put("items", "List of ItemOnReceipt");
         return required;
     }

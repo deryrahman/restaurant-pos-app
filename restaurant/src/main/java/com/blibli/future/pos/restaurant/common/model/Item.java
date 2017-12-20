@@ -94,7 +94,7 @@ public class Item extends BaseResource {
 
     @Override
     public Boolean notValidAttribute() {
-        return (name == null || price == null || status == null);
+        return (name == null || price == null || status == null || categoryId == null);
     }
 
     @Override
@@ -102,6 +102,7 @@ public class Item extends BaseResource {
         Map<String, String> required = new HashMap<>();
         if(name == null) required.put("name", "String");
         if(price == null) required.put("price", "Decimal");
+        if(categoryId == null) required.put("categoryId", "Integer");
         if(status == null) required.put("status", "String");
         return required;
     }
