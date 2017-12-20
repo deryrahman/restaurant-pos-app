@@ -1,5 +1,6 @@
 package com.blibli.future.pos.restaurant.service;
 
+import com.blibli.future.pos.restaurant.common.ErrorMessage;
 import com.blibli.future.pos.restaurant.common.model.BaseResponse;
 import com.blibli.future.pos.restaurant.common.model.User;
 import com.blibli.future.pos.restaurant.dao.user.UserDAOMysql;
@@ -99,7 +100,7 @@ public class UserService extends BaseRESTService {
 
         th.runTransaction(conn -> {
             if(userDAO.findById(id).isEmpty()){
-                throw new NotFoundException(ErrorMessage.NotFoundFrom(user));
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new User()));
             }
             userDAO.delete(id);
             return null;
@@ -114,6 +115,9 @@ public class UserService extends BaseRESTService {
     @Path("/{id}")
     @Consumes("application/json")
     public Response update(@PathParam("id") int id, User user) throws Exception {
+        if(user.notValidAttribute()){
+            throw new BadRequestException(ErrorMessage.requiredValue(user));
+        }
         th.runTransaction(conn -> {
             this.user = userDAO.findById(id);
 

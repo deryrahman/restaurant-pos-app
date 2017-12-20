@@ -1,4 +1,4 @@
-package com.blibli.future.pos.restaurant.service;
+package com.blibli.future.pos.restaurant.common;
 
 import com.blibli.future.pos.restaurant.common.model.BaseResource;
 import com.blibli.future.pos.restaurant.common.model.User;

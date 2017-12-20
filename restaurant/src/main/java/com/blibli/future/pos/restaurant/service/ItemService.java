@@ -1,10 +1,10 @@
 package com.blibli.future.pos.restaurant.service;
 
 
+import com.blibli.future.pos.restaurant.common.ErrorMessage;
 import com.blibli.future.pos.restaurant.common.model.*;
-import com.blibli.future.pos.restaurant.common.model.custom.ItemWithStock;
 import com.blibli.future.pos.restaurant.dao.item.ItemDAOMysql;
-import com.blibli.future.pos.restaurant.dao.itemwithstock.ItemWithStockDAOMysql;
+import com.blibli.future.pos.restaurant.dao.custom.itemwithstock.ItemWithStockDAOMysql;
 import com.blibli.future.pos.restaurant.dao.restaurant.RestaurantDAOMysql;
 
 import javax.ws.rs.*;
@@ -18,6 +18,9 @@ public class ItemService extends BaseRESTService{
     private RestaurantDAOMysql restaurantDAO = new RestaurantDAOMysql();
     private ItemWithStockDAOMysql itemWithStockDAO = new ItemWithStockDAOMysql();
 
+    private List<Item> items;
+    private Item item;
+
     // ---- BEGIN /items ----
 
     @POST
@@ -27,25 +30,28 @@ public class ItemService extends BaseRESTService{
         if(item.notValidAttribute()){
             throw new BadRequestException(ErrorMessage.requiredValue(item));
         }
-        tx.init();
-        itemDAO.create(item);
-        tx.commit();
-        return Response.status(201).build();
+        th.runTransaction(conn -> {
+            itemDAO.create(item);
+            return null;
+        });
+
+        baseResponse = new BaseResponse(true, 201);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(201).entity(json).build();
     }
 
     @GET
     @Produces("application/json")
     public Response getAll() throws Exception {
-        tx.init();
-        List<Item> items = itemDAO.find("true");
-        tx.commit();
-
-        if(items.size()==0){
-            throw new NotFoundException("Item not found");
-        }
+        items = (List<Item>) th.runTransaction(conn -> {
+            List<Item> items = itemDAO.find("true");
+            if(items.size()==0){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(item));
+            }
+            return items;
+        });
 
         baseResponse = new BaseResponse(true,200,items);
-
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
@@ -90,14 +96,16 @@ public class ItemService extends BaseRESTService{
     @Path("/{id}")
     @Produces("application/json")
     public Response get(@PathParam("id") int id) throws Exception {
-        tx.init();
-        Item item = itemDAO.findById(id);
-        tx.commit();
-        if(item.isEmpty()){
-            throw new NotFoundException(ErrorMessage.NotFoundFrom(item));
-        }
+        item = (Item) th.runTransaction(conn -> {
+            Item item = itemDAO.findById(id);
+            if(item.isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(item));
+            }
+            return item;
+        });
 
-        json = objectMapper.writeValueAsString(item);
+        baseResponse = new BaseResponse(true,200,item);
+        json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
 
@@ -111,105 +119,47 @@ public class ItemService extends BaseRESTService{
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") int id) throws Exception {
-        tx.init();
-        if(itemDAO.findById(id).isEmpty()){
-            tx.commit();
-            throw new NotFoundException(ErrorMessage.NotFoundFrom(new Item()));
-        }
-        itemDAO.delete(id);
-        tx.commit();
-        return Response.status(200).build();
+        th.runTransaction(conn -> {
+            if(itemDAO.findById(id).isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Item()));
+            }
+            itemDAO.delete(id);
+            return null;
+        });
+
+        baseResponse = new BaseResponse(true,200);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(200).entity(json).build();
     }
 
     @PUT
     @Path("/{id}")
     @Consumes("application/json")
     public Response update(@PathParam("id") int id, Item item) throws Exception {
-        tx.init();
-        Item item1 = itemDAO.findById(id);
-        if(item1.isEmpty()){
-            tx.commit();
-            throw new NotFoundException(ErrorMessage.NotFoundFrom(item));
+        if(item.notValidAttribute()){
+            throw new BadRequestException(ErrorMessage.requiredValue(item));
         }
-        if(item1.getId() != id){
-            tx.commit();
-            throw new BadRequestException("Id not match");
-        }
-        itemDAO.update(id,item);
-        tx.commit();
-        return Response.status(200).build();
-    }
+        th.runTransaction(conn -> {
+            this.item = itemDAO.findById(id);
 
-    // ---- END /items/{id} ----
+            if(this.item.isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(item));
+            }
 
-    // NESTED WITH RESTAURANT
-    @GET
-    @Produces("application/json")
-    @Path("/{id}/restaurants")
-    public Response getAll(@PathParam("id") Integer id) throws Exception {
-        tx.init();
-        List<ItemWithStock> itemWithStockList = itemWithStockDAO.findByItemId(id, "true");
-        tx.commit();
+            if(this.item.getId() != id){
+                throw new BadRequestException("Id not match");
+            }
 
-        if(itemWithStockList.size()==0){
-            throw new NotFoundException("Restaurant not found");
-        }
+            itemDAO.update(id,item);
 
-        baseResponse = new BaseResponse(true,200,itemWithStockList);
+            return null;
+        });
 
+        baseResponse = new BaseResponse(true,200);
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
 
-    @POST
-    @Consumes("application/json")
-    @Produces("application/json")
-    @Path("/{id}/restaurants")
-    public Response create(@PathParam("id") Integer id, ItemWithStock itemWithStock) throws Exception {
-        if(itemWithStock.notValidAttribute()){
-            throw new BadRequestException(ErrorMessage.requiredValue(itemWithStock));
-        }
-        if(id != itemWithStock.getItemId()){
-            throw new BadRequestException("itemId not match");
-        }
-        if(itemDAO.findById(id).isEmpty() || restaurantDAO.findById(itemWithStock.getRestaurantId()).isEmpty()){
-            throw new NotFoundException(ErrorMessage.NotFoundFrom(new Restaurant()));
-        }
-        tx.init();
-        itemWithStockDAO.create(itemWithStock.getRestaurantId(),id,itemWithStock.getStock());
-        tx.commit();
-        return Response.status(201).build();
-    }
+    // ---- END /items/{id} ----
 
-    @POST
-    @Consumes("application/json")
-    @Path("/{itemId}/restaurants/{restaurantId}")
-    public Response update(@PathParam("itemId") Integer itemId, @PathParam("restaurantId") Integer restaurantId, ItemWithStock itemWithStock) throws Exception {
-        tx.init();
-        ItemWithStock itemWithStock1 = itemWithStockDAO.findById(restaurantId,itemId);
-        if(itemWithStock1.isEmpty()){
-            tx.commit();
-            throw new NotFoundException(ErrorMessage.NotFoundFrom(itemWithStock));
-        }
-        if(itemWithStock1.getItemId() != itemId || itemWithStock1.getRestaurantId() != restaurantId){
-            tx.commit();
-            throw new BadRequestException("Id not match");
-        }
-        itemWithStockDAO.update(restaurantId,itemId,itemWithStock.getStock());
-        tx.commit();
-        return Response.status(200).build();
-    }
-
-    @DELETE
-    @Path("/{itemId}/restaurants/{restaurantId}")
-    public Response delete(@PathParam("itemId") Integer itemId, @PathParam("restaurantId") Integer restaurantId) throws Exception {
-        tx.init();
-        if(itemWithStockDAO.findById(restaurantId,itemId).isEmpty()){
-            tx.commit();
-            throw new NotFoundException(ErrorMessage.NotFoundFrom(new ItemWithStock()));
-        }
-        itemWithStockDAO.delete(restaurantId, itemId);
-        tx.commit();
-        return Response.status(200).build();
-    }
 }

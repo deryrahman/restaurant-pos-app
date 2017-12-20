@@ -1,18 +1,15 @@
 package com.blibli.future.pos.restaurant.service;
 
 
+import com.blibli.future.pos.restaurant.common.ErrorMessage;
 import com.blibli.future.pos.restaurant.common.model.*;
-import com.blibli.future.pos.restaurant.common.model.custom.ItemOnReceipt;
 import com.blibli.future.pos.restaurant.common.model.custom.ReceiptWithItem;
-import com.blibli.future.pos.restaurant.dao.item.ItemDAO;
 import com.blibli.future.pos.restaurant.dao.item.ItemDAOMysql;
 import com.blibli.future.pos.restaurant.dao.receipt.ReceiptDAOMysql;
 import com.blibli.future.pos.restaurant.dao.custom.receiptwithitem.ReceiptWithItemDAOMysql;
-import com.google.gson.Gson;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.sql.SQLException;
 import java.util.List;
 
 @SuppressWarnings("ALL")
