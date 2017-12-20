@@ -1,24 +1,35 @@
 package com.blibli.future.pos.restaurant.common.exception;
 
 import com.blibli.future.pos.restaurant.common.model.BaseResponse;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
-public abstract class BaseExceptionMapper<T extends Exception> implements ExceptionMapper<T> {
+public class BaseExceptionMapper<T extends Exception> implements ExceptionMapper<T> {
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
+    static {
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
 
     @Override
     public Response toResponse(T exception) {
-        Gson gson = new Gson();
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setSuccess(false);
-        baseResponse.setMessage(getExceptionName() + " : " + exception.getMessage());
-        String json = gson.toJson(baseResponse);
-        return Response.status(generateStatus()).entity(json).build();
+        String msg = exception.getClass().getSimpleName() + " : " + exception.getMessage();
+        BaseResponse baseResponse = new BaseResponse(false,getStatusCode(), msg);
+        String json = null;
+        try {
+            json = objectMapper.writeValueAsString(baseResponse);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return Response.status(getStatusCode()).entity(json).build();
     }
 
-    public abstract int generateStatus();
-
-    public abstract String getExceptionName();
+    public Integer getStatusCode(){
+        return Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
+    }
 }
