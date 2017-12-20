@@ -2,76 +2,62 @@ package com.blibli.future.pos.restaurant.service;
 
 
 import com.blibli.future.pos.restaurant.common.model.*;
+import com.blibli.future.pos.restaurant.common.model.custom.ReceiptWithItem;
 import com.blibli.future.pos.restaurant.dao.receipt.ReceiptDAOMysql;
-import com.blibli.future.pos.restaurant.dao.receipt.ReceiptItemDAOMysql;
+import com.blibli.future.pos.restaurant.dao.receiptwithitem.ReceiptWithItemDAOMysql;
 import com.google.gson.Gson;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+@SuppressWarnings("ALL")
 @Path("/receipts")
-public class ReceiptService {
+public class ReceiptService extends BaseRESTService{
     private ReceiptDAOMysql receiptDAO = new ReceiptDAOMysql();
-    private ReceiptItemDAOMysql receiptItemDAO = new ReceiptItemDAOMysql();
-    private Gson gson = new Gson();
-    private Message msg = new Message();
+    private ReceiptWithItemDAOMysql receiptWithItemDAO = new ReceiptWithItemDAOMysql();
 
-//    private Response get405Response(){
-//        msg.setMessage("Method not allowed");
-//        String json = gson.toJson(msg);
-//        return Response.status(405).entity(json).build();
-//    }
-//
-//    private Response get404Response(){
-//        msg.setMessage("Not found");
-//        String json = gson.toJson(msg);
-//        return Response.status(404).entity(json).build();
-//    }
+    private ReceiptWithItem receiptWithItem;
+    private List<ReceiptWithItem> receiptWithItemList;
+    private Receipt receipt;
+    private List<Receipt> receipts;
 
     // ---- BEGIN /receipts ----
 
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response create(ReceiptItems receiptItems) throws SQLException {
-        receiptDAO.create(receiptItems.getReceipt());
-        int lastId = receiptDAO.getId();
-        receiptItemDAO.createBulk(lastId,receiptItems.getItems());
-        return Response.status(201).build();
+    public Response create() throws Exception {
+        throw new NotAllowedException(ErrorMessage.POST_NOT_ALLOWED, Response.status(405).build());
     }
 
     @GET
     @Produces("application/json")
-    public Response getAll() throws SQLException {
-        Gson gson = new Gson();
-        List<Receipt> receipts = receiptDAO.getBulk("true");
+    public Response getAll() throws Exception {
+        receipts = (List<Receipt>) th.runTransaction(conn -> {
+            List<Receipt> receipts = receiptDAO.find("true");
+            if(receipts.size()==0){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(receipt));
+            }
+            return receipts;
+        });
 
-        Map<String, Object> map = new HashMap<>();
-        Metadata metadata = new Metadata();
-        metadata.setCount(receipts.size());
-        metadata.setLimit(receipts.size());
-
-        map.put("metadata", metadata);
-        map.put("results", receipts);
-
-        String json = gson.toJson(map);
+        baseResponse = new BaseResponse(true,200,receipts);
+        json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
 
     @DELETE
     @Produces("application/json")
     public Response delete() throws Exception {
-        throw new Exception("Method not allowed");
+        throw new NotAllowedException(ErrorMessage.DELETE_NOT_ALLOWED, Response.status(405).build());
     }
 
     @PUT
     @Produces("application/json")
     public Response update() throws Exception {
-        throw new Exception("Method not allowed");
+        throw new NotAllowedException(ErrorMessage.PUT_NOT_ALLOWED, Response.status(405).build());
     }
     // ---- END /receipts ----
 
@@ -82,17 +68,16 @@ public class ReceiptService {
     @Path("/{id}")
     @Produces("application/json")
     public Response get(@PathParam("id") int id) throws Exception {
-        Gson gson = new Gson();
-        ReceiptItems receiptItems = new ReceiptItems();
-        Receipt receipt = receiptDAO.getById(id);
+        this.receiptWithItem = (ReceiptWithItem) th.runTransaction(conn -> {
+            ReceiptWithItem receiptWithItem = receiptWithItemDAO.findById(id);
+            if(receiptWithItem.isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(receiptWithItem));
+            }
+            return receiptWithItem;
+        });
 
-        if(receipt == null){
-            throw new Exception("Not found");
-        }
-        receiptItems.setReceipt(receipt);
-        receiptItems.setItems(receiptItemDAO.getBulkByReceiptId(id));
-
-        String json = gson.toJson(receiptItems);
+        baseResponse = new BaseResponse(true,200,receiptWithItem);
+        json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
 

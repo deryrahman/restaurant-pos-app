@@ -1,55 +1,66 @@
 package com.blibli.future.pos.restaurant.service;
 
 
-import com.blibli.future.pos.restaurant.common.TransactionUtility;
 import com.blibli.future.pos.restaurant.common.model.*;
+import com.blibli.future.pos.restaurant.common.model.custom.ItemOnReceipt;
+import com.blibli.future.pos.restaurant.common.model.custom.ItemWithStock;
+import com.blibli.future.pos.restaurant.common.model.custom.ReceiptWithItem;
 import com.blibli.future.pos.restaurant.dao.item.ItemDAOMysql;
+import com.blibli.future.pos.restaurant.dao.itemwithstock.ItemWithStockDAOMysql;
+import com.blibli.future.pos.restaurant.dao.receipt.ReceiptDAOMysql;
+import com.blibli.future.pos.restaurant.dao.receiptwithitem.ReceiptWithItemDAOMysql;
 import com.blibli.future.pos.restaurant.dao.restaurant.RestaurantDAOMysql;
-import com.blibli.future.pos.restaurant.dao.restaurant.RestaurantItemDAOMysql;
 import com.blibli.future.pos.restaurant.dao.user.UserDAOMysql;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("ALL")
 @Path("/restaurants")
-public class RestaurantService {
+public class RestaurantService extends BaseRESTService {
     private static RestaurantDAOMysql restaurantDAO = new RestaurantDAOMysql();
     private static ItemDAOMysql itemDAO = new ItemDAOMysql();
-    private static RestaurantItemDAOMysql restaurantItemDAO = new RestaurantItemDAOMysql();
+    private static ItemWithStockDAOMysql itemWithStockDAO = new ItemWithStockDAOMysql();
+    private static ReceiptDAOMysql receiptDAO = new ReceiptDAOMysql();
+    private static ReceiptWithItemDAOMysql receiptWithItemDAO = new ReceiptWithItemDAOMysql();
     private static UserDAOMysql userDAO = new UserDAOMysql();
-    private static Gson gson = new Gson();
-    private static TransactionUtility tx;
+    private Restaurant restaurant;
+    private List<Restaurant> restaurants;
+    private List<ItemWithStock> itemWithStockList;
+    private List<User> users;
+    private Receipt receipt;
+    private List<Receipt> receipts;
 
     // ---- BEGIN /restaurants ----
     @POST
     @Consumes("application/json")
     @Produces("application/json")
     public Response create(Restaurant restaurant) throws Exception {
-        tx.beginTransaction();
-        restaurantDAO.create(restaurant);
-        tx.commitTransaction();
-        return Response.status(201).build();
+        if(restaurant.notValidAttribute()){
+            throw new BadRequestException(ErrorMessage.requiredValue(restaurant));
+        }
+        th.runTransaction(conn -> {
+            restaurantDAO.create(restaurant);
+            return null;
+        });
+
+        baseResponse = new BaseResponse(true, 201);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(201).entity(json).build();
     }
 
     @GET
     @Produces("application/json")
     public Response getAll() throws Exception {
-        tx.beginTransaction();
-        List<Restaurant> restaurants = restaurantDAO.getBulk("true");
-        tx.commitTransaction();
-        Map<String, Object> map = new HashMap<>();
-        Metadata metadata = new Metadata();
-        metadata.setCount(restaurants.size());
-        metadata.setLimit(restaurants.size());
-        map.put("metadata", metadata);
-        map.put("results", restaurants);
-        String json = gson.toJson(map);
+        restaurants = (List<Restaurant>) th.runTransaction(conn -> {
+            List<Restaurant> restaurants = restaurantDAO.find("true");
+            return restaurants;
+        });
+
+        baseResponse = new BaseResponse(true,200,restaurants);
+        json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
 
@@ -71,13 +82,16 @@ public class RestaurantService {
     @Path("/{id}")
     @Produces("application/json")
     public Response get(@PathParam("id") int id) throws Exception {
-        tx.beginTransaction();
-        Restaurant restaurant = restaurantDAO.getById(id);
-        tx.commitTransaction();
-        if(restaurant == null){
-            throw new Exception("Not found");
-        }
-        String json = gson.toJson(restaurant);
+        restaurant = (Restaurant) th.runTransaction(conn -> {
+            Restaurant restaurant = restaurantDAO.findById(id);
+            if(restaurant.isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(restaurant));
+            }
+            return restaurant;
+        });
+
+        baseResponse = new BaseResponse(true,200,restaurant);
+        json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
 
@@ -91,18 +105,42 @@ public class RestaurantService {
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") int id) throws Exception {
-        restaurantDAO.delete(id);
-        return Response.status(204).build();
+        th.runTransaction(conn -> {
+            if(restaurantDAO.findById(id).isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(restaurant));
+            }
+            restaurantDAO.delete(id);
+            return null;
+        });
+
+        baseResponse = new BaseResponse(true,200);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(200).entity(json).build();
     }
 
     @PUT
     @Path("/{id}")
     @Consumes("application/json")
     public Response update(@PathParam("id") int id, Restaurant restaurant) throws Exception {
-        Gson gson = new Gson();
-        gson.toJson(restaurant);
-        restaurantDAO.update(id,restaurant);
-        return Response.status(204).build();
+        th.runTransaction(conn -> {
+            this.restaurant = restaurantDAO.findById(id);
+
+            if(this.restaurant.isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(this.restaurant));
+            }
+
+            if(this.restaurant.getId() != id){
+                throw new BadRequestException("Id not match");
+            }
+
+            restaurantDAO.update(id,restaurant);
+
+            return null;
+        });
+
+        baseResponse = new BaseResponse(true,200);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(200).entity(json).build();
     }
     // ---- END /restaurants/{id} ----
 
@@ -115,60 +153,128 @@ public class RestaurantService {
     @Path("/{restaurantId}/items")
     @Produces("application/json")
     public Response getAllItem(@PathParam("restaurantId") int restaurantId) throws Exception {
-        tx.beginTransaction();
-        List<Item> items = itemDAO.getAllItemByRestaurantId(restaurantId,"true");
-        tx.commitTransaction();
-        Map<String, Object> map = new HashMap<>();
-        Metadata metadata = new Metadata();
-        metadata.setCount(items.size());
-        metadata.setLimit(items.size());
-
-        map.put("metadata", metadata);
-        map.put("results", items);
-
-        String json = gson.toJson(map);
+        itemWithStockList = (List<ItemWithStock>) th.runTransaction(conn -> {
+            if(restaurantDAO.findById(restaurantId).isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(restaurant));
+            }
+            List<ItemWithStock> itemWithStockList = itemWithStockDAO.findByRestaurantId(restaurantId, "true");
+            return itemWithStockList;
+        });
+        baseResponse = new BaseResponse(true,200, itemWithStockList);
+        json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
 
-    /**
-     * Add com.blibli.future.pos.restaurant.item to restaurant. Item id must be guaranteed exist on items table
-     */
-    @POST
-    @Path("/{restaurantId}/items")
-    @Consumes("application/json")
-    @Produces("application/json")
-    public Response addItem(Item item, @PathParam("restaurantId") int restaurantId) throws Exception {
-        tx.beginTransaction();
-        if(itemDAO.getBulk("name = " + item.getName()).size() == 0){
-            itemDAO.create(item);
-        }
-        restaurantDAO.addRelationRestaurantItem(item.getId(), restaurantId, 0);
-        tx.commitTransaction();
-        return Response.status(201).build();
-    }
 
-    /**
-     * special purpose of nested resources. Like /restaurants/1/users. It will call /users, on userResource
-     */
     @GET
     @Path("/{restaurantId}/users")
     @Produces("application/json")
     public Response getAllUser(@PathParam("restaurantId") int restaurantId) throws Exception {
-        tx.beginTransaction();
-        List<User> users = userDAO.getBulk("restaurant_id="+restaurantId);
-        tx.commitTransaction();
-
-        Map<String, Object> map = new HashMap<>();
-        Metadata metadata = new Metadata();
-        metadata.setCount(users.size());
-        metadata.setLimit(users.size());
-
-        map.put("metadata", metadata);
-        map.put("results", users);
-
-        String json = gson.toJson(map);
+        users = (List<User>) th.runTransaction(conn -> {
+            if(restaurantDAO.findById(restaurantId).isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(restaurant));
+            }
+            List<User> users = userDAO.find("restaurant_id="+restaurantId);
+            return users;
+        });
+        baseResponse = new BaseResponse(true,200, users);
+        json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
+
+    @GET
+    @Path("/{restaurantId}/receipts")
+    @Produces("application/json")
+    public Response getAllReceipt(@PathParam("restaurantId") int restaurantId) throws Exception {
+        receipts = (List<Receipt>) th.runTransaction(conn -> {
+            if(restaurantDAO.findById(restaurantId).isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Restaurant()));
+            }
+            List<Receipt> receipts = receiptDAO.find("restaurant_id="+restaurantId);
+            if (receipts.size() == 0) {
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(receipts));
+            }
+            return receipts;
+        });
+        baseResponse = new BaseResponse(true,200, receipts);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(200).entity(json).build();
+    }
+
+    @POST
+    @Path("/{restaurantId}/receipts")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response createReceipt(@PathParam("restaurantId") Integer restaurantId, ReceiptWithItem receiptWithItem) throws Exception {
+//        if(receiptWithItem.notValidAttribute()){
+//            throw new BadRequestException(ErrorMessage.requiredValue(receiptWithItem));
+//        }
+//
+//        for (ItemOnReceipt item : receiptWithItem.getItems()) {
+//            if(item.notValidAttribute()){
+//                throw new BadRequestException(ErrorMessage.requiredValue(item));
+//            }
+//            if(itemDAO.findById(item.getItemId()).isEmpty()){
+//                throw new NotFoundException(ErrorMessage.NotFoundFrom(item));
+//            }
+//        }
+//
+//        th.runTransaction(conn -> {
+//            if(!receiptWithItemDAO.findById(receiptWithItem.getReceiptId()).isEmpty()){
+//                throw new BadRequestException("Id already taken");
+//            }
+//            receipt = new Receipt();
+//            receipt.setId(receiptWithItem.getReceiptId());
+//            receipt.setRestaurantId();
+//            receiptDAO.create(receipt);
+//            receiptWithItemDAO.create(receiptWithItem);
+//            return null;
+//        });
+
+        baseResponse = new BaseResponse(true, 201);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(201).entity(json).build();
+    }
+//
+//    /**
+//     * Add item to restaurant. Item id must be guaranteed exist on items table
+//     */
+//    @POST
+//    @Path("/{restaurantId}/items")
+//    @Consumes("application/json")
+//    @Produces("application/json")
+//    public Response addItem(Item item, @PathParam("restaurantId") int restaurantId) throws Exception {
+//        tx.init();
+//        if(itemDAO.find("name = " + item.getName()).size() == 0){
+//            itemDAO.create(item);
+//        }
+//        restaurantDAO.addRelationRestaurantItem(item.getId(), restaurantId, 0);
+//        tx.commit();
+//        return Response.status(201).build();
+//    }
+//
+//    /**
+//     * special purpose of nested resources. Like /restaurants/1/users. It will call /users, on userResource
+//     */
+//    @GET
+//    @Path("/{restaurantId}/users")
+//    @Produces("application/json")
+//    public Response getAllUser(@PathParam("restaurantId") int restaurantId) throws Exception {
+//        tx.init();
+//        List<User> users = userDAO.find("restaurant_id="+restaurantId);
+//        tx.commit();
+//
+//        Map<String, Object> map = new HashMap<>();
+//        Metadata metadata = new Metadata();
+//        metadata.setCount(users.size());
+//        metadata.setLimit(users.size());
+//
+//        map.put("metadata", metadata);
+//        map.put("results", users);
+//
+//        String json = gson.toJson(map);
+//        return Response.status(200).entity(json).build();
+//    }
 
     // ---- END NESTED ----
 }

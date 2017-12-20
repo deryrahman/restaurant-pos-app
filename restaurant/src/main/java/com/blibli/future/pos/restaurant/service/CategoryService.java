@@ -95,14 +95,14 @@ public class CategoryService {
 //        ItemService itemService = new ItemService();
 //        return itemService.getAll(categoryId);
 //    }
-    @GET
-    @Path("/{categoryId}/items/{id}")
-    @Produces("application/json")
-    public Response getItem(@PathParam("categoryId") int categoryId,
-                            @PathParam("id") int id) throws Exception {
-        ItemService itemService = new ItemService();
-        return itemService.get(id, categoryId);
-    }
+//    @GET
+//    @Path("/{categoryId}/items/{id}")
+//    @Produces("application/json")
+//    public Response getItem(@PathParam("categoryId") int categoryId,
+//                            @PathParam("id") int id) throws Exception {
+//        ItemService itemService = new ItemService();
+//        return itemService.get(id, categoryId);
+//    }
 
     @POST
     @Path("/{id}")
