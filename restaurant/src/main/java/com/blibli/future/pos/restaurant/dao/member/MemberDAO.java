@@ -18,7 +18,7 @@ public interface MemberDAO {
      * @param id : integer parameter, id must be valid
      * @return member object
      */
-    public Member getById(int id) throws SQLException;
+    public Member findById(int id) throws SQLException;
 
     /**
      * Get all member with specific limitation
@@ -26,7 +26,7 @@ public interface MemberDAO {
      *               To get all members, just set filter to "true"
      * @return list of filtered members
      */
-    public List<Member> getBulk(String filter) throws SQLException;
+    public List<Member> find(String filter) throws SQLException;
 
     /**
      * Delete member

@@ -26,19 +26,20 @@ public class ReceiptWithItemDAOMysql extends MysqlDAO<ReceiptWithItem> implement
         items.setItemId(rs.getInt("item_id"));
         items.setItemName(rs.getString("name"));
         items.setCount(rs.getInt("count_item"));
-        items.setSubTotal(rs.getInt("subtotal"));
+        items.setSubTotal(rs.getBigDecimal("subtotal"));
     }
 
     @Override
     public void create(ReceiptWithItem receiptWithItem) throws SQLException {
 
-        String query = "INSERT INTO receipt_item(receipt_id, item_id, count_item)" +
-                " VALUES(?, ?, ?)";
+        String query = "INSERT INTO receipt_item(receipt_id, item_id, count_item, subtotal)" +
+                " VALUES(?, ?, ?, ?)";
         ps = TransactionHelper.getConnection().prepareStatement(query);
         for (ItemOnReceipt item: receiptWithItem.getItems()) {
             ps.setInt(1, receiptWithItem.getReceiptId());
             ps.setInt(2, item.getItemId());
             ps.setInt(3, item.getCount());
+            ps.setBigDecimal(4, item.getSubTotal());
             ps.addBatch();
         }
 

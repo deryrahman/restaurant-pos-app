@@ -1,8 +1,8 @@
 package com.blibli.future.pos.restaurant.dao.member;
 
 
-import com.blibli.future.pos.restaurant.common.MysqlDAO;
-import com.blibli.future.pos.restaurant.common.TransactionUtility;
+import com.blibli.future.pos.restaurant.common.TransactionHelper;
+import com.blibli.future.pos.restaurant.dao.MysqlDAO;
 import com.blibli.future.pos.restaurant.common.model.Member;
 
 import java.sql.ResultSet;
@@ -12,6 +12,8 @@ import java.util.List;
 
 @SuppressWarnings("ALL")
 public class MemberDAOMysql extends MysqlDAO<Member> implements MemberDAO {
+    private Member member;
+    private List<Member> members;
 
     @Override
     protected void mappingObject(Member member, ResultSet rs) throws SQLException {
@@ -20,14 +22,13 @@ public class MemberDAOMysql extends MysqlDAO<Member> implements MemberDAO {
         member.setTimestampCreated(rs.getTimestamp("timestamp_created"));
         member.setAddress(rs.getString("address"));
         member.setEmail(rs.getString("email"));
-        member.autoSetHref();
     }
 
     @Override
     public void create(Member member) throws SQLException {
         String query = "INSERT INTO members(name, address, email)" +
                 " VALUES(?, ?, ?)";
-        ps = TransactionUtility.getConnection().prepareStatement(query);
+        ps = TransactionHelper.getConnection().prepareStatement(query);
         ps.setString(1, member.getName());
         ps.setString(2, member.getAddress());
         ps.setString(3, member.getEmail());
@@ -39,23 +40,21 @@ public class MemberDAOMysql extends MysqlDAO<Member> implements MemberDAO {
     }
 
     @Override
-    public Member getById(int id) throws SQLException {
-        Member member = new Member();
-        String query = "SELECT * FROM members WHERE id = ?";
-        ps = TransactionUtility.getConnection().prepareStatement(query);
-        ps.setInt(1, id);
+    public Member findById(int id) throws SQLException {
+        member = new Member();
 
-        ResultSet rs = ps.executeQuery();
-        rs.next();
-        mappingObject(member, rs);
+        members = find("id = "+ id);
+        if(members.size()>0){
+            member = members.get(0);
+        }
         return member;
     }
 
     @Override
-    public List<Member> getBulk(String filter) throws SQLException {
+    public List<Member> find(String filter) throws SQLException {
         List<Member> members = new ArrayList<>();
         String query = "SELECT * FROM members WHERE "+filter;
-        ps = TransactionUtility.getConnection().prepareStatement(query);
+        ps = TransactionHelper.getConnection().prepareStatement(query);
 
         ResultSet rs = ps.executeQuery();
         while(rs.next()) {
@@ -69,7 +68,7 @@ public class MemberDAOMysql extends MysqlDAO<Member> implements MemberDAO {
     @Override
     public void delete(int id) throws SQLException {
         String query = "DELETE FROM members WHERE id = ?";
-        ps = TransactionUtility.getConnection().prepareStatement(query);
+        ps = TransactionHelper.getConnection().prepareStatement(query);
         ps.setInt(1, id);
 
         int affected = ps.executeUpdate();
@@ -85,7 +84,7 @@ public class MemberDAOMysql extends MysqlDAO<Member> implements MemberDAO {
                 "address = ?," +
                 "email = ?," +
                 "WHERE id = ?";
-        ps = TransactionUtility.getConnection().prepareStatement(query);
+        ps = TransactionHelper.getConnection().prepareStatement(query);
         ps.setString(1, member.getName());
         ps.setString(2, member.getAddress());
         ps.setString(3, member.getEmail());

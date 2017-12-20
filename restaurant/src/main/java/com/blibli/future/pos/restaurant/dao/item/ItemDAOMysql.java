@@ -6,6 +6,7 @@ import com.blibli.future.pos.restaurant.common.model.Item;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +34,11 @@ public class ItemDAOMysql extends MysqlDAO<Item> implements ItemDAO{
         ps.setString(1, item.getName());
         ps.setBigDecimal(2, item.getPrice());
         ps.setString(3, item.getDescription());
-        if(item.getCategoryId() == null) item.setCategoryId(0);
-        ps.setInt(4, item.getCategoryId());
+        if(item.getCategoryId() == null) {
+            ps.setNull(4, Types.INTEGER);
+        } else {
+            ps.setInt(4, item.getCategoryId());
+        }
         ps.setString(5, item.getStatus());
 
         int affected = ps.executeUpdate();

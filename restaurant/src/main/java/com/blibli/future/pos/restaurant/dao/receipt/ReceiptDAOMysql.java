@@ -7,6 +7,7 @@ import com.blibli.future.pos.restaurant.common.model.Receipt;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,9 +34,17 @@ public class ReceiptDAOMysql extends MysqlDAO<Receipt> implements ReceiptDAO{
             ps = TransactionHelper.getConnection().prepareStatement(query);
             ps.setInt(1, receipt.getRestaurantId());
             ps.setInt(2, receipt.getUserId());
-            ps.setInt(3, receipt.getMemberId());
+            if(receipt.getMemberId() == null) {
+                ps.setNull(3, Types.INTEGER);
+            } else {
+                ps.setInt(3, receipt.getMemberId());
+            }
             ps.setBigDecimal(4, receipt.getTotalPrice());
-            ps.setString(5, receipt.getNote());
+            if(receipt.getNote() == null){
+                ps.setNull(5, Types.INTEGER);
+            } else {
+                ps.setString(5, receipt.getNote());
+            }
 
             int affected = ps.executeUpdate();
             if (affected > 0) {

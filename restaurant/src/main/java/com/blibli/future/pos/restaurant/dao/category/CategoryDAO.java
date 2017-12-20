@@ -17,7 +17,7 @@ public interface CategoryDAO {
      * @param id : integer parameter, id must be valid
      * @return Category object
      */
-    public Category getById(int id) throws SQLException;
+    public Category findById(int id) throws SQLException;
 
     /**
      * Get all com.blibli.future.pos.restaurant.category with specific limitation
@@ -25,7 +25,7 @@ public interface CategoryDAO {
      *               To get all categories, just set filter to "true"
      * @return list of filtered com.blibli.future.pos.restaurant.category
      */
-    public List<Category> getBulk(String filter) throws SQLException;
+    public List<Category> find(String filter) throws SQLException;
 
     /**
      * Delete com.blibli.future.pos.restaurant.category
