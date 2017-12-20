@@ -1,6 +1,7 @@
 package api.v1;
 
 import exception.InvalidCredentialsException;
+import exception.UnsupportedMediaTypeException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,24 +24,36 @@ public class LoginService extends HttpServlet {
             String token = generateTokenFromRequest(request);
             response.setStatus(HttpServletResponse.SC_OK);
             output.write(token);
+
+        } catch (UnsupportedMediaTypeException e) {
+            response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+            output.write(e.getMessage());
+
         } catch (InvalidCredentialsException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             output.write(e.getMessage());
+
         } finally {
             output.close();
         }
     }
 
-    private String generateTokenFromRequest(HttpServletRequest request) throws InvalidCredentialsException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        String ipAddress = request.getRemoteAddr();
-        String userAgent = request.getHeader("User-Agent");
+    private String generateTokenFromRequest(HttpServletRequest request) throws InvalidCredentialsException, UnsupportedMediaTypeException {
+        if (request.getContentType().equals("application/json")) {
 
-        if (isValid(username, password)) {
-            return generateJwt(username, ipAddress, userAgent);
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+            String ipAddress = request.getRemoteAddr();
+            String userAgent = request.getHeader("User-Agent");
+
+            if (isValid(username, password)) {
+                return generateJwt(username, ipAddress, userAgent);
+            } else {
+                throw new InvalidCredentialsException("Invalid username or password.");
+            }
+
         } else {
-            throw new InvalidCredentialsException("Invalid username or password.");
+            throw new UnsupportedMediaTypeException("Invalid content type.");
         }
     }
 
