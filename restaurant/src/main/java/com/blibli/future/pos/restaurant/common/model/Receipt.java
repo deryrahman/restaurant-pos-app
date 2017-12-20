@@ -2,26 +2,26 @@ package com.blibli.future.pos.restaurant.common.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Receipt {
-    private int id;
+public class Receipt extends BaseResource {
+    private Integer id;
     private Timestamp timestampCreated;
-    private int restaurantId;
-    private int userId;
-    private int memberId;
+    private Integer restaurantId;
+    private Integer userId;
+    private Integer memberId;
     private BigDecimal totalPrice;
     private String note;
-    private String href;
-    private String href2;
 
     public Receipt() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -33,27 +33,27 @@ public class Receipt {
         this.timestampCreated = timestampCreated;
     }
 
-    public int getRestaurantId() {
+    public Integer getRestaurantId() {
         return restaurantId;
     }
 
-    public void setRestaurantId(int restaurantId) {
+    public void setRestaurantId(Integer restaurantId) {
         this.restaurantId = restaurantId;
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
-    public int getMemberId() {
+    public Integer getMemberId() {
         return memberId;
     }
 
-    public void setMemberId(int memberId) {
+    public void setMemberId(Integer memberId) {
         this.memberId = memberId;
     }
 
@@ -74,11 +74,6 @@ public class Receipt {
         this.note = note;
     }
 
-    public void autoSetHref(){
-        this.href = "/receipts/" + id;
-        this.href2 = "/restaurants/" + restaurantId + this.href;
-    }
-
     @Override
     public String toString() {
         return "Receipt{" +
@@ -90,5 +85,24 @@ public class Receipt {
                 ", totalPrice='" + totalPrice + '\'' +
                 ", note='" + note + '\'' +
                 '}';
+    }
+
+    @Override
+    public Boolean isEmpty() {
+        return id == null;
+    }
+
+    @Override
+    public Boolean notValidAttribute() {
+        return (restaurantId == null || userId == null || totalPrice == null);
+    }
+
+    @Override
+    public Map<String, String> requiredAttribute() {
+        Map<String, String> required = new HashMap<>();
+        if(restaurantId == null) required.put("restaurantId", "Integer");
+        if(userId == null) required.put("userId", "Integer");
+        if(totalPrice == null) required.put("totalPrice", "Decimal");
+        return required;
     }
 }

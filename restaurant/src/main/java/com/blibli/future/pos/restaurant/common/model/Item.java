@@ -3,31 +3,26 @@ package com.blibli.future.pos.restaurant.common.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Item {
-    private int id;
+public class Item extends BaseResource {
+    private Integer id;
     private Timestamp timestampCreated;
     private String name;
     private BigDecimal price;
     private String description;
-    private int categoryId;
+    private Integer categoryId;
     private String status;
-//    private String href;
-//    private String href2;
-    // special for restaurant
-//    private int restaurantId;
-//    private int stock;
-    // special for receipt
-//    private int count;
 
     public Item() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -63,11 +58,11 @@ public class Item {
         this.description = description;
     }
 
-    public int getCategoryId() {
+    public Integer getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -78,38 +73,6 @@ public class Item {
     public void setStatus(String status) {
         this.status = status;
     }
-//
-//    public int getRestaurantId() {
-//        return restaurantId;
-//    }
-//
-//    public void setRestaurantId(int restaurantId) {
-//        this.restaurantId = restaurantId;
-//    }
-//
-//    public int getStock() {
-//        return stock;
-//    }
-//
-//    public void setStock(int stock) {
-//        this.stock = stock;
-//    }
-//
-//    public int getCount() {
-//        return count;
-//    }
-//
-//    public void setCount(int count) {
-//        this.count = count;
-//    }
-
-    /**
-     * Must trigger after set all variable
-     */
-//    public void autoSetHref(){
-//        this.href = "/items/" + id;
-//        this.href2 = "/categories/" + categoryId + "/items/" + id;
-//    }
 
     @Override
     public String toString() {
@@ -122,5 +85,24 @@ public class Item {
                 ", categoryId=" + categoryId +
                 ", status='" + status + '\'' +
                 '}';
+    }
+
+    @Override
+    public Boolean isEmpty() {
+        return (id == null || timestampCreated == null || name == null || price == null || categoryId == null || status == null);
+    }
+
+    @Override
+    public Boolean notValidAttribute() {
+        return (name == null || price == null || status == null);
+    }
+
+    @Override
+    public Map<String, String> requiredAttribute() {
+        Map<String, String> required = new HashMap<>();
+        if(name == null) required.put("name", "String");
+        if(price == null) required.put("price", "Decimal");
+        if(status == null) required.put("status", "String");
+        return required;
     }
 }
