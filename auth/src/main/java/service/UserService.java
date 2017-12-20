@@ -1,11 +1,13 @@
 package service;
 
+import exception.DuplicateDataException;
 import exception.FailedCRUDOperationException;
 import exception.InvalidCredentialsException;
 import model.UserIdentity;
 import model.UserIdentityDAO;
 
 import java.util.List;
+import java.util.Objects;
 
 public class UserService {
     private static UserIdentityDAO userIdentityDAO = new UserIdentityDAO();
@@ -33,9 +35,24 @@ public class UserService {
     }
 
     public static long createUserIdentity(UserIdentity newUserIdentity) throws FailedCRUDOperationException {
+        checkDuplicateIdentity(newUserIdentity);
+
         userIdentityDAO.createUserIdentity(newUserIdentity);
         userIdentities.add(newUserIdentity);
         return newUserIdentity.getId();
+    }
+
+    private static void checkDuplicateIdentity(UserIdentity newUserIdentity) throws DuplicateDataException {
+        for (UserIdentity user :
+                userIdentities) {
+            if (user.getId() == newUserIdentity.getId()) {
+                throw new DuplicateDataException("User ID already exists.");
+            }
+
+            if (user.getUsername().equals(newUserIdentity.getUsername())) {
+                throw new DuplicateDataException("Username already exists.");
+            }
+        }
     }
 
 
