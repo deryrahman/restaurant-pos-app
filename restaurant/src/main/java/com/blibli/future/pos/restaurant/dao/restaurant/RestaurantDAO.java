@@ -19,7 +19,7 @@ public interface RestaurantDAO {
      * @param id : integer parameter, id must be valid
      * @return Restaurant object
      */
-    public Restaurant getById(int id) throws SQLException;
+    public Restaurant findById(int id) throws SQLException;
 
     /**
      * Get all restaurant with specific limitation
@@ -27,7 +27,7 @@ public interface RestaurantDAO {
      *               To get all restaurant, just set filter to "true"
      * @return list of filtered restaurant
      */
-    public List<Restaurant> getBulk(String filter) throws SQLException;
+    public List<Restaurant> find(String filter) throws SQLException;
 
     /**
      * Delete restaurant
@@ -40,31 +40,31 @@ public interface RestaurantDAO {
      * @param id, restaurant : only one restaurant will be updated. Restaurant must be valid
      */
     public void update(int id, Restaurant restaurant) throws SQLException;
-
-    /**
-     * Add relation restaurant com.blibli.future.pos.restaurant.item
-     * @param itemId id com.blibli.future.pos.restaurant.item. Id must be valid
-     */
-    public void addRelationRestaurantItem(int itemId, int restaurantId, int stock) throws SQLException;
-
-    /**
-     * Get all restaurant on specified com.blibli.future.pos.restaurant.item
-     * @param itemId com.blibli.future.pos.restaurant.item id
-     * @return list of restaurant
-     */
-    public List<Restaurant> getAllRestaurantByItemId(int itemId, String filter) throws SQLException;
-
-    /**
-     * Delete relation restaurant com.blibli.future.pos.restaurant.item
-     * @param itemId id com.blibli.future.pos.restaurant.item. Id must be valid
-     */
-    public void deleteRelationRestaurantItem(int itemId, int restaurantId) throws SQLException;
-
-    /**
-     * Update relation
-     * @param itemId id com.blibli.future.pos.restaurant.item
-     * @param restaurantId it restaurant
-     * @param stock count of stock available
-     */
-    public void updateRelationRestaurantItem(int itemId, int restaurantId, int stock) throws SQLException;
+//
+//    /**
+//     * Add relation restaurant item
+//     * @param itemId id item. Id must be valid
+//     */
+//    public void addRelationRestaurantItem(int itemId, int restaurantId, int stock) throws SQLException;
+//
+//    /**
+//     * Get all restaurant on specified item
+//     * @param itemId item id
+//     * @return list of restaurant
+//     */
+//    public List<Restaurant> getAllRestaurantByItemId(int itemId, String filter) throws SQLException;
+//
+//    /**
+//     * Delete relation restaurant item
+//     * @param itemId id item. Id must be valid
+//     */
+//    public void deleteRelationRestaurantItem(int itemId, int restaurantId) throws SQLException;
+//
+//    /**
+//     * Update relation
+//     * @param itemId id item
+//     * @param restaurantId it restaurant
+//     * @param stock count of stock available
+//     */
+//    public void updateRelationRestaurantItem(int itemId, int restaurantId, int stock) throws SQLException;
 }
