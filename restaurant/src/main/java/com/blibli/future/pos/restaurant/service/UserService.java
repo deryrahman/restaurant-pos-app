@@ -51,7 +51,7 @@ public class UserService extends BaseRESTService {
         users = (List<User>) th.runTransaction(conn -> {
             List<User> users = userDAO.find("true");
             if(users.size()==0){
-                throw new NotFoundException("User not found");
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new User()));
             }
             return users;
         });
