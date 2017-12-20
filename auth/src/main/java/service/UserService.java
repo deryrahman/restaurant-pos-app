@@ -1,5 +1,6 @@
 package service;
 
+import exception.FailedCRUDOperationException;
 import exception.InvalidCredentialsException;
 import model.UserIdentity;
 import model.UserIdentityDAO;
@@ -29,5 +30,26 @@ public class UserService {
             }
         }
         throw new InvalidCredentialsException("Username not found.");
+    }
+
+    public static long createUserIdentity(UserIdentity newUserIdentity) throws FailedCRUDOperationException {
+        userIdentityDAO.createUserIdentity(newUserIdentity);
+        userIdentities.add(newUserIdentity);
+        return newUserIdentity.getId();
+    }
+
+
+    public static UserIdentity updateUserIdentity(UserIdentity newUserIdentity) throws FailedCRUDOperationException {
+        userIdentityDAO.updateUserIdentity(newUserIdentity);
+        for (UserIdentity user :
+                userIdentities) {
+            if (user.getId() == newUserIdentity.getId()) {
+                user.setUsername(newUserIdentity.getUsername());
+                user.setPassword(newUserIdentity.getPassword());
+                user.setRole(newUserIdentity.getRole());
+                return user;
+            }
+        }
+        return newUserIdentity;
     }
 }
