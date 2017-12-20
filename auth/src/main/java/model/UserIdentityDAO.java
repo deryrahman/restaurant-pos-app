@@ -1,5 +1,6 @@
 package model;
 
+import exception.BadDataException;
 import exception.DatabaseFailureException;
 import exception.FailedCRUDOperationException;
 import util.MySQLConnection;
@@ -34,7 +35,6 @@ public class UserIdentityDAO {
 
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return userIdentities;
@@ -58,10 +58,12 @@ public class UserIdentityDAO {
             connection.close();
 
             System.out.println("Successfully created UserIdentity.");
+        } catch (SQLIntegrityConstraintViolationException e) {
+            System.out.println("Error: " + e.getMessage());
+            throw new BadDataException(e.getMessage());
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
-            e.printStackTrace();
-            throw new DatabaseFailureException("Failed to create user.");
+            throw new DatabaseFailureException(e.getMessage());
         }
     }
 
@@ -83,11 +85,12 @@ public class UserIdentityDAO {
             connection.close();
 
             System.out.println("Successfully updated UserIdentity with id = " + userIdentity.getId());
+        } catch (SQLIntegrityConstraintViolationException e) {
+            System.out.println("Error: " + e.getMessage());
+            throw new BadDataException(e.getMessage());
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
-            e.printStackTrace();
-            throw new DatabaseFailureException("Failed to update user with id " +
-                    userIdentity.getId() + ".");
+            throw new DatabaseFailureException(e.getMessage());
         }
     }
 }

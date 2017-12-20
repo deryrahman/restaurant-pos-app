@@ -27,33 +27,40 @@ public class RegisterServlet extends HttpServlet {
             long newId = UserService.createUserIdentity(newUser);
             response.setStatus(HttpServletResponse.SC_CREATED);
             response.setContentType("application/json");
-            output.write("{'userId' : '" + newId +"'}");
+            output.write("{\"userId\" : \"" + Long.toString(newId) +"\"}");
+
+        } catch (UnsupportedMediaTypeException e) {
+            response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+            output.write(e.getMessage());
 
         } catch (DuplicateDataException e) {
             response.setStatus(HttpServletResponse.SC_CONFLICT);
             output.write(e.getMessage());
+
         } catch (BadDataException e) {
-            response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             output.write(e.getMessage());
+
         } catch (FailedCRUDOperationException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             output.write(e.getMessage());
+
         } finally {
             output.close();
         }
 
     }
 
-    private String extractBody(HttpServletRequest request) throws IOException, FailedCRUDOperationException {
+    private String extractBody(HttpServletRequest request) throws IOException, FailedCRUDOperationException, UnsupportedMediaTypeException {
         if (request.getContentType().equals("application/json")) {
             String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
             if (body.equals("")) {
-                throw new EmptyDataException("Empty request body.");
+                throw new BadDataException("Empty request body.");
             } else {
                 return body;
             }
         } else {
-            throw new BadDataException("Invalid content type.");
+            throw new UnsupportedMediaTypeException("Invalid content type.");
         }
     }
 

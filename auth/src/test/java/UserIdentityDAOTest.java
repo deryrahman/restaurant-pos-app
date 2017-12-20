@@ -1,10 +1,11 @@
+import exception.FailedCRUDOperationException;
 import model.UserIdentity;
 import model.UserIdentityDAO;
 
 import java.util.List;
 
 public class UserIdentityDAOTest {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FailedCRUDOperationException {
         UserIdentityDAO userIdentityDAO = new UserIdentityDAO();
 
         //testGetAllUserIdentity(userIdentityDAO);
@@ -12,7 +13,7 @@ public class UserIdentityDAOTest {
         testUpdateUserIdentity(userIdentityDAO);
     }
 
-    private static void testUpdateUserIdentity(UserIdentityDAO userIdentityDAO) {
+    private static void testUpdateUserIdentity(UserIdentityDAO userIdentityDAO) throws FailedCRUDOperationException {
         Long id = 3L;
         String username = "test3";
         String password = "test3";
@@ -22,7 +23,7 @@ public class UserIdentityDAOTest {
         userIdentityDAO.updateUserIdentity(newUser);
     }
 
-    private static void testCreateUserIdentity(UserIdentityDAO userIdentityDAO) {
+    private static void testCreateUserIdentity(UserIdentityDAO userIdentityDAO) throws FailedCRUDOperationException {
         Long id = 4L;
         String username = "test2";
         String password = "test2";
