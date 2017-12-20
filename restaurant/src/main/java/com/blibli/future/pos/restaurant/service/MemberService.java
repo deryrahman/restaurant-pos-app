@@ -1,7 +1,8 @@
 package com.blibli.future.pos.restaurant.service;
 
+import com.blibli.future.pos.restaurant.common.ErrorMessage;
+import com.blibli.future.pos.restaurant.common.model.BaseResponse;
 import com.blibli.future.pos.restaurant.common.model.Member;
-import com.blibli.future.pos.restaurant.common.model.Message;
 import com.blibli.future.pos.restaurant.common.model.Metadata;
 import com.blibli.future.pos.restaurant.dao.member.MemberDAOMysql;
 import com.google.gson.Gson;
@@ -12,60 +13,61 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("ALL")
 @Path("/members")
-public class MemberService {
+public class MemberService extends BaseRESTService {
     private MemberDAOMysql memberDAO = new MemberDAOMysql();
-    private Gson gson = new Gson();
-    private Message msg = new Message();
-
-//    private Response get405Response(){
-//        msg.setMessage("Method not allowed");
-//        String json = gson.toJson(msg);
-//        return Response.status(405).entity(json).build();
-//    }
-//
-//    private Response get404Response(){
-//        msg.setMessage("Not found");
-//        String json = gson.toJson(msg);
-//        return Response.status(404).entity(json).build();
-//    }
+    private Member member;
+    private List<Member> members;
 
     // ---- BEGIN /members ----
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response create(Member member) throws Exception {
-        memberDAO.create(member);
-        return Response.status(201).build();
+    public Response create(List<Member> members) throws Exception {
+        if(members.isEmpty()){
+            throw new BadRequestException();
+        }
+        for (Member member: members) {
+            if(member.notValidAttribute()){
+                throw new BadRequestException(ErrorMessage.requiredValue(new Member()));
+            }
+            th.runTransaction(conn -> {
+                memberDAO.create(member);
+                return null;
+            });
+        }
+
+        baseResponse = new BaseResponse(true, 201);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(201).entity(json).build();
     }
     @GET
     @Produces("application/json")
     public Response getAll() throws Exception {
-        Gson gson = new Gson();
-        List<Member> members = memberDAO.getBulk("true");
+        members = (List<Member>) th.runTransaction(conn -> {
+            List<Member> members = memberDAO.find("true");
+            if(members.size()==0){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Member()));
+            }
+            return members;
+        });
 
-        Map<String, Object> map = new HashMap<>();
-        Metadata metadata = new Metadata();
-        metadata.setCount(members.size());
-        metadata.setLimit(members.size());
-
-        map.put("metadata", metadata);
-        map.put("results", members);
-
-        String json = gson.toJson(map);
+        baseResponse = new BaseResponse(true,200,members);
+        json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
 
     @DELETE
     @Produces("application/json")
     public Response delete() throws Exception {
-        throw new Exception("Method not allowed");
+        throw new NotAllowedException(ErrorMessage.DELETE_NOT_ALLOWED, Response.status(405).build());
     }
 
     @PUT
     @Produces("application/json")
     public Response update() throws Exception {
-        throw new Exception("Method not allowed");
+        throw new NotAllowedException(ErrorMessage.PUT_NOT_ALLOWED, Response.status(405).build());
     }
     // ---- END /members ----
 
@@ -74,37 +76,58 @@ public class MemberService {
     @Path("/{id}")
     @Produces("application/json")
     public Response get(@PathParam("id") int id) throws Exception {
-        Gson gson = new Gson();
-        Member member = memberDAO.getById(id);
 
-        if(member == null){
-            throw new Exception("Not found");
-        }
+        this.member = (Member) th.runTransaction(conn -> {
+            Member member = memberDAO.findById(id);
+            if(member.isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(member));
+            }
+            return member;
+        });
 
-        String json = gson.toJson(member);
+        baseResponse = new BaseResponse(true,200,member);
+        json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
     @POST
     @Path("/{id}")
     @Produces("application/json")
     public Response create(@PathParam("id") int id) throws Exception {
-
-        throw new Exception("Method not allowed");
+        throw new NotAllowedException(ErrorMessage.POST_NOT_ALLOWED, Response.status(405).build());
     }
     @DELETE
     @Path("/{id}")
+    @Produces("application/json")
     public Response delete(@PathParam("id") int id) throws Exception {
-        memberDAO.delete(id);
-        return Response.status(204).build();
+        throw new NotAllowedException(ErrorMessage.POST_NOT_ALLOWED, Response.status(405).build());
     }
     @PUT
     @Path("/{id}")
     @Consumes("application/json")
+    @Produces("application/json")
     public Response update(@PathParam("id") int id, Member member) throws Exception {
-        Gson gson = new Gson();
-        gson.toJson(member);
-        memberDAO.update(id,member);
-        return Response.status(204).build();
+        if(member.notValidAttribute()){
+            throw new BadRequestException(ErrorMessage.requiredValue(member));
+        }
+        th.runTransaction(conn -> {
+            this.member = memberDAO.findById(id);
+
+            if(this.member.isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(this.member));
+            }
+
+            if(this.member.getId() != id){
+                throw new BadRequestException("Id not match");
+            }
+
+            memberDAO.update(id,member);
+
+            return null;
+        });
+
+        baseResponse = new BaseResponse(true,200);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(200).entity(json).build();
     }
     // ---- END /members/{id} ----
 }
