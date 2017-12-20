@@ -2,9 +2,12 @@ package com.blibli.future.pos.restaurant.service;
 
 
 import com.blibli.future.pos.restaurant.common.model.*;
+import com.blibli.future.pos.restaurant.common.model.custom.ItemOnReceipt;
 import com.blibli.future.pos.restaurant.common.model.custom.ReceiptWithItem;
+import com.blibli.future.pos.restaurant.dao.item.ItemDAO;
+import com.blibli.future.pos.restaurant.dao.item.ItemDAOMysql;
 import com.blibli.future.pos.restaurant.dao.receipt.ReceiptDAOMysql;
-import com.blibli.future.pos.restaurant.dao.receiptwithitem.ReceiptWithItemDAOMysql;
+import com.blibli.future.pos.restaurant.dao.custom.receiptwithitem.ReceiptWithItemDAOMysql;
 import com.google.gson.Gson;
 
 import javax.ws.rs.*;
@@ -17,6 +20,7 @@ import java.util.List;
 public class ReceiptService extends BaseRESTService{
     private ReceiptDAOMysql receiptDAO = new ReceiptDAOMysql();
     private ReceiptWithItemDAOMysql receiptWithItemDAO = new ReceiptWithItemDAOMysql();
+    private ItemDAOMysql itemDAO = new ItemDAOMysql();
 
     private ReceiptWithItem receiptWithItem;
     private List<ReceiptWithItem> receiptWithItemList;
@@ -106,4 +110,6 @@ public class ReceiptService extends BaseRESTService{
     }
 
     // ---- END /receipts/{id} ----
+
+
 }
