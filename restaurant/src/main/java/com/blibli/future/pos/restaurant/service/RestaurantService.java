@@ -12,6 +12,7 @@ import com.blibli.future.pos.restaurant.dao.receipt.ReceiptDAOMysql;
 import com.blibli.future.pos.restaurant.dao.custom.receiptwithitem.ReceiptWithItemDAOMysql;
 import com.blibli.future.pos.restaurant.dao.restaurant.RestaurantDAOMysql;
 import com.blibli.future.pos.restaurant.dao.user.UserDAOMysql;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -38,14 +39,19 @@ public class RestaurantService extends BaseRESTService {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response create(Restaurant restaurant) throws Exception {
-        if(restaurant.notValidAttribute()){
-            throw new BadRequestException(ErrorMessage.requiredValue(restaurant));
+    public Response create(List<Restaurant> restaurants) throws Exception {
+        if(restaurants.isEmpty()){
+            throw new BadRequestException();
         }
-        th.runTransaction(conn -> {
-            restaurantDAO.create(restaurant);
-            return null;
-        });
+        for (Restaurant restaurant: restaurants) {
+            if(restaurant.notValidAttribute()){
+                throw new BadRequestException(ErrorMessage.requiredValue(restaurant));
+            }
+            th.runTransaction(conn -> {
+                restaurantDAO.create(restaurant);
+                return null;
+            });
+        }
 
         baseResponse = new BaseResponse(true, 201);
         json = objectMapper.writeValueAsString(baseResponse);
@@ -170,13 +176,26 @@ public class RestaurantService extends BaseRESTService {
     @Path("/{restaurantId}/items")
     @Consumes("application/json")
     @Produces("application/json")
-    public Response addItem(ItemWithStock itemWithStock, @PathParam("restaurantId") int restaurantId) throws Exception {
-        // Check item valid
-        itemWithStock.setRestaurantId(restaurantId);
-        if(itemWithStock.notValidAttribute()){
-            throw new BadRequestException(ErrorMessage.requiredValue(itemWithStock));
+    public Response addItem(List<ItemWithStock> itemWithStockList, @PathParam("restaurantId") int restaurantId) throws Exception {
+        if(itemWithStockList.isEmpty()){
+            throw new BadRequestException();
+        }
+        for (ItemWithStock itemWithStock : itemWithStockList) {
+            // Check item valid
+            itemWithStock.setRestaurantId(restaurantId);
+            if(itemWithStock.notValidAttribute()){
+                throw new BadRequestException(ErrorMessage.requiredValue(itemWithStock));
+            }
+
+            insertItem(restaurantId, itemWithStock);
         }
 
+        baseResponse = new BaseResponse(true, 201);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(201).entity(json).build();
+    }
+
+    private void insertItem(int restaurantId, ItemWithStock itemWithStock) throws Exception {
         th.runTransaction(conn -> {
             // Check restaturant valid
             Restaurant restaurant = restaurantDAO.findById(restaurantId);
@@ -191,10 +210,6 @@ public class RestaurantService extends BaseRESTService {
             itemWithStockDAO.create(restaurantId, itemWithStock.getItemId(), itemWithStock.getStock());
             return null;
         });
-
-        baseResponse = new BaseResponse(true, 201);
-        json = objectMapper.writeValueAsString(baseResponse);
-        return Response.status(201).entity(json).build();
     }
 
     @GET
@@ -236,13 +251,24 @@ public class RestaurantService extends BaseRESTService {
     @Path("/{restaurantId}/receipts")
     @Consumes("application/json")
     @Produces("application/json")
-    public Response addReceipt(@PathParam("restaurantId") Integer restaurantId, ReceiptWithItem receiptWithItem) throws Exception {
-        if(receiptWithItem.notValidAttribute()){
-            throw new BadRequestException(ErrorMessage.requiredValue(receiptWithItem));
+    public Response addReceipt(@PathParam("restaurantId") Integer restaurantId, List<ReceiptWithItem> receiptWithItemList) throws Exception {
+        if(receiptWithItemList.isEmpty()){
+            throw new BadRequestException();
+        }
+        for (ReceiptWithItem receiptWithItem : receiptWithItemList) {
+            if(receiptWithItem.notValidAttribute()){
+                throw new BadRequestException(ErrorMessage.requiredValue(receiptWithItem));
+            }
+            insertReceipt(restaurantId, receiptWithItem);
         }
 
-        th.runTransaction(conn -> {
+        baseResponse = new BaseResponse(true, 201);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(201).entity(json).build();
+    }
 
+    public void insertReceipt(Integer restaurantId, ReceiptWithItem receiptWithItem) throws Exception {
+        th.runTransaction(conn -> {
             // Check if item on receipt is valid
             for (ItemOnReceipt item : receiptWithItem.getItems()) {
                 if(item.notValidAttribute()){
@@ -272,10 +298,6 @@ public class RestaurantService extends BaseRESTService {
             receiptWithItemDAO.create(receiptWithItem);
             return null;
         });
-
-        baseResponse = new BaseResponse(true, 201);
-        json = objectMapper.writeValueAsString(baseResponse);
-        return Response.status(201).entity(json).build();
     }
 //
 

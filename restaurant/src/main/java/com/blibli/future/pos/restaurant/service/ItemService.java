@@ -26,14 +26,19 @@ public class ItemService extends BaseRESTService{
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response create(Item item) throws Exception {
-        if(item.notValidAttribute()){
-            throw new BadRequestException(ErrorMessage.requiredValue(item));
+    public Response create(List<Item> items) throws Exception {
+        if(items.isEmpty()){
+            throw new BadRequestException();
         }
-        th.runTransaction(conn -> {
-            itemDAO.create(item);
-            return null;
-        });
+        for (Item item : items) {
+            if(item.notValidAttribute()){
+                throw new BadRequestException(ErrorMessage.requiredValue(item));
+            }
+            th.runTransaction(conn -> {
+                itemDAO.create(item);
+                return null;
+            });
+        }
 
         baseResponse = new BaseResponse(true, 201);
         json = objectMapper.writeValueAsString(baseResponse);
@@ -119,17 +124,18 @@ public class ItemService extends BaseRESTService{
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") int id) throws Exception {
-        th.runTransaction(conn -> {
-            if(itemDAO.findById(id).isEmpty()){
-                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Item()));
-            }
-            itemDAO.delete(id);
-            return null;
-        });
-
-        baseResponse = new BaseResponse(true,200);
-        json = objectMapper.writeValueAsString(baseResponse);
-        return Response.status(200).entity(json).build();
+        throw new NotAllowedException(ErrorMessage.DELETE_NOT_ALLOWED, Response.status(405).build());
+//        th.runTransaction(conn -> {
+//            if(itemDAO.findById(id).isEmpty()){
+//                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Item()));
+//            }
+//            itemDAO.delete(id);
+//            return null;
+//        });
+//
+//        baseResponse = new BaseResponse(true,200);
+//        json = objectMapper.writeValueAsString(baseResponse);
+//        return Response.status(200).entity(json).build();
     }
 
     @PUT

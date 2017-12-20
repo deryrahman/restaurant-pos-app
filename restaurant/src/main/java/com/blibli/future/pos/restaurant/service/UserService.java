@@ -21,18 +21,24 @@ public class UserService extends BaseRESTService {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response create(User user) throws Exception {
-        if(user.notValidAttribute()){
-            throw new BadRequestException(ErrorMessage.requiredValue(user));
+    public Response create(List<User> users) throws Exception {
+        if(users.isEmpty()){
+            throw new BadRequestException();
         }
 
-        th.runTransaction(conn -> {
-            if(!userDAO.findById(user.getEmail()).isEmpty()){
-                throw new BadRequestException("Email already taken");
+        for (User user: users) {
+            if(user.notValidAttribute()){
+                throw new BadRequestException(ErrorMessage.requiredValue(user));
             }
-            userDAO.create(user);
-            return null;
-        });
+
+            th.runTransaction(conn -> {
+                if(!userDAO.findById(user.getEmail()).isEmpty()){
+                    throw new BadRequestException("Email already taken");
+                }
+                userDAO.create(user);
+                return null;
+            });
+        }
 
         baseResponse = new BaseResponse(true, 201);
         json = objectMapper.writeValueAsString(baseResponse);
