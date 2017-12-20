@@ -1,17 +1,15 @@
 package com.blibli.future.pos.restaurant.service;
 
 import com.blibli.future.pos.restaurant.common.ErrorMessage;
-import com.blibli.future.pos.restaurant.common.model.*;
+import com.blibli.future.pos.restaurant.common.model.BaseResponse;
+import com.blibli.future.pos.restaurant.common.model.Category;
+import com.blibli.future.pos.restaurant.common.model.Item;
 import com.blibli.future.pos.restaurant.dao.category.CategoryDAOMysql;
 import com.blibli.future.pos.restaurant.dao.item.ItemDAOMysql;
-import com.google.gson.Gson;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("ALL")
 @Path("/categories")
@@ -27,11 +25,11 @@ public class CategoryService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response create(List<Category> categories) throws Exception {
-        if(categories.isEmpty()){
+        if (categories.isEmpty()) {
             throw new BadRequestException();
         }
 
-        for (Category category: categories) {
+        for (Category category : categories) {
             if (category.notValidAttribute()) {
                 throw new BadRequestException(ErrorMessage.requiredValue(category));
             }
@@ -52,13 +50,13 @@ public class CategoryService extends BaseRESTService {
     public Response getAll() throws Exception {
         categories = (List<Category>) th.runTransaction(conn -> {
             List<Category> categories = categoryDAO.find("true");
-            if(categories.size()==0){
+            if (categories.size() == 0) {
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(new Category()));
             }
             return categories;
         });
 
-        baseResponse = new BaseResponse(true,200,categories);
+        baseResponse = new BaseResponse(true, 200, categories);
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
@@ -83,13 +81,13 @@ public class CategoryService extends BaseRESTService {
     public Response get(@PathParam("id") int id) throws Exception {
         category = (Category) th.runTransaction(conn -> {
             Category category = categoryDAO.findById(id);
-            if(category.isEmpty()){
+            if (category.isEmpty()) {
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(new Category()));
             }
             return category;
         });
 
-        baseResponse = new BaseResponse(true,200,category);
+        baseResponse = new BaseResponse(true, 200, category);
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
@@ -97,7 +95,7 @@ public class CategoryService extends BaseRESTService {
     @POST
     @Path("/{id}")
     @Produces("application/json")
-    public Response create(@PathParam("id") int id){
+    public Response create(@PathParam("id") int id) {
         throw new NotAllowedException(ErrorMessage.POST_NOT_ALLOWED, Response.status(405).build());
     }
 
@@ -113,26 +111,26 @@ public class CategoryService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response update(@PathParam("id") int id, Category category) throws Exception {
-        if(category.notValidAttribute()){
+        if (category.notValidAttribute()) {
             throw new BadRequestException(ErrorMessage.requiredValue(new Category()));
         }
         th.runTransaction(conn -> {
             this.category = categoryDAO.findById(id);
 
-            if(this.category.isEmpty()){
+            if (this.category.isEmpty()) {
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(new Category()));
             }
 
-            if(this.category.getId() != id){
+            if (this.category.getId() != id) {
                 throw new BadRequestException("Id not match");
             }
 
-            categoryDAO.update(id,category);
+            categoryDAO.update(id, category);
 
             return null;
         });
 
-        baseResponse = new BaseResponse(true,200);
+        baseResponse = new BaseResponse(true, 200);
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
@@ -148,19 +146,19 @@ public class CategoryService extends BaseRESTService {
     public Response getAllItem(@PathParam("categoryId") int categoryId) throws Exception {
         items = (List<Item>) th.runTransaction(conn -> {
             // check categoryId first
-            if(categoryDAO.findById(categoryId).isEmpty()){
+            if (categoryDAO.findById(categoryId).isEmpty()) {
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(new Category()));
             }
 
             // search specific item with category_id
-            List<Item> items = itemDAO.find("category_id="+categoryId);
-            if(items.size()==0){
+            List<Item> items = itemDAO.find("category_id=" + categoryId);
+            if (items.size() == 0) {
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(new Item()));
             }
             return items;
         });
 
-        baseResponse = new BaseResponse(true,200,items);
+        baseResponse = new BaseResponse(true, 200, items);
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
