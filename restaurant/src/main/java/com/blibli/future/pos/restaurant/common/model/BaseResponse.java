@@ -1,25 +1,52 @@
 package com.blibli.future.pos.restaurant.common.model;
 
 public class BaseResponse {
-    private boolean success;
+    private Boolean success;
+    private Integer statusCode;
     private String message;
-    private String errorCode;
     private Object payload;
 
-    public boolean isSuccess() {
+    public BaseResponse() {
+    }
+
+    public BaseResponse(Boolean success, Integer statusCode) {
+        this.success = success;
+        this.statusCode = statusCode;
+    }
+
+    public BaseResponse(Boolean success, Integer statusCode, String message) {
+        this.success = success;
+        this.statusCode = statusCode;
+        this.message = message;
+    }
+
+    public BaseResponse(Boolean success, Integer statusCode, Object payload) {
+        this.success = success;
+        this.statusCode = statusCode;
+        this.payload = payload;
+    }
+
+    public BaseResponse(Boolean success, Integer statusCode, String message, Object payload) {
+        this.success = success;
+        this.statusCode = statusCode;
+        this.message = message;
+        this.payload = payload;
+    }
+
+    public Boolean isSuccess() {
         return success;
     }
 
-    public void setSuccess(boolean success) {
+    public void setSuccess(Boolean success) {
         this.success = success;
     }
 
-    public String getErrorCode() {
-        return errorCode;
+    public Integer getStatusCode() {
+        return statusCode;
     }
 
-    public void setErrorCode(String errorCode) {
-        this.errorCode = errorCode;
+    public void setStatusCode(Integer statusCode) {
+        this.statusCode = statusCode;
     }
 
     public Object getPayload() {
@@ -42,6 +69,7 @@ public class BaseResponse {
     public String toString() {
         return "BaseResponse{" +
                 "success=" + success +
+                ", statusCode='" + statusCode + '\'' +
                 ", message='" + message + '\'' +
                 ", payload=" + payload +
                 '}';
