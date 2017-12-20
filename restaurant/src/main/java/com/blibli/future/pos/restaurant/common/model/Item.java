@@ -89,7 +89,7 @@ public class Item extends BaseResource {
 
     @Override
     public Boolean isEmpty() {
-        return (id == null || timestampCreated == null || name == null || price == null || categoryId == null || status == null);
+        return (id == null);
     }
 
     @Override
