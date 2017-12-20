@@ -33,6 +33,7 @@ public class ItemDAOMysql extends MysqlDAO<Item> implements ItemDAO{
         ps.setString(1, item.getName());
         ps.setBigDecimal(2, item.getPrice());
         ps.setString(3, item.getDescription());
+        if(item.getCategoryId() == null) item.setCategoryId(0);
         ps.setInt(4, item.getCategoryId());
         ps.setString(5, item.getStatus());
 
