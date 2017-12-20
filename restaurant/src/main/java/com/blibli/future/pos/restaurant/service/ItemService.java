@@ -3,6 +3,7 @@ package com.blibli.future.pos.restaurant.service;
 
 import com.blibli.future.pos.restaurant.common.ErrorMessage;
 import com.blibli.future.pos.restaurant.common.model.*;
+import com.blibli.future.pos.restaurant.dao.category.CategoryDAOMysql;
 import com.blibli.future.pos.restaurant.dao.item.ItemDAOMysql;
 import com.blibli.future.pos.restaurant.dao.custom.itemwithstock.ItemWithStockDAOMysql;
 import com.blibli.future.pos.restaurant.dao.restaurant.RestaurantDAOMysql;
@@ -17,6 +18,7 @@ public class ItemService extends BaseRESTService{
     private ItemDAOMysql itemDAO = new ItemDAOMysql();
     private RestaurantDAOMysql restaurantDAO = new RestaurantDAOMysql();
     private ItemWithStockDAOMysql itemWithStockDAO = new ItemWithStockDAOMysql();
+    private CategoryDAOMysql categoryDAO = new CategoryDAOMysql();
 
     private List<Item> items;
     private Item item;
@@ -35,6 +37,9 @@ public class ItemService extends BaseRESTService{
                 throw new BadRequestException(ErrorMessage.requiredValue(item));
             }
             th.runTransaction(conn -> {
+                if(categoryDAO.findById(item.getCategoryId()).isEmpty()){
+                    throw new NotFoundException(ErrorMessage.NotFoundFrom(new Category()));
+                }
                 itemDAO.create(item);
                 return null;
             });
@@ -60,26 +65,6 @@ public class ItemService extends BaseRESTService{
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }
-
-//    /**
-//     * Special purpose for nested com.blibli.future.pos.restaurant.category
-//     * @param categoryId
-//     */
-//    public Response getAll(int categoryId) throws Exception{
-//        Gson gson = new Gson();
-//        List<Item> items = itemDAO.find("category_id=" + categoryId);
-//
-//        Map<String, Object> map = new HashMap<>();
-//        Metadata metadata = new Metadata();
-//        metadata.setCount(items.size());
-//        metadata.setLimit(items.size());
-//
-//        map.put("metadata", metadata);
-//        map.put("results", items);
-//
-//        String json = gson.toJson(map);
-//        return Response.status(200).entity(json).build();
-//    }
 
     @DELETE
     @Produces("application/json")
