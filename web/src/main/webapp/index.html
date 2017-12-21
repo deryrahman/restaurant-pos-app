@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Homepage</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/style.css">
+    <link rel="stylesheet" type="text/css" href="/assets/custom.css">
+</head>
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+
+        <div class="navbar-header">
+            <a href="#" class="navbar-brand">PEREGRINE</a>
+        </div>
+
+        <div>
+            <ul class="nav navbar-nav navbar-left">
+                <li class="active"><a href="index.html">Admin Page</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">Iqbal</a></li>
+                <li><a href="login.html">Logout</a></li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+
+<div id="homepage" class="container">
+    <div class="row">
+        <div id="sidebar-container"></div>
+        <div class="col-xs-12 overlay"></div>
+        <div id="page-homepage-container"></div>
+    </div>
+</div>
+</body>
+<!-- Scripts -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/assets/js/main.js"></script>
+<script>
+    $(document).ready(function(){
+        $.getJSON("http://localhost:8080/restaurant/restaurants", function( data ) {
+            console.log(data);
+        });
+
+        // load
+        $('#sidebar-container').load('template/sidebar.html');
+        $('#page-homepage-container').load('template/page-homepage.html');
+
+
+        $(".toggle-sidebar-in-main").click(function(){
+            $("#sidebar").animate({width:'toggle'},'medium',function(){
+                $("#inside-wrapper-sidebar").fadeToggle('fast');
+            });
+            $(".overlay").fadeToggle('slow');
+        });
+        $(".overlay, .toggle-sidebar-in-sidebar, #add-item").click(function(){
+            $("#inside-wrapper-sidebar").fadeToggle(10,function(){
+                $("#sidebar").animate({width:'toggle'},'medium');
+                $(".overlay").fadeToggle('slow');
+            });
+        });
+        $(".toggle-search").click(function(){
+            $('.search-bar').css('position','absolute');
+            $('.logo').fadeToggle('fast');
+            $('.search-bar').fadeToggle('fast');
+        });
+    });
+</script>
+</html>
