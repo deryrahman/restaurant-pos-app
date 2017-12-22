@@ -5,12 +5,12 @@ import java.sql.DriverManager;
 
 public class MySQLConnection {
     // JDBC driver name and database URL
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://geekstudio.id:3306/peregrine_identity?useSSL=false";
+    static final String JDBC_DRIVER = MySQLConfiguration.JDBC_DRIVER;
+    static final String DB_URL = MySQLConfiguration.DB_URL;
 
     //  Database credentials
-    static final String USER = "peregrine";
-    static final String PASS = "pausterbang";
+    static final String USER = MySQLConfiguration.USER;
+    static final String PASS = MySQLConfiguration.PASS;
 
     static Connection connection = null;
 
