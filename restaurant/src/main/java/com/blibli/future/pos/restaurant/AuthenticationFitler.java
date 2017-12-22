@@ -3,10 +3,8 @@ package com.blibli.future.pos.restaurant;
 import com.blibli.future.pos.restaurant.common.ApplicationUtility;
 import com.blibli.future.pos.restaurant.common.model.Config;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jdk.nashorn.internal.parser.JSONParser;
 import okhttp3.*;
 
-import javax.security.sasl.AuthenticationException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -14,7 +12,6 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 @Provider
@@ -50,6 +47,6 @@ public class AuthenticationFitler implements ContainerRequestFilter {
         if(map.get("status").equals("invalid")){
             throw new NotAuthorizedException("Invalid token");
         }
-        
+
     }
 }
