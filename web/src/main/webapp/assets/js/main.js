@@ -1,4 +1,7 @@
 var coreService = "http://localhost:8080/restaurant"
+// load sidebar js
+$.getScript("sidebar.js")
+
 // Main
 function loadMain(){
     loadCategories()
@@ -56,12 +59,8 @@ function loadItemByCategoryId(categoryId) {
         var payload = data["payload"]
         var items = []
         $.each(payload, function (key, val) {
-            var id = "item-"+key
-            var name = val["name"]
-            var price = val["price"]
-            var categoryId = val["categoryId"]
             items.push(
-                itemToHTML(id,name,price,categoryId)
+                itemToHTML(val)
             )
         })
 
@@ -91,10 +90,15 @@ function loadAllItem() {
         $("#category-all").empty().append(items)
     })
 }
-function itemToHTML(id, name, price, categoryId) {
-    var itemId = "item"+id
+function itemToHTML(item) {
+    var id = item["id"]
+    var name = item["name"]
+    var price = item["price"]
+    var categoryId = item["categoryId"]
+    var itemId = "item-"+item["id"]
+
     var result = "<div class='col-xs-12 col-sm-3 col-md-2 col-lg-3'>"+
-    "<div class='item pointer'>" +
+    "<div id='"+itemId+"' class='item pointer' onclick='addItem(item)'>" +
     "<div class='row padding-default'>" +
     "<div class='col-xs-8 col-sm-12'>" +
     "<h4 class='title-item'>" +
