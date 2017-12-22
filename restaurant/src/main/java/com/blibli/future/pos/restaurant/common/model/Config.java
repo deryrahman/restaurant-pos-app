@@ -1,9 +1,18 @@
 package com.blibli.future.pos.restaurant.common.model;
 
 public class Config {
+    private String authService;
     private Jdbc jdbc;
 
     public Config() {
+    }
+
+    public String getAuthService() {
+        return authService;
+    }
+
+    public void setAuthService(String authService) {
+        this.authService = authService;
     }
 
     public Jdbc getJdbc() {
