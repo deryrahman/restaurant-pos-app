@@ -7,9 +7,21 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/assets/style.css">
     <link rel="stylesheet" type="text/css" href="/assets/custom.css">
+    <style>
+        /* hide before load ajax finish */
+        #hideAll{
+            display: block;
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background-color: #eeeeee;
+            z-index: 99;
+        }
+    </style>
 </head>
 <body>
-
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
 
@@ -44,9 +56,7 @@
 <script src="/assets/js/main.js"></script>
 <script>
     $(document).ready(function(){
-        $.getJSON("http://localhost:8080/restaurant/restaurants", function( data ) {
-            console.log(data);
-        });
+        loadMain();
 
         // load
         $('#sidebar-container').load('template/sidebar.html');
