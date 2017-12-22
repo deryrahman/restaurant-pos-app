@@ -97,7 +97,7 @@ public class ItemDAOMysql extends MysqlDAO<Item> implements ItemDAO{
                 "price = ?," +
                 "description = ?," +
                 "category_id = ?," +
-                "status = ? +" +
+                "status = ? " +
                 "WHERE id = ?";
         ps = TransactionHelper.getConnection().prepareStatement(query);
         ps.setString(1, item.getName());

@@ -7,8 +7,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 import java.io.FileReader;
 
+@WebListener
 public class ServiceServletContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {

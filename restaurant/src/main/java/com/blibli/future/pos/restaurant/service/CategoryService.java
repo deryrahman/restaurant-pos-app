@@ -14,6 +14,7 @@ import java.util.List;
 @SuppressWarnings("ALL")
 @Path("/categories")
 public class CategoryService extends BaseRESTService {
+    private int id = 0;
     private CategoryDAOMysql categoryDAO = new CategoryDAOMysql();
     private ItemDAOMysql itemDAO = new ItemDAOMysql();
     private List<Category> categories;
@@ -48,6 +49,7 @@ public class CategoryService extends BaseRESTService {
     @GET
     @Produces("application/json")
     public Response getAll() throws Exception {
+        System.out.print(id);
         categories = (List<Category>) th.runTransaction(conn -> {
             List<Category> categories = categoryDAO.find("true");
             if (categories.size() == 0) {
@@ -103,7 +105,25 @@ public class CategoryService extends BaseRESTService {
     @Path("/{id}")
     @Produces("application/json")
     public Response delete(@PathParam("id") int id) throws Exception {
-        throw new NotAllowedException(ErrorMessage.DELETE_NOT_ALLOWED, Response.status(405).build());
+        if(id==1){
+            throw new BadRequestException("Default category cannot be deleted");
+        }
+        th.runTransaction(conn -> {
+            if(categoryDAO.findById(id).isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Category()));
+            }
+            List<Item> items = itemDAO.find("category_id="+id);
+            for (Item item:items) {
+                item.setCategoryId(1);
+                itemDAO.update(item.getId(),item);
+            }
+            categoryDAO.delete(id);
+            return null;
+        });
+
+        baseResponse = new BaseResponse(true,200);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(200).entity(json).build();
     }
 
     @PUT
@@ -111,6 +131,9 @@ public class CategoryService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response update(@PathParam("id") int id, Category category) throws Exception {
+        if(id==1){
+            throw new BadRequestException("Default category cannot be update");
+        }
         if (category.notValidAttribute()) {
             throw new BadRequestException(ErrorMessage.requiredValue(new Category()));
         }
