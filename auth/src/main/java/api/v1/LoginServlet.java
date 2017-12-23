@@ -14,8 +14,8 @@ import java.io.PrintWriter;
 import static service.TokenGenerator.generateJwt;
 import static service.UserService.isValid;
 
-@WebServlet(name = "LoginService")
-public class LoginService extends HttpServlet {
+@WebServlet(name = "LoginServlet")
+public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
         PrintWriter output = response.getWriter();

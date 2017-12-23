@@ -1,10 +1,6 @@
-version 'unspecified'
-
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'war'
-
-sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()

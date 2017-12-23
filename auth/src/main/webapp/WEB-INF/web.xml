@@ -5,8 +5,8 @@
          version="3.1">
 
     <servlet>
-        <servlet-name>LoginService</servlet-name>
-        <servlet-class>api.v1.LoginService</servlet-class>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>api.v1.LoginServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GenerateTokenServlet</servlet-name>
@@ -20,9 +20,13 @@
         <servlet-name>RegisterServlet</servlet-name>
         <servlet-class>api.v1.RegisterServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdateServlet</servlet-name>
+        <servlet-class>api.v1.UpdateServlet</servlet-class>
+    </servlet>
 
     <servlet-mapping>
-        <servlet-name>LoginService</servlet-name>
+        <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -37,5 +41,19 @@
         <servlet-name>RegisterServlet</servlet-name>
         <url-pattern>/register</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateServlet</servlet-name>
+        <url-pattern>/update</url-pattern>
+    </servlet-mapping>
+
+    <filter>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>api.AuthenticationFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <servlet-name>UpdateServlet</servlet-name>
+    </filter-mapping>
 
 </web-app>
