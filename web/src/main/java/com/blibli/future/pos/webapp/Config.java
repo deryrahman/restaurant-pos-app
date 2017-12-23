@@ -1,6 +1,6 @@
 package com.blibli.future.pos.webapp;
 
-public class Config {
+class Config {
     private String baseUrl;
     private String restaurantRestPath;
 
@@ -21,5 +21,13 @@ public class Config {
 
     public void setRestaurantRestPath(String restaurantRestPath) {
         this.restaurantRestPath = restaurantRestPath;
+    }
+
+    @Override
+    public String toString() {
+        return "Config{" +
+                "baseUrl='" + baseUrl + '\'' +
+                ", restaurantRestPath='" + restaurantRestPath + '\'' +
+                '}';
     }
 }
