@@ -1,7 +1,8 @@
 {
+  "baseUrl": "http://localhost:8080",
   "endpoints": {
-    "login": "http://localhost:8080/login",
-    "registerUser": "",
-    "registerUserIdentity": ""
+    "login": "/auth/login",
+    "registerIdentity": "/auth/register",
+    "registerUser": "/core/users"
   }
 }

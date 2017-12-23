@@ -1,5 +1,6 @@
 var userToken;
 var config;
+var loginUrl;
 loadConfig("configurations.json");
 
 function login(form) {
@@ -9,7 +10,7 @@ function login(form) {
 
     request.onload = loginHandler;
     request.onerror = errorHandler;
-    request.open("POST", config.endpoints.login);
+    request.open("POST", loginUrl);
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     request.send(body);
 }
@@ -44,6 +45,10 @@ function loadConfig(fileName) {
 
     request.onload = function () {
         config = JSON.parse(this.responseText);
+        var baseUrl = config.baseUrl;
+        var context = config.contexts.auth;
+        var endpoint = config.endpoints.login;
+        loginUrl = baseUrl + context + endpoint;
     };
     request.open("GET", fileName);
     request.send();

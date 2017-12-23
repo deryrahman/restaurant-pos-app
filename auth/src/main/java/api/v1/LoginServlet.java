@@ -39,7 +39,7 @@ public class LoginServlet extends HttpServlet {
     }
 
     private String generateTokenFromRequest(HttpServletRequest request) throws InvalidCredentialsException, UnsupportedMediaTypeException {
-        if (request.getContentType().equals("application/json")) {
+        if (request.getContentType().equals("application/x-www-form-urlencoded")) {
 
             String username = request.getParameter("username");
             String password = request.getParameter("password");
