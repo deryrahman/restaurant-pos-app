@@ -49,18 +49,27 @@ $(document).ready(function() {
     };
 
     $('#register-form').submit(function (e) {
-        console.log(this.checkValidity());
+        if (isFormValid()) {
+            console.log("OK");
+        }
 
         e.preventDefault();
     });
 
     var isFormValid = function () {
-        return false;
-        return  isFullnameValid() &&
-                isUsernameValid() &&
-                isPasswordValid() &&
-                isEmailValid() &&
-                isRestaurantIdValid();
+        var validation = {
+            fullname: isFullnameValid(),
+            username: isUsernameValid(),
+            password: isPasswordValid(),
+            email: isEmailValid(),
+            restaurantId: isRestaurantIdValid()
+        };
+        var isValid = true;
+
+        $.each(validation, function (key, value) {
+            isValid = isValid && value;
+        });
+        return  isValid;
     };
 
     var isFullnameValid = function () {
