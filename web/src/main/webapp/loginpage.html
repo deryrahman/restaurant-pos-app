@@ -47,21 +47,27 @@
                             <form id="register-form" action="#" method="post" role="form" style="display: none;">
                                 <div class="form-group">
                                     <input type="text" name="fullname" id="fullname" tabindex="1" class="form-control" placeholder="Your Name" value="">
+                                    <p id="fullname-warning" class="warning">Fullname warning</p>
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+                                    <input type="text" name="username" id="new-username" tabindex="1" class="form-control" placeholder="Username" value="">
+                                    <p id="username-warning" class="warning">Username warning</p>
                                 </div>
                                 <div class="form-group">
                                     <input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="Email Address" value="">
+                                    <p id="email-warning" class="warning">Email warning</p>
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
+                                    <input type="password" name="password" id="new-password" tabindex="2" class="form-control" placeholder="Password">
+                                    <p id="password-warning" class="warning">Password warning</p>
                                 </div>
                                 <div class="form-group">
                                     <input type="password" name="confirm-password" id="confirm-password" tabindex="2" class="form-control" placeholder="Confirm Password">
+                                    <p id="confirm-warning" class="warning">Confirm password warning</p>
                                 </div>
                                 <div class="form-group">
                                     <input type="number" name="restaurant-id" id="restaurant-id" tabindex="2" class="form-control" placeholder="Restaurant ID" value="">
+                                    <p id="restaurant-warning" class="warning">Restaurant ID warning</p>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
@@ -82,6 +88,7 @@
 
 <!-- Script -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="assets/loginpage/script.js"></script>
 <!--<script src="assets/loginpage/login-request.js"></script>-->
