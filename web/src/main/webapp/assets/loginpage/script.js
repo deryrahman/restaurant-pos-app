@@ -49,28 +49,13 @@ $(document).ready(function() {
     };
 
     $('#register-form').submit(function (e) {
-        if (isFormValid()) {
-            var userData = {
-                name: $(this).find("#fullname").val(),
-                restaurantId: $(this).find("#restaurant-id"),
-                email: $(this).find("#email")
-            };
-            console.log(userData);
-
-            var userIdentity = {
-                id: 0,
-                username: $(this).find("#new-username"),
-                password: $(this).find("#new-password"),
-                role: "cashier"
-            };
-            console.log(userIdentity);
-
-        }
+        console.log(this.checkValidity());
 
         e.preventDefault();
     });
 
     var isFormValid = function () {
+        return false;
         return  isFullnameValid() &&
                 isUsernameValid() &&
                 isPasswordValid() &&
