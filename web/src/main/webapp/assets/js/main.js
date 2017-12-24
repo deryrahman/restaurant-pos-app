@@ -1,15 +1,26 @@
 var coreService = "http://localhost:8080/restaurant"
-// load sidebar js
-$.getScript("sidebar.js")
+var authService = "http://localhost:8080/auth"
 
 // Main
 function loadMain(){
+    console.log("wei")
     loadCategories()
     loadAllItem()
 }
+function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
+}
+// Check auth first
+function isLogin(){
+}
+
 // Categories
 function loadCategories(){
+    console.log("BEM")
     $.getJSON(coreService+"/categories", function (data) {
+        console.log(data["success"])
         if(!data["success"]){
             console.log(data["message"])
             return;
