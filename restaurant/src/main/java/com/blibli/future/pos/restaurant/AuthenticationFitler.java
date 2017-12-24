@@ -4,6 +4,7 @@ import com.blibli.future.pos.restaurant.common.ApplicationUtility;
 import com.blibli.future.pos.restaurant.common.model.Config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
+import org.apache.log4j.MDC;
 
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
@@ -21,18 +22,21 @@ public class AuthenticationFitler implements ContainerRequestFilter {
     public void filter(ContainerRequestContext requestContext) throws IOException {
         Config config = (Config) ApplicationUtility.getServletContext().getAttribute("restaurantConfig");
 
+        // Get POSRESTAURANT Cookie
         Map<String,Cookie> cookies = requestContext.getCookies();
-        String JWT = null;
+        Cookie cookie = null;
         for (Map.Entry<String, Cookie> pair : cookies.entrySet()) {
             if(pair.getKey().equals("POSRESTAURANT")){
-                JWT = pair.getValue().getValue();
+                cookie = pair.getValue();
             }
         }
-        if(JWT == null){
+        if(cookie == null){
             throw new NotFoundException("Cookie not found");
         }
+
+        // Check if token is valid
         OkHttpClient client = new OkHttpClient();
-        FormBody requestBody = new FormBody.Builder().add("token",JWT).build();
+        FormBody requestBody = new FormBody.Builder().add("token",cookie.getValue()).build();
         Request request = new Request.Builder()
                 .url(config.getAuthService() + "/parseToken")
                 .post(requestBody)
@@ -44,9 +48,13 @@ public class AuthenticationFitler implements ContainerRequestFilter {
 
         ObjectMapper mapper = new ObjectMapper();
         Map<String,Object> map = mapper.readValue(response.body().string(), Map.class);
-        if(map.get("status").equals("invalid")){
+        if(!map.get("status").equals("ok")){
             throw new NotAuthorizedException("Invalid token");
         }
 
+        Map<String,Object> payload = (Map<String,Object>) map.get("payload");
+        String refreshToken = payload.get("refreshToken").toString();
+
+        MDC.put("refreshToken",refreshToken);
     }
 }
