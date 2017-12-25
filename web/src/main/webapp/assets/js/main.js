@@ -3,7 +3,6 @@ var authService = "http://localhost:8080/auth"
 
 // Main
 function loadMain(){
-    console.log("wei")
     loadCategories()
     loadAllItem()
 }
@@ -18,9 +17,7 @@ function isLogin(){
 
 // Categories
 function loadCategories(){
-    console.log("BEM")
     $.getJSON(coreService+"/categories", function (data) {
-        console.log(data["success"])
         if(!data["success"]){
             console.log(data["message"])
             return;
@@ -96,8 +93,6 @@ function loadAllItem() {
             )
         })
 
-        console.log(items)
-
         $("#category-all").empty().append(items)
     })
 }
@@ -109,7 +104,7 @@ function itemToHTML(item) {
     var itemId = "item-"+item["id"]
 
     var result = "<div class='col-xs-12 col-sm-3 col-md-2 col-lg-3'>"+
-    "<div id='"+itemId+"' class='item pointer' onclick='addItem(item)'>" +
+    "<div id='"+itemId+"' class='item pointer' onclick='addItem("+id+",\""+name+"\","+price+")'>" +
     "<div class='row padding-default'>" +
     "<div class='col-xs-8 col-sm-12'>" +
     "<h4 class='title-item'>" +
