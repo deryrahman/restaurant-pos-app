@@ -116,6 +116,6 @@ function itemToHTML(item) {
     "</div>" +
     "</div>" +
     "</div>" +
-    "</div>"
+    "</div>";
     return result
 }

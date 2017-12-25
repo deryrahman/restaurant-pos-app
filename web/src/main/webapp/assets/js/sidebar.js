@@ -10,9 +10,10 @@ function addItem(itemId, name, price) {
         $('#sidebar-count-item-'+itemId).text(cnt);
         var price = parseInt($('#sidebar-price-item-'+itemId).text());
         $('#sidebar-subtotal-item-'+itemId).text(price*cnt);
+        editModalHTML(itemId,name,cnt)
     } else {
         console.log(itemId)
-        var result = "<div id='sidebar-item-" + itemId + "' class='invoice-item padding-v-default invoice-item-with-delete pointer row' data-toggle='modal' data-target='#delete-item-modal-" + itemId + "'>" +
+        var result = "<div id='sidebar-item-" + itemId + "' class='invoice-item padding-v-default invoice-item-with-delete pointer row' data-toggle='modal' data-target='#edit-item-modal-" + itemId + "'>" +
             "<div id='name-item-"+itemId+"' class='col-xs-6 invoice-item-name'> +" +
             name +
             "</div>" +
@@ -28,9 +29,56 @@ function addItem(itemId, name, price) {
             "</div>" +
             "</div>" +
             "</div>";
-        console.log(result)
+        editModalHTML(itemId,name,1)
         $("#invoice-item-list").append(result)
     }
+}
+
+function deleteModalHTML(itemId) {
+    if($('#delete-item-modal-').length===0){
+        var result = "<div id='delete-item-modal-"+itemId+"' class='modal fade' role='dialog'>" +
+        "<div class='modal-dialog modal-sm'>" +
+        "<div class='modal-content'>" +
+        "<div class='modal-header'>" +
+        "<h4 class='modal-title'>Are you sure delete this item?</h4>" +
+        "</div>" +
+        "<div class='modal-footer'>" +
+        "<button type='button' class='btn btn-danger' data-dismiss='modal'>Delete</button>" +
+        "<button type='button' class='btn btn-default' data-dismiss='modal'>Cancel</button>" +
+        "</div>" +
+        "</div>" +
+        "</div>" +
+        "</div>"
+        $('#delete-item-modal').append(result)
+    }
+}
+
+function editModalHTML(itemId, name, itemCount){
+    if($('#edit-item-modal-'+itemId).length){
+        $('#edit-item-modal-'+itemId).remove()
+    }
+    var result = "<div id='edit-item-modal-"+itemId+"' class='modal fade' role='dialog'>" +
+    "<div class='modal-dialog modal-sm'>" +
+    "<div class='modal-content'>" +
+    " <div class='modal-header'>" +
+    "<h4 class='modal-title'>Edit "+name+"</h4>" +
+    "</div>" +
+    "<div class='modal-body'>"+
+    "<p>Count :</p>" +
+    "<input type='text' name='edit-count-"+itemId+"' value='"+itemCount+"'>" +
+    "<div class='modal-footer'>" +
+    "<button class='btn btn-danger col-xs-12' data-toggle='modal' data-target='#delete-item-modal-"+itemId+"'><span class='glyphicon glyphicon-trash'></span> Remove</button>" +
+    "</div>" +
+    "</div>" +
+    "<div class='modal-footer'>" +
+    "<button type='button' class='btn btn-danger' data-dismiss='modal'>Cancel</button>"+
+    "<button type='button' class='btn btn-success' data-dismiss='modal'>Save</button>"+
+    "</div>"+
+    "</div>"+
+    "</div>"+
+    "</div>"
+    deleteModalHTML(itemId)
+    $('#edit-item-modal').append(result)
 }
 
 function getItemById(itemId) {
