@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TokenGenerator {
-    private final static long ttlMillis = 24 * 60 * 60 * 1000;
+    private final static long ttlMillis = 60000;
     static Key key = MacProvider.generateKey();
 
     public static String generateJwtFromMap (Map<String, String> userInfo) throws InvalidTokenRequestException {
