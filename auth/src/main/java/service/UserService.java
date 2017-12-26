@@ -19,7 +19,15 @@ public class UserService {
         return BCrypt.checkpw(password, hashed);
     }
 
-    public static String getRole(String username) {
+    public static Long getIdByUsername(String username) {
+        try {
+            return getUserIdentity(username).getId();
+        } catch (InvalidCredentialsException e) {
+            return 0L;
+        }
+    }
+
+    public static String getRoleByUsername(String username) {
         try {
             return getUserIdentity(username).getRole();
         } catch (InvalidCredentialsException e) {

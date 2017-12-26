@@ -40,7 +40,7 @@ public class TokenGenerator {
                                      String userAgent) {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-        String role = UserService.getRole(username);
+        String role = UserService.getRoleByUsername(username);
 
         long nowMillis = System.currentTimeMillis();
         long expMillis = nowMillis + ttlMillis;
@@ -102,12 +102,14 @@ public class TokenGenerator {
         String userAgent = claims.get("uag", String.class);
         String role = claims.get("role", String.class);
         String refreshToken = generateJwt(username, ipAddress, userAgent);
+        Long userId = UserService.getIdByUsername(username);
 
         payload.put("username", username);
         payload.put("ipAddress", ipAddress);
         payload.put("userAgent", userAgent);
         payload.put("role", role);
         payload.put("refreshToken", refreshToken);
+        payload.put("id", userId);
 
         return payload;
     }
