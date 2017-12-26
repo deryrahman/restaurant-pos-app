@@ -32,7 +32,11 @@ public class ItemService extends BaseRESTService{
         if(items.isEmpty()){
             throw new BadRequestException();
         }
+
         for (Item item : items) {
+            if(item.getCategoryId() == null){
+                item.setCategoryId(1);
+            }
             if(item.notValidAttribute()){
                 throw new BadRequestException(ErrorMessage.requiredValue(item));
             }

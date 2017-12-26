@@ -174,6 +174,9 @@ public class RestaurantService extends BaseRESTService {
             List<ItemWithStock> itemWithStockList = itemWithStockDAO.findByRestaurantId(restaurantId, "true");
             return itemWithStockList;
         });
+        if(itemWithStockList.isEmpty()){
+            throw new NotFoundException(ErrorMessage.NotFoundFrom(new ItemWithStock()));
+        }
         baseResponse = new BaseResponse(true,200, itemWithStockList);
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
@@ -193,6 +196,9 @@ public class RestaurantService extends BaseRESTService {
             List<ItemWithStock> itemWithStockList = itemWithStockDAO.findByRestaurantId(restaurantId, "category_id="+categoryId);
             return itemWithStockList;
         });
+        if(itemWithStockList.isEmpty()){
+            throw new NotFoundException(ErrorMessage.NotFoundFrom(new ItemWithStock()));
+        }
         baseResponse = new BaseResponse(true,200, itemWithStockList);
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
@@ -377,5 +383,24 @@ public class RestaurantService extends BaseRESTService {
             receiptWithItemDAO.create(receiptWithItem);
             return null;
         });
+    }
+
+    @DELETE
+    @Path("/{restaurantId}/items/{itemId}")
+    @Produces("application/json")
+    public Response deleteItemOnRestaurant(@PathParam("restaurantId") Integer restaurantId, @PathParam("itemId") Integer itemId) throws Exception{
+        th.runTransaction(conn -> {
+            if(restaurantDAO.findById(restaurantId).isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Restaurant()));
+            }
+            if(itemDAO.findById(itemId).isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Item()));
+            }
+            itemWithStockDAO.delete(restaurantId, itemId);
+            return null;
+        });
+        baseResponse = new BaseResponse(true,200);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(200).entity(json).build();
     }
 }
