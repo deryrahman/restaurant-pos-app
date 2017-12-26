@@ -2,6 +2,7 @@ package api.v1;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +19,7 @@ public class LoginService extends HttpServlet {
         String password = request.getParameter("password");
         String userAgent = request.getHeader("User-Agent");
         String ipAddress = request.getRemoteAddr();
-        String jwt;
+        String jwt = null;
 
         PrintWriter output = response.getWriter();
 
@@ -27,6 +28,27 @@ public class LoginService extends HttpServlet {
             output.write(jwt);
         } else {
             output.write("Invalid username.");
+        }
+
+        Cookie cookie = null;
+        if (request.getCookies() != null) {
+            for (Cookie cookie1 : request.getCookies()) {
+                if (cookie1.getName().equals("POSRESTAURANT")) {
+                    cookie = cookie1;
+                }
+            }
+        }
+
+        if(jwt!=null) {
+            if(!jwt.isEmpty()) {
+                if(cookie == null) {
+                    cookie = new Cookie("POSRESTAURANT", jwt);
+                }
+                cookie.setValue(jwt);
+                cookie.setMaxAge(60 * 60 * 24 * 365);
+                cookie.setPath("/");
+                response.addCookie(cookie);
+            }
         }
 
         output.flush();
