@@ -3,11 +3,17 @@
   "endpoints": {
     "login": "/auth/login",
     "register": "/auth/register",
+    "parser": "/auth/parseToken",
     "user": "/core/users",
     "restaurant": "/core/restaurants",
     "receipts": "/core/receipts",
     "item": "/core/items",
     "category": "/core/categories",
     "member": "/core/members"
+  },
+  "pages": {
+    "home": "index.html",
+    "admin": "adminpage.html",
+    "login": "loginpage.html"
   }
 }

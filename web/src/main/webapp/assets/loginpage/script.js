@@ -36,7 +36,25 @@ $(document).ready(function() {
 
     var successfulLogin = function (token) {
         Cookies.set('POSRESTAURANT', token);
-        alert(token);
+        console.log(token);
+
+        var parserUrl = baseUrl + config.endpoints.parser;
+        var userInfo;
+        $.ajax(parserUrl, {
+            method: "POST",
+            url: parserUrl,
+            contentType: "application/x-www-form-urlencoded",
+            data: {token: token},
+            success: function (response) {
+                userInfo = response.payload;
+                if (userInfo.role === "cashier") {
+                    window.location.assign(config.pages.home);
+                } else if (userInfo.role === "admin") {
+                    window.location.assign(config.pages.admin);
+                }
+                console.log(userInfo);
+            }
+        });
     };
 
     var invalidLogin = function () {
