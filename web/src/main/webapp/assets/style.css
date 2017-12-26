@@ -3,6 +3,10 @@ body {
 	overflow-x: hidden;
 }
 
+#homepage {
+	margin-top: 40px;
+}
+
 /* color */
 a {
 	color: #ff5722;

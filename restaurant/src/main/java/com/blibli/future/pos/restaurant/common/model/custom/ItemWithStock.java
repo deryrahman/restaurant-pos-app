@@ -68,12 +68,12 @@ public class ItemWithStock extends BaseResource {
 
     @Override
     public Boolean isEmpty() {
-        return (itemId == null || restaurantId == null || stock == null);
+        return (notValidAttribute());
     }
 
     @Override
     public Boolean notValidAttribute() {
-        return (itemId == null || restaurantId == null || stock == null);
+        return (itemId == null || restaurantId == null || stock == null || stock < 0);
     }
 
     @Override

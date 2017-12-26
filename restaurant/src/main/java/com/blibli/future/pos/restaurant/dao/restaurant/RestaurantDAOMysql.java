@@ -75,7 +75,7 @@ public class RestaurantDAOMysql extends MysqlDAO<Restaurant> implements Restaura
 
     @Override
     public void update(int id, Restaurant restaurant) throws SQLException {
-        String query = "UPDATE categories SET id = ?, address = ?, phone = ? WHERE id = ?";
+        String query = "UPDATE restaurants SET address = ?, phone = ? WHERE id = ?";
         ps = TransactionHelper.getConnection().prepareStatement(query);
         ps.setString(1, restaurant.getAddress());
         ps.setString(2, restaurant.getPhone());

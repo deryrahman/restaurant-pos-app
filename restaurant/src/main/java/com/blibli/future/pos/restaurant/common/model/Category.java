@@ -1,11 +1,9 @@
 package com.blibli.future.pos.restaurant.common.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
-@XmlRootElement
 public class Category extends BaseResource {
     private Integer id;
     private Timestamp timestampCreated;
@@ -59,18 +57,18 @@ public class Category extends BaseResource {
 
     @Override
     public Boolean isEmpty() {
-        return id == null;
+        return id == null || notValidAttribute();
     }
 
     @Override
     public Boolean notValidAttribute() {
-        return name == null;
+        return name == null || name.isEmpty();
     }
 
     @Override
     public Map<String, String> requiredAttribute() {
         Map<String, String> required = new HashMap<>();
-        if(name == null) required.put("name", "String");
+        if(name == null || name.isEmpty()) required.put("name", "String");
         return required;
     }
 }

@@ -68,20 +68,20 @@ public class Member extends BaseResource {
 
     @Override
     public Boolean isEmpty() {
-        return id == null;
+        return id == null || notValidAttribute();
     }
 
     @Override
     public Boolean notValidAttribute() {
-        return name == null || address == null || email == null;
+        return name == null || address == null || email == null || name.isEmpty() || address.isEmpty() || email.isEmpty();
     }
 
     @Override
     public Map<String, String> requiredAttribute() {
         Map<String, String> required = new HashMap<>();
-        if(name == null) required.put("name", "String");
-        if(address == null) required.put("address", "String");
-        if(email == null) required.put("email", "String");
+        if(name == null || name.isEmpty()) required.put("name", "String");
+        if(address == null || address.isEmpty()) required.put("address", "String");
+        if(email == null || email.isEmpty()) required.put("email", "String");
         return required;
     }
 }

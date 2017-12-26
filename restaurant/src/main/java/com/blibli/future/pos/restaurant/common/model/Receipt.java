@@ -1,6 +1,7 @@
 package com.blibli.future.pos.restaurant.common.model;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,12 +90,12 @@ public class Receipt extends BaseResource {
 
     @Override
     public Boolean isEmpty() {
-        return id == null;
+        return id == null || notValidAttribute();
     }
 
     @Override
     public Boolean notValidAttribute() {
-        return (restaurantId == null || userId == null || totalPrice == null);
+        return (restaurantId == null || userId == null || totalPrice == null || totalPrice.compareTo(BigDecimal.ZERO) < 0);
     }
 
     @Override

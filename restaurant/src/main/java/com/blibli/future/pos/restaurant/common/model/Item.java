@@ -89,21 +89,21 @@ public class Item extends BaseResource {
 
     @Override
     public Boolean isEmpty() {
-        return (id == null);
+        return (id == null || notValidAttribute());
     }
 
     @Override
     public Boolean notValidAttribute() {
-        return (name == null || price == null || status == null || categoryId == null);
+        return (name == null || price == null || status == null || categoryId == null || name.isEmpty() || status.isEmpty() || price.compareTo(BigDecimal.ZERO) < 0);
     }
 
     @Override
     public Map<String, String> requiredAttribute() {
         Map<String, String> required = new HashMap<>();
-        if(name == null) required.put("name", "String");
+        if(name == null || name.isEmpty()) required.put("name", "String");
         if(price == null) required.put("price", "Decimal");
         if(categoryId == null) required.put("categoryId", "Integer");
-        if(status == null) required.put("status", "String");
+        if(status == null || status.isEmpty()) required.put("status", "String");
         return required;
     }
 }
