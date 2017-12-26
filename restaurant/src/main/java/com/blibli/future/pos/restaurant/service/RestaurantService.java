@@ -6,6 +6,7 @@ import com.blibli.future.pos.restaurant.common.model.*;
 import com.blibli.future.pos.restaurant.common.model.custom.ItemOnReceipt;
 import com.blibli.future.pos.restaurant.common.model.custom.ItemWithStock;
 import com.blibli.future.pos.restaurant.common.model.custom.ReceiptWithItem;
+import com.blibli.future.pos.restaurant.dao.category.CategoryDAOMysql;
 import com.blibli.future.pos.restaurant.dao.item.ItemDAOMysql;
 import com.blibli.future.pos.restaurant.dao.custom.itemwithstock.ItemWithStockDAOMysql;
 import com.blibli.future.pos.restaurant.dao.receipt.ReceiptDAOMysql;
@@ -30,6 +31,7 @@ public class RestaurantService extends BaseRESTService {
     private static ReceiptDAOMysql receiptDAO = new ReceiptDAOMysql();
     private static ReceiptWithItemDAOMysql receiptWithItemDAO = new ReceiptWithItemDAOMysql();
     private static UserDAOMysql userDAO = new UserDAOMysql();
+    private static CategoryDAOMysql categoryDAO = new CategoryDAOMysql();
 
     private Restaurant restaurant;
     private Receipt receipt;
@@ -164,7 +166,7 @@ public class RestaurantService extends BaseRESTService {
     @GET
     @Path("/{restaurantId}/items")
     @Produces("application/json")
-    public Response getAllItem(@PathParam("restaurantId") int restaurantId) throws Exception {
+    public Response getAllItem(@PathParam("restaurantId") Integer restaurantId) throws Exception {
         itemWithStockList = (List<ItemWithStock>) th.runTransaction(conn -> {
             if(restaurantDAO.findById(restaurantId).isEmpty()){
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(restaurant));
@@ -177,11 +179,30 @@ public class RestaurantService extends BaseRESTService {
         return Response.status(200).entity(json).build();
     }
 
+    @GET
+    @Path("/{restaurantId}/categories/{categoryId}/items")
+    @Produces("application/json")
+    public Response GetAllItemByCategoryId(@PathParam("restaurantId") Integer restaurantId, @PathParam("categoryId") Integer categoryId) throws Exception{
+        itemWithStockList = (List<ItemWithStock>) th.runTransaction(conn -> {
+            if(restaurantDAO.findById(restaurantId).isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Restaurant()));
+            }
+            if(categoryDAO.findById(categoryId).isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Category()));
+            }
+            List<ItemWithStock> itemWithStockList = itemWithStockDAO.findByRestaurantId(restaurantId, "category_id="+categoryId);
+            return itemWithStockList;
+        });
+        baseResponse = new BaseResponse(true,200, itemWithStockList);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(200).entity(json).build();
+    }
+
     @POST
     @Path("/{restaurantId}/items")
     @Consumes("application/json")
     @Produces("application/json")
-    public Response addItem(List<ItemWithStock> itemWithStockList, @PathParam("restaurantId") int restaurantId) throws Exception {
+    public Response addItem(List<ItemWithStock> itemWithStockList, @PathParam("restaurantId") Integer restaurantId) throws Exception {
         if(itemWithStockList.isEmpty()){
             throw new BadRequestException();
         }
@@ -249,7 +270,7 @@ public class RestaurantService extends BaseRESTService {
     @GET
     @Path("/{restaurantId}/users")
     @Produces("application/json")
-    public Response getAllUser(@PathParam("restaurantId") int restaurantId) throws Exception {
+    public Response getAllUser(@PathParam("restaurantId") Integer restaurantId) throws Exception {
         users = (List<User>) th.runTransaction(conn -> {
             if(restaurantDAO.findById(restaurantId).isEmpty()){
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(restaurant));
@@ -265,7 +286,7 @@ public class RestaurantService extends BaseRESTService {
     @GET
     @Path("/{restaurantId}/receipts")
     @Produces("application/json")
-    public Response getAllReceipt(@PathParam("restaurantId") int restaurantId) throws Exception {
+    public Response getAllReceipt(@PathParam("restaurantId") Integer restaurantId) throws Exception {
         receipts = (List<Receipt>) th.runTransaction(conn -> {
             if(restaurantDAO.findById(restaurantId).isEmpty()){
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(new Restaurant()));
