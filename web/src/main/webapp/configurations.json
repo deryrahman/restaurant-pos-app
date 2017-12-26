@@ -2,7 +2,12 @@
   "baseUrl": "http://localhost:8080",
   "endpoints": {
     "login": "/auth/login",
-    "registerIdentity": "/auth/register",
-    "registerUser": "/core/users"
+    "register": "/auth/register",
+    "user": "/core/users",
+    "restaurant": "/core/restaurants",
+    "receipts": "/core/receipts",
+    "item": "/core/items",
+    "category": "/core/categories",
+    "member": "/core/members"
   }
 }

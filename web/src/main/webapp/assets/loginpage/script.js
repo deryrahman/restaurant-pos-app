@@ -1,6 +1,7 @@
 $(document).ready(function() {
 
     var config;
+    var baseUrl;
     var loginUrl;
     var registerUserUrl;
     var registerIdentityUrl;
@@ -8,10 +9,10 @@ $(document).ready(function() {
     var configUrl = "configurations.json";
     $.getJSON(configUrl, function (data) {
         config = data;
-        var baseUrl = config.baseUrl;
+        baseUrl = config.baseUrl;
         loginUrl = baseUrl + config.endpoints.login;
-        registerIdentityUrl = baseUrl + config.endpoints.registerIdentity;
-        registerUserUrl = baseUrl + config.endpoints.registerUser;
+        registerIdentityUrl = baseUrl + config.endpoints.register;
+        registerUserUrl = baseUrl + config.endpoints.user;
     });
 
     $('#login-form').submit(function (e) {
@@ -34,7 +35,7 @@ $(document).ready(function() {
     });
 
     var successfulLogin = function (token) {
-        Cookies.set('userToken', token);
+        Cookies.set('POSRESTAURANT', token);
         alert(token);
     };
 
@@ -138,8 +139,12 @@ $(document).ready(function() {
     };
 
     var isRestaurantIdValid = function () {
+        var restaurantId = $('#restaurant-id').val();
+        var restaurantUrl = baseUrl + config.endpoints.restaurant + "/" + restaurantId;
+
         var warning = $('#restaurant-warning');
-        if (isEmpty('#restaurant-id')) {
+        var isRestaurantExist = $.get(restaurantUrl).status === 200;
+        if (isEmpty('#restaurant-id') || !isRestaurantExist) {
             warning
                 .html("Please insert a valid restaurant ID.")
                 .show();
@@ -147,6 +152,7 @@ $(document).ready(function() {
             warning.hide();
             return true;
         }
+
         return false;
     };
 
