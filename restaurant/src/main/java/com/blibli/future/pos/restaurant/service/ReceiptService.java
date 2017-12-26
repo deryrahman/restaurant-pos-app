@@ -98,6 +98,7 @@ public class ReceiptService extends BaseRESTService{
     @PUT
     @Path("/{id}")
     @Consumes("application/json")
+    @Produces("application/json")
     public Response update(@PathParam("id") int id, Receipt receipt) throws Exception {
         throw new NotAllowedException(ErrorMessage.PUT_NOT_ALLOWED, Response.status(405).build());
     }

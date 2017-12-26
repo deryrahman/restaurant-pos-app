@@ -87,19 +87,19 @@ public class User extends BaseResource{
 
     @Override
     public Boolean isEmpty() {
-        return (id == null || timestampCreated == null || restaurantId == null || email == null || name == null);
+        return (id == null || timestampCreated == null || notValidAttribute());
     }
 
     @Override
     public Boolean notValidAttribute() {
-        return (restaurantId == null || email == null || name == null);
+        return (restaurantId == null || email == null || name == null || email.isEmpty() || name.isEmpty());
     }
 
     @Override
     public Map<String,String> requiredAttribute(){
         Map<String, String> required = new HashMap<>();
-        if(email == null) required.put("email", "String");
-        if(name == null) required.put("name", "String");
+        if(email == null || email.isEmpty()) required.put("email", "String");
+        if(name == null || name.isEmpty()) required.put("name", "String");
         if(restaurantId == null) required.put("restaurantId", "Integer");
         return required;
     }

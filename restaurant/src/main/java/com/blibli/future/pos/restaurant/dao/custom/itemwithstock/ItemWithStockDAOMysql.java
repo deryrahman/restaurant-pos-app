@@ -117,8 +117,8 @@ public class ItemWithStockDAOMysql extends MysqlDAO<ItemWithStock> implements It
     @Override
     public void update(Integer restaurantId, Integer itemId, Integer stock) throws SQLException {
         String query = "UPDATE restaurant_item SET " +
-                "stock = ? +" +
-                "WHERE restaurant_id = ?" +
+                "stock = ? " +
+                "WHERE restaurant_id = ? " +
                 "AND item_id = ?";
         ps = TransactionHelper.getConnection().prepareStatement(query);
         ps.setInt(1, stock);

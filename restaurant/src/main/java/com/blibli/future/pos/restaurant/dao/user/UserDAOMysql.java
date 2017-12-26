@@ -98,7 +98,7 @@ public class UserDAOMysql extends MysqlDAO<User> implements UserDAO {
                 "name = ?, " +
                 "restaurant_id = ?," +
                 "email = ?," +
-                "role = ?" +
+                "role = ? " +
                 "WHERE id = ?";
         ps = TransactionHelper.getConnection().prepareStatement(query);
         ps.setString(1, user.getName());

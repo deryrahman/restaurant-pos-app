@@ -82,7 +82,7 @@ public class MemberDAOMysql extends MysqlDAO<Member> implements MemberDAO {
         String query = "UPDATE members SET " +
                 "name = ?, " +
                 "address = ?," +
-                "email = ?," +
+                "email = ? " +
                 "WHERE id = ?";
         ps = TransactionHelper.getConnection().prepareStatement(query);
         ps.setString(1, member.getName());

@@ -108,6 +108,7 @@ public class ItemService extends BaseRESTService{
 
     @DELETE
     @Path("/{id}")
+    @Produces("application/json")
     public Response delete(@PathParam("id") int id) throws Exception {
         throw new NotAllowedException(ErrorMessage.DELETE_NOT_ALLOWED, Response.status(405).build());
 //        th.runTransaction(conn -> {
@@ -126,6 +127,7 @@ public class ItemService extends BaseRESTService{
     @PUT
     @Path("/{id}")
     @Consumes("application/json")
+    @Produces("application/json")
     public Response update(@PathParam("id") int id, Item item) throws Exception {
         if(item.notValidAttribute()){
             throw new BadRequestException(ErrorMessage.requiredValue(item));

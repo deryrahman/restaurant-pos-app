@@ -63,14 +63,14 @@ public class Restaurant extends BaseResource{
 
     @Override
     public Boolean notValidAttribute() {
-        return (address == null || phone == null);
+        return (address == null || phone == null || address.isEmpty() || phone.isEmpty());
     }
 
     @Override
     public Map<String, String> requiredAttribute() {
         Map<String, String> required = new HashMap<>();
-        if(address == null) required.put("address", "String");
-        if(phone == null) required.put("phone", "String");
+        if(address == null || address.isEmpty()) required.put("address", "String");
+        if(phone == null || phone.isEmpty()) required.put("phone", "String");
         return required;
     }
 }

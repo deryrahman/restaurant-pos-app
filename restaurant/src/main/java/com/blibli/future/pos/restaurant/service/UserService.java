@@ -102,6 +102,7 @@ public class UserService extends BaseRESTService {
 
     @DELETE
     @Path("/{id}")
+    @Produces("application/json")
     public Response delete(@PathParam("id") int id) throws Exception {
 
         th.runTransaction(conn -> {
@@ -120,6 +121,7 @@ public class UserService extends BaseRESTService {
     @PUT
     @Path("/{id}")
     @Consumes("application/json")
+    @Produces("application/json")
     public Response update(@PathParam("id") int id, User user) throws Exception {
         if(user.notValidAttribute()){
             throw new BadRequestException(ErrorMessage.requiredValue(user));

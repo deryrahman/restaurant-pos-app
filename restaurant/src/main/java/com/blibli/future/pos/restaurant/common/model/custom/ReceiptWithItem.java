@@ -39,18 +39,18 @@ public class ReceiptWithItem extends BaseResource {
 
     @Override
     public Boolean isEmpty() {
-        return receiptId == null;
+        return receiptId == null || notValidAttribute();
     }
 
     @Override
     public Boolean notValidAttribute() {
-        return items == null;
+        return items == null || items.isEmpty();
     }
 
     @Override
     public Map<String, String> requiredAttribute() {
         Map<String, String> required = new HashMap<>();
-        if(items == null) required.put("items", "List of ItemOnReceipt");
+        if(items == null || items.isEmpty()) required.put("items", "List of ItemOnReceipt");
         return required;
     }
 }

@@ -59,12 +59,12 @@ public class ItemOnReceipt extends BaseResource {
 
     @Override
     public Boolean isEmpty() {
-        return itemId == null;
+        return itemId == null || notValidAttribute();
     }
 
     @Override
     public Boolean notValidAttribute() {
-        return (itemId == null || count == null);
+        return (itemId == null || count == null || count < 0);
     }
 
     @Override

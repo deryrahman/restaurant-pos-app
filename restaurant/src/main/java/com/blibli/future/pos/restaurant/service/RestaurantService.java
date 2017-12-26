@@ -114,6 +114,7 @@ public class RestaurantService extends BaseRESTService {
 
     @DELETE
     @Path("/{id}")
+    @Produces("application/json")
     public Response delete(@PathParam("id") int id) throws Exception {
         th.runTransaction(conn -> {
             if(restaurantDAO.findById(id).isEmpty()){
@@ -131,6 +132,7 @@ public class RestaurantService extends BaseRESTService {
     @PUT
     @Path("/{id}")
     @Consumes("application/json")
+    @Produces("application/json")
     public Response update(@PathParam("id") int id, Restaurant restaurant) throws Exception {
         th.runTransaction(conn -> {
             this.restaurant = restaurantDAO.findById(id);
@@ -215,6 +217,35 @@ public class RestaurantService extends BaseRESTService {
         });
     }
 
+    @PUT
+    @Path("/{restaurantId}/items/{itemId}")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response updateStock(@PathParam("restaurantId") Integer restaurantId, @PathParam("itemId") Integer itemId, ItemWithStock itemWithStock) throws Exception{
+        itemWithStock.setRestaurantId(restaurantId);
+        itemWithStock.setItemId(itemId);
+        if(itemWithStock.isEmpty()){
+            throw new BadRequestException(ErrorMessage.requiredValue(itemWithStock));
+        }
+        th.runTransaction(conn -> {
+            // Check restaturant valid
+            Restaurant restaurant = restaurantDAO.findById(restaurantId);
+            if(restaurant.isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Restaurant()));
+            }
+
+            if(itemDAO.findById(itemWithStock.getItemId()).isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Item()));
+            }
+
+            itemWithStockDAO.update(itemWithStock.getRestaurantId(), itemWithStock.getItemId(), itemWithStock.getStock());
+            return null;
+        });
+
+        baseResponse = new BaseResponse(true, 200);
+        json = objectMapper.writeValueAsString(baseResponse);
+        return Response.status(200).entity(json).build();
+    }
     @GET
     @Path("/{restaurantId}/users")
     @Produces("application/json")
@@ -274,6 +305,11 @@ public class RestaurantService extends BaseRESTService {
 
     public void insertReceipt(Integer restaurantId, ReceiptWithItem receiptWithItem) throws Exception {
         th.runTransaction(conn -> {
+            // check if restaurant exist
+            if(restaurantDAO.findById(restaurantId).isEmpty()){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Restaurant()));
+            }
+
             // Check if item on receipt is valid
             BigDecimal total = BigDecimal.ZERO;
             for(int i = 0; i < receiptWithItem.getItems().size(); i++){
@@ -287,9 +323,17 @@ public class RestaurantService extends BaseRESTService {
                 }
                 item.setItemName(item1.getName());
                 BigDecimal decimal = item1.getPrice();
-                BigDecimal subtotal = decimal.multiply(BigDecimal.valueOf(item1.getPrice().longValue()));
+                BigDecimal subtotal = decimal.multiply(BigDecimal.valueOf(item.getCount().longValue()));
                 item.setSubTotal(subtotal);
                 total = total.add(subtotal);
+
+                // check stock and decrease stock by count item
+                ItemWithStock itemWithStock = itemWithStockDAO.findById(restaurantId, item.getItemId());
+                if(itemWithStock.getStock()<item.getCount()){
+                    throw new BadRequestException("Stock is not sufficient");
+                }
+                Integer remainStock = itemWithStock.getStock()-item.getCount();
+                itemWithStockDAO.update(restaurantId, item.getItemId(), remainStock);
             }
 
             // Check if receipt id is valid
@@ -313,31 +357,4 @@ public class RestaurantService extends BaseRESTService {
             return null;
         });
     }
-//
-
-//
-//    /**
-//     * special purpose of nested resources. Like /restaurants/1/users. It will call /users, on userResource
-//     */
-//    @GET
-//    @Path("/{restaurantId}/users")
-//    @Produces("application/json")
-//    public Response getAllUser(@PathParam("restaurantId") int restaurantId) throws Exception {
-//        tx.init();
-//        List<User> users = userDAO.find("restaurant_id="+restaurantId);
-//        tx.commit();
-//
-//        Map<String, Object> map = new HashMap<>();
-//        Metadata metadata = new Metadata();
-//        metadata.setCount(users.size());
-//        metadata.setLimit(users.size());
-//
-//        map.put("metadata", metadata);
-//        map.put("results", users);
-//
-//        String json = gson.toJson(map);
-//        return Response.status(200).entity(json).build();
-//    }
-
-    // ---- END NESTED ----
 }
