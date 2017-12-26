@@ -1,6 +1,9 @@
+version 'unspecified'
+
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'war'
+
 sourceCompatibility = 1.8
 
 repositories {
@@ -11,5 +14,6 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile 'io.jsonwebtoken:jjwt:0.9.0'
     compile 'mysql:mysql-connector-java:5.1.6'
-    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
+    compile 'javax.servlet:javax.servlet-api:3.1.0'
+    compile 'de.svenkubiak:jBCrypt:0.4'
 }

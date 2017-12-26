@@ -40,7 +40,7 @@ public class TokenGenerator {
                                      String userAgent) {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-        String role = UserService.getRole(username);
+        String role = UserService.getRoleByUsername(username);
 
         long nowMillis = System.currentTimeMillis();
         long expMillis = nowMillis + ttlMillis;
@@ -62,36 +62,17 @@ public class TokenGenerator {
         return jwt;
     }
 
-    public static String parseJwt(String jwt) {
-        String status = "";
-        Map<String, Object> payload = new HashMap<>();
+    public static Map<String, Object> parseJwt(String jwt) {
+        Map<String, Object> payload;
         Map<String, Object> parsedInfo = new HashMap<>();
 
         Claims claims;
-        try {
-            claims = Jwts.parser()
-                    .setSigningKey(key)
-                    .parseClaimsJws(jwt)
-                    .getBody();
+        claims = Jwts.parser()
+                .setSigningKey(key)
+                .parseClaimsJws(jwt)
+                .getBody();
 
-            status = "ok";
-            payload = generatePayloadFromClaims(claims);
-
-        } catch (SignatureException e) {
-            status = "invalid";
-
-        } catch (ExpiredJwtException e) {
-            status = "expired";
-
-        } catch (JwtException e) {
-            status = "unknown";
-
-        } finally {
-            parsedInfo.put("status", status);
-            parsedInfo.put("payload", payload);
-        }
-
-        return mapToJson(parsedInfo);
+        return generatePayloadFromClaims(claims);
     }
 
     private static Map<String, Object> generatePayloadFromClaims(Claims claims) {
@@ -102,26 +83,17 @@ public class TokenGenerator {
         String userAgent = claims.get("uag", String.class);
         String role = claims.get("role", String.class);
         String refreshToken = generateJwt(username, ipAddress, userAgent);
+        Long userId = UserService.getIdByUsername(username);
 
         payload.put("username", username);
         payload.put("ipAddress", ipAddress);
         payload.put("userAgent", userAgent);
         payload.put("role", role);
         payload.put("refreshToken", refreshToken);
+        payload.put("id", userId);
 
         return payload;
     }
 
-    private static String mapToJson(Map<String, Object> map) {
-        String parsedJson;
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            parsedJson = mapper.writeValueAsString(map);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return "Failed to parse token. \nError: " + e.getMessage();
-        }
-        return parsedJson;
-    }
 
 }
