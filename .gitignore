@@ -26,4 +26,4 @@ gradle/
 
 # Project
 *JDBCConn.java
-*MySQLConfiguration.java
+/auth/src/main/java/util/MySQLConfiguration.java
