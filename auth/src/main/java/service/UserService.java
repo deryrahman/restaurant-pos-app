@@ -5,6 +5,7 @@ import exception.FailedCRUDOperationException;
 import exception.InvalidCredentialsException;
 import model.UserIdentity;
 import model.UserIdentityDAO;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
 import java.util.Objects;
@@ -14,7 +15,8 @@ public class UserService {
     private static List<UserIdentity> userIdentities = userIdentityDAO.getAllUserIdentity();
 
     public static boolean isValid(String username, String password) throws InvalidCredentialsException {
-        return getUserIdentity(username).getPassword().equals(password);
+        String hashed = getUserIdentity(username).getPassword();
+        return BCrypt.checkpw(password, hashed);
     }
 
     public static String getRole(String username) {
@@ -37,9 +39,17 @@ public class UserService {
     public static long createUserIdentity(UserIdentity newUserIdentity) throws FailedCRUDOperationException {
         checkDuplicateIdentity(newUserIdentity);
 
+        String hashedPassword = hashPassword(newUserIdentity.getPassword());
+        newUserIdentity.setPassword(hashedPassword);
+
         userIdentityDAO.createUserIdentity(newUserIdentity);
         userIdentities.add(newUserIdentity);
         return newUserIdentity.getId();
+    }
+
+    private static String hashPassword(String password) {
+        String salt = BCrypt.gensalt();
+        return BCrypt.hashpw(password, salt);
     }
 
     private static void checkDuplicateIdentity(UserIdentity newUserIdentity) throws DuplicateDataException {
