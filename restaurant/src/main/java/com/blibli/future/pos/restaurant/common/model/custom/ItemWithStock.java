@@ -2,6 +2,7 @@ package com.blibli.future.pos.restaurant.common.model.custom;
 
 import com.blibli.future.pos.restaurant.common.model.BaseResource;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +12,8 @@ public class ItemWithStock extends BaseResource {
     private Integer restaurantId;
     private String restaurantAddress;
     private Integer stock;
+    private BigDecimal price;
+    private Integer categoryId;
 
     public ItemWithStock() {
     }
@@ -55,6 +58,22 @@ public class ItemWithStock extends BaseResource {
         this.stock = stock;
     }
 
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+
     @Override
     public String toString() {
         return "ItemWithStock{" +
@@ -63,6 +82,8 @@ public class ItemWithStock extends BaseResource {
                 ", restaurantId=" + restaurantId +
                 ", restaurantAddress='" + restaurantAddress + '\'' +
                 ", stock=" + stock +
+                ", price=" + price +
+                ", categoryId=" + categoryId +
                 '}';
     }
 

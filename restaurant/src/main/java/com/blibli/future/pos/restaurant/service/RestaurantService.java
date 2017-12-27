@@ -193,7 +193,7 @@ public class RestaurantService extends BaseRESTService {
             if(categoryDAO.findById(categoryId).isEmpty()){
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(new Category()));
             }
-            List<ItemWithStock> itemWithStockList = itemWithStockDAO.findByRestaurantId(restaurantId, "category_id="+categoryId);
+            List<ItemWithStock> itemWithStockList = itemWithStockDAO.findByRestaurantId(restaurantId, "items.category_id="+categoryId);
             return itemWithStockList;
         });
         if(itemWithStockList.isEmpty()){

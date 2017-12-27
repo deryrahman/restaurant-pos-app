@@ -35,6 +35,8 @@ public class ItemWithStockDAOMysql extends MysqlDAO<ItemWithStock> implements It
         itemWithStock.setRestaurantId(rs.getInt("restaurants.id"));
         itemWithStock.setRestaurantAddress(rs.getString("restaurants.address"));
         itemWithStock.setStock(rs.getInt("stock"));
+        itemWithStock.setPrice(rs.getBigDecimal("items.price"));
+        itemWithStock.setCategoryId(rs.getInt("items.category_id"));
     }
 
     @Override
@@ -65,7 +67,7 @@ public class ItemWithStockDAOMysql extends MysqlDAO<ItemWithStock> implements It
 
     @Override
     public List<ItemWithStock> findByRestaurantId(Integer restaurantId, String filter) throws SQLException {
-        itemWithStockList = find("restaurants.id = "+ restaurantId);
+        itemWithStockList = find("restaurants.id = "+ restaurantId + " AND " + filter);
         for (ItemWithStock itemWithStock1: itemWithStockList) {
             itemWithStock = itemWithStock1;
             removeRestaurantAttr();
