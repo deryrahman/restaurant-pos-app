@@ -356,6 +356,9 @@ public class RestaurantService extends BaseRESTService {
 
                 // check stock and decrease stock by count item
                 ItemWithStock itemWithStock = itemWithStockDAO.findById(restaurantId, item.getItemId());
+                if(itemWithStock.isEmpty()){
+                    throw new NotFoundException(ErrorMessage.NotFoundFrom(new ItemWithStock()));
+                }
                 if(itemWithStock.getStock()<item.getCount()){
                     throw new BadRequestException("Stock is not sufficient");
                 }
