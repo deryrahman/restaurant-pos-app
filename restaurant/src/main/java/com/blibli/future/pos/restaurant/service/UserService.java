@@ -7,6 +7,7 @@ import com.blibli.future.pos.restaurant.dao.user.UserDAOMysql;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("ALL")
@@ -22,25 +23,29 @@ public class UserService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response create(List<User> users) throws Exception {
+        insertId();
         if(users.isEmpty()){
             throw new BadRequestException();
         }
 
+        this.users = new ArrayList<>();
         for (User user: users) {
             if(user.notValidAttribute()){
                 throw new BadRequestException(ErrorMessage.requiredValue(user));
             }
 
-            th.runTransaction(conn -> {
+            User user1 = (User) th.runTransaction(conn -> {
                 if(!userDAO.findById(user.getEmail()).isEmpty()){
                     throw new BadRequestException("Email already taken");
                 }
                 userDAO.create(user);
-                return null;
+                return user;
             });
+
+            this.users.add(user);
         }
 
-        baseResponse = new BaseResponse(true, 201);
+        baseResponse = new BaseResponse(true, 201, users);
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(201).entity(json).build();
     }
@@ -48,6 +53,7 @@ public class UserService extends BaseRESTService {
     @GET
     @Produces("application/json")
     public Response getAll() throws Exception {
+        insertId();
         users = (List<User>) th.runTransaction(conn -> {
             List<User> users = userDAO.find("true");
             if(users.size()==0){

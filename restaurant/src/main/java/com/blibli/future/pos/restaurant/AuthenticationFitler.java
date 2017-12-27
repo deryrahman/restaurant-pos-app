@@ -48,13 +48,17 @@ public class AuthenticationFitler implements ContainerRequestFilter {
 
         ObjectMapper mapper = new ObjectMapper();
         Map<String,Object> map = mapper.readValue(response.body().string(), Map.class);
+        response.body().close();
+
         if(!map.get("status").equals("ok")){
             throw new NotAuthorizedException("Invalid token");
         }
 
         Map<String,Object> payload = (Map<String,Object>) map.get("payload");
         String refreshToken = payload.get("refreshToken").toString();
+        Integer userId = Integer.valueOf(payload.get("id").toString());
 
         MDC.put("refreshToken",refreshToken);
+        MDC.put("userId", userId);
     }
 }
