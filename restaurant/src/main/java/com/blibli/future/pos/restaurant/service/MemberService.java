@@ -21,6 +21,10 @@ public class MemberService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response create(List<Member> members) throws Exception {
+        initializeRole();
+        if(!(userIs(CASHIER) || userIs(MANAGER))){
+            throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
+        }
         if (members.isEmpty()) {
             throw new BadRequestException();
         }
@@ -106,6 +110,10 @@ public class MemberService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response update(@PathParam("id") int id, Member member) throws Exception {
+        initializeRole();
+        if(!(userIs(CASHIER) || userIs(MANAGER))){
+            throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
+        }
         if (member.notValidAttribute()) {
             throw new BadRequestException(ErrorMessage.requiredValue(member));
         }

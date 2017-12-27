@@ -4,7 +4,9 @@ import com.blibli.future.pos.restaurant.common.ErrorMessage;
 import com.blibli.future.pos.restaurant.common.model.BaseResponse;
 import com.blibli.future.pos.restaurant.common.model.Category;
 import com.blibli.future.pos.restaurant.common.model.Item;
+import com.blibli.future.pos.restaurant.common.model.custom.ItemWithStock;
 import com.blibli.future.pos.restaurant.dao.category.CategoryDAOMysql;
+import com.blibli.future.pos.restaurant.dao.custom.itemwithstock.ItemWithStockDAOMysql;
 import com.blibli.future.pos.restaurant.dao.item.ItemDAOMysql;
 
 import javax.ws.rs.*;
@@ -14,9 +16,9 @@ import java.util.List;
 @SuppressWarnings("ALL")
 @Path("/categories")
 public class CategoryService extends BaseRESTService {
-    private int id = 0;
     private CategoryDAOMysql categoryDAO = new CategoryDAOMysql();
     private ItemDAOMysql itemDAO = new ItemDAOMysql();
+    private ItemWithStockDAOMysql itemWithStockDAO = new ItemWithStockDAOMysql();
     private List<Category> categories;
     private List<Item> items;
     private Category category;
@@ -26,6 +28,10 @@ public class CategoryService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response create(List<Category> categories) throws Exception {
+        initializeRole();
+        if(!userIs(ADMIN)){
+            throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
+        }
         if (categories.isEmpty()) {
             throw new BadRequestException();
         }
@@ -49,7 +55,6 @@ public class CategoryService extends BaseRESTService {
     @GET
     @Produces("application/json")
     public Response getAll() throws Exception {
-        System.out.print(id);
         categories = (List<Category>) th.runTransaction(conn -> {
             List<Category> categories = categoryDAO.find("true");
             if (categories.size() == 0) {
@@ -105,6 +110,10 @@ public class CategoryService extends BaseRESTService {
     @Path("/{id}")
     @Produces("application/json")
     public Response delete(@PathParam("id") int id) throws Exception {
+        initializeRole();
+        if(!userIs(ADMIN)){
+            throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
+        }
         if(id==1){
             throw new BadRequestException("Default category cannot be deleted");
         }
@@ -112,6 +121,7 @@ public class CategoryService extends BaseRESTService {
             if(categoryDAO.findById(id).isEmpty()){
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(new Category()));
             }
+            // update as default category
             List<Item> items = itemDAO.find("category_id="+id);
             for (Item item:items) {
                 item.setCategoryId(1);
@@ -131,6 +141,10 @@ public class CategoryService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response update(@PathParam("id") int id, Category category) throws Exception {
+        initializeRole();
+        if(!userIs(ADMIN)){
+            throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
+        }
         if(id==1){
             throw new BadRequestException("Default category cannot be update");
         }
@@ -167,21 +181,42 @@ public class CategoryService extends BaseRESTService {
     @Path("/{categoryId}/items")
     @Produces("application/json")
     public Response getAllItem(@PathParam("categoryId") int categoryId) throws Exception {
-        items = (List<Item>) th.runTransaction(conn -> {
+        initializeRole();
+        if(userIs(ADMIN)){
+            items = (List<Item>) th.runTransaction(conn -> {
+                // check categoryId first
+                if (categoryDAO.findById(categoryId).isEmpty()) {
+                    throw new NotFoundException(ErrorMessage.NotFoundFrom(new Category()));
+                }
+
+                // search specific item with category_id
+                List<Item> items = itemDAO.find("category_id=" + categoryId);
+                if (items.size() == 0) {
+                    throw new NotFoundException(ErrorMessage.NotFoundFrom(new Item()));
+                }
+                return items;
+            });
+
+            baseResponse = new BaseResponse(true, 200, items);
+            json = objectMapper.writeValueAsString(baseResponse);
+            return Response.status(200).entity(json).build();
+        }
+
+        List<ItemWithStock> itemWithStockList = (List<ItemWithStock>) th.runTransaction(conn -> {
             // check categoryId first
             if (categoryDAO.findById(categoryId).isEmpty()) {
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(new Category()));
             }
 
             // search specific item with category_id
-            List<Item> items = itemDAO.find("category_id=" + categoryId);
+            List<ItemWithStock> items = itemWithStockDAO.findByRestaurantId(this.restaurantId, "category_id=" + categoryId);
             if (items.size() == 0) {
-                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Item()));
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new ItemWithStock()));
             }
             return items;
         });
 
-        baseResponse = new BaseResponse(true, 200, items);
+        baseResponse = new BaseResponse(true, 200, itemWithStockList);
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(200).entity(json).build();
     }

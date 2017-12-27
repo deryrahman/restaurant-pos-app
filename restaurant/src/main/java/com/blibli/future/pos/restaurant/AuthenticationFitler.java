@@ -2,6 +2,7 @@ package com.blibli.future.pos.restaurant;
 
 import com.blibli.future.pos.restaurant.common.ApplicationUtility;
 import com.blibli.future.pos.restaurant.common.model.Config;
+import com.blibli.future.pos.restaurant.service.BaseRESTService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 import org.apache.log4j.MDC;
@@ -60,5 +61,11 @@ public class AuthenticationFitler implements ContainerRequestFilter {
 
         MDC.put("refreshToken",refreshToken);
         MDC.put("userId", userId);
+
+        try {
+            BaseRESTService.insertId();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -14,6 +14,7 @@ public class ErrorMessage {
     public static final String POST_NOT_ALLOWED = "POST" + NOT_ALLOWED;
     public static final String DELETE_NOT_ALLOWED = "DELETE" + NOT_ALLOWED;
     public static final String PUT_NOT_ALLOWED = "PUT" + NOT_ALLOWED;
+    public static final String USER_NOT_ALLOWED = "Not allowed";
 
     public static String NotFoundFrom(Object obj){
         return obj.getClass().getSimpleName() + " not found";

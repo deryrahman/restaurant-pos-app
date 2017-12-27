@@ -23,7 +23,10 @@ public class UserService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response create(List<User> users) throws Exception {
-        insertId();
+        initializeRole();
+        if(!(userIs(ADMIN) || userIs(MANAGER))){
+            throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
+        }
         if(users.isEmpty()){
             throw new BadRequestException();
         }
@@ -37,6 +40,17 @@ public class UserService extends BaseRESTService {
             User user1 = (User) th.runTransaction(conn -> {
                 if(!userDAO.findById(user.getEmail()).isEmpty()){
                     throw new BadRequestException("Email already taken");
+                }
+                if(userIs(MANAGER)){
+                    user.setRestaurantId(this.restaurantId);
+                    if(user.getRole() == ADMIN){
+                        user.setRole(MANAGER);
+                    }
+                }
+                if(userIs(ADMIN)){
+                    if(user.getRole() == CASHIER){
+                        user.setRole(MANAGER);
+                    }
                 }
                 userDAO.create(user);
                 return user;
@@ -53,18 +67,34 @@ public class UserService extends BaseRESTService {
     @GET
     @Produces("application/json")
     public Response getAll() throws Exception {
-        insertId();
-        users = (List<User>) th.runTransaction(conn -> {
-            List<User> users = userDAO.find("true");
-            if(users.size()==0){
-                throw new NotFoundException(ErrorMessage.NotFoundFrom(new User()));
-            }
-            return users;
-        });
+        initializeRole();
+        if(userIs(ADMIN)) {
+            users = (List<User>) th.runTransaction(conn -> {
+                List<User> users = userDAO.find("true");
+                if (users.size() == 0) {
+                    throw new NotFoundException(ErrorMessage.NotFoundFrom(new User()));
+                }
+                return users;
+            });
 
-        baseResponse = new BaseResponse(true,200,users);
-        json = objectMapper.writeValueAsString(baseResponse);
-        return Response.status(200).entity(json).build();
+            baseResponse = new BaseResponse(true, 200, users);
+            json = objectMapper.writeValueAsString(baseResponse);
+            return Response.status(200).entity(json).build();
+        }
+        if(userIs(MANAGER)){
+            users = (List<User>) th.runTransaction(conn -> {
+                List<User> users = userDAO.find("restaurant_id="+this.restaurantId);
+                if (users.size() == 0) {
+                    throw new NotFoundException(ErrorMessage.NotFoundFrom(new User()));
+                }
+                return users;
+            });
+
+            baseResponse = new BaseResponse(true, 200, users);
+            json = objectMapper.writeValueAsString(baseResponse);
+            return Response.status(200).entity(json).build();
+        }
+        throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
     }
 
     @DELETE
@@ -85,11 +115,19 @@ public class UserService extends BaseRESTService {
     @Path("/{id}")
     @Produces("application/json")
     public Response get(@PathParam("id") int id) throws Exception {
-
+        initializeRole();
+        if(!(userIs(ADMIN) || userIs(MANAGER))){
+            throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
+        }
         this.user = (User) th.runTransaction(conn -> {
             User user = userDAO.findById(id);
             if(user.isEmpty()){
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(user));
+            }
+            if(userIs(MANAGER)){
+                if(user.getRestaurantId()!=this.restaurantId){
+                    throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
+                }
             }
             return user;
         });
@@ -110,10 +148,19 @@ public class UserService extends BaseRESTService {
     @Path("/{id}")
     @Produces("application/json")
     public Response delete(@PathParam("id") int id) throws Exception {
-
+        initializeRole();
+        if(!(userIs(ADMIN) || userIs(MANAGER))){
+            throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
+        }
         th.runTransaction(conn -> {
-            if(userDAO.findById(id).isEmpty()){
+            User user = userDAO.findById(id);
+            if(user.isEmpty()){
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(new User()));
+            }
+            if(userIs(MANAGER)){
+                if(user.getRestaurantId()!=this.restaurantId){
+                    throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
+                }
             }
             userDAO.delete(id);
             return null;
@@ -129,9 +176,13 @@ public class UserService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response update(@PathParam("id") int id, User user) throws Exception {
-        if(user.notValidAttribute()){
-            throw new BadRequestException(ErrorMessage.requiredValue(user));
+        initializeRole();
+        if(!(userIs(ADMIN) || userIs(MANAGER))){
+            throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
+//        if(user.notValidAttribute()){
+//            throw new BadRequestException(ErrorMessage.requiredValue(user));
+//        }
         th.runTransaction(conn -> {
             this.user = userDAO.findById(id);
 
@@ -143,6 +194,25 @@ public class UserService extends BaseRESTService {
                 throw new BadRequestException("Id not match");
             }
 
+            if(userIs(MANAGER)){
+                if(this.user.getRestaurantId()!=this.restaurantId){
+                    throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
+                }
+            }
+
+            // fill if have empty
+            if(user.getRole() == null){
+                user.setRole(this.user.getRole());
+            }
+            if(user.getEmail() == null){
+                user.setEmail(this.user.getEmail());
+            }
+            if(user.getRestaurantId() == null){
+                user.setRestaurantId(this.user.getRestaurantId());
+            }
+            if(user.getName() == null){
+                user.setName(this.user.getName());
+            }
             userDAO.update(id,user);
 
             return null;
