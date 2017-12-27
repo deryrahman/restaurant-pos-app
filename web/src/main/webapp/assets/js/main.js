@@ -1,5 +1,7 @@
 var coreService = "http://localhost:8080/restaurant"
 var authService = "http://localhost:8080/auth"
+var restaurantId = 1
+var userId = 1
 
 // Main
 function loadMain(){
@@ -59,7 +61,7 @@ function tabContentCategoryToHTML(id) {
 }
 // Items
 function loadItemByCategoryId(categoryId) {
-    $.getJSON(coreService+"/categories/"+categoryId+"/items", function (data) {
+    $.getJSON(coreService+"/restaurants/"+restaurantId+"/categories/"+categoryId+"/items", function (data) {
         if(!data["success"]){
             console.log(data["message"])
             return;
@@ -67,6 +69,7 @@ function loadItemByCategoryId(categoryId) {
         var payload = data["payload"]
         var items = []
         $.each(payload, function (key, val) {
+            console.log(val)
             items.push(
                 itemToHTML(val)
             )
@@ -76,7 +79,7 @@ function loadItemByCategoryId(categoryId) {
     })
 }
 function loadAllItem() {
-    $.getJSON(coreService+"/items", function (data) {
+    $.getJSON(coreService+"/restaurants/"+restaurantId+"/items", function (data) {
         if(!data["success"]){
             console.log(data["message"])
             return;
@@ -84,21 +87,19 @@ function loadAllItem() {
         var payload = data["payload"]
         var items = []
         $.each(payload, function (key, val) {
-            var id = val["id"]
-            var name = val["name"]
-            var price = val["price"]
-            var categoryId = val["categoryId"]
+            console.log(val)
             items.push(
-                itemToHTML(id,name,price,categoryId)
+                itemToHTML(val)
             )
         })
 
         $("#category-all").empty().append(items)
     })
 }
+
 function itemToHTML(item) {
-    var id = item["id"]
-    var name = item["name"]
+    var id = item["itemId"]
+    var name = item["itemName"]
     var price = item["price"]
     var categoryId = item["categoryId"]
     var itemId = "item-"+item["id"]
