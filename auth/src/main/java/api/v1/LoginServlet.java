@@ -5,6 +5,7 @@ import exception.UnsupportedMediaTypeException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,8 +21,10 @@ public class LoginServlet extends HttpServlet {
         response.setHeader("Access-Control-Allow-Origin", "*");
         PrintWriter output = response.getWriter();
 
+        String jwt = null;
         try {
             String token = generateTokenFromRequest(request);
+            jwt = token;
             response.setStatus(HttpServletResponse.SC_OK);
             output.write(token);
 
@@ -34,6 +37,26 @@ public class LoginServlet extends HttpServlet {
             output.write(e.getMessage());
 
         } finally {
+            Cookie cookie = null;
+            if (request.getCookies() != null) {
+                for (Cookie cookie1 : request.getCookies()) {
+                    if (cookie1.getName().equals("POSRESTAURANT")) {
+                        cookie = cookie1;
+                    }
+                }
+            }
+
+            if(jwt!=null) {
+                if(!jwt.isEmpty()) {
+                    if(cookie == null) {
+                        cookie = new Cookie("POSRESTAURANT", jwt);
+                    }
+                    cookie.setValue(jwt);
+                    cookie.setMaxAge(60 * 60 * 24 * 365);
+                    cookie.setPath("/");
+                    response.addCookie(cookie);
+                }
+            }
             output.close();
         }
     }
