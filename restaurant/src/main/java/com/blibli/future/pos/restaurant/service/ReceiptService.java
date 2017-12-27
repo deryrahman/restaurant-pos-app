@@ -38,7 +38,7 @@ public class ReceiptService extends BaseRESTService{
     @Produces("application/json")
     public Response create(List<ReceiptWithItem> receiptWithItemList) throws Exception {
         initializeRole();
-        if(userIs(MANAGER)){
+        if(!userIs(CASHIER)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
 
