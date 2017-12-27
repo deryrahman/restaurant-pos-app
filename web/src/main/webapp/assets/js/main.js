@@ -1,20 +1,12 @@
 var coreService = "http://localhost:8080/restaurant"
 var authService = "http://localhost:8080/auth"
-var restaurantId = 1
-var userId = 1
+
+var categoryItem = {}
 
 // Main
 function loadMain(){
     loadCategories()
     loadAllItem()
-}
-function getCookie(name) {
-    var value = "; " + document.cookie;
-    var parts = value.split("; " + name + "=");
-    if (parts.length == 2) return parts.pop().split(";").shift();
-}
-// Check auth first
-function isLogin(){
 }
 
 // Categories
@@ -61,7 +53,10 @@ function tabContentCategoryToHTML(id) {
 }
 // Items
 function loadItemByCategoryId(categoryId) {
-    $.getJSON(coreService+"/restaurants/"+restaurantId+"/categories/"+categoryId+"/items", function (data) {
+    if(categoryItem['category-'+categoryId] != null) {
+        return;
+    }
+    $.getJSON(coreService+"/categories/"+categoryId+"/items", function (data) {
         if(!data["success"]){
             console.log(data["message"])
             return;
@@ -70,16 +65,20 @@ function loadItemByCategoryId(categoryId) {
         var items = []
         $.each(payload, function (key, val) {
             console.log(val)
+            var itemId = val["itemId"]
+            if($('#item-'+itemId) != null){
+                val["stock"] = parseInt($('.item-stock-'+itemId).first().text());
+            }
             items.push(
                 itemToHTML(val)
             )
         })
-
-        $("#category-"+categoryId).empty().append(items)
+        categoryItem['category-'+categoryId] = items
+        $("#category-" + categoryId).empty().append(items)
     })
 }
 function loadAllItem() {
-    $.getJSON(coreService+"/restaurants/"+restaurantId+"/items", function (data) {
+    $.getJSON(coreService+"/items", function (data) {
         if(!data["success"]){
             console.log(data["message"])
             return;
@@ -101,6 +100,7 @@ function itemToHTML(item) {
     var id = item["itemId"]
     var name = item["itemName"]
     var price = item["price"]
+    var stock = item["stock"]
     var categoryId = item["categoryId"]
     var itemId = "item-"+item["id"]
 
@@ -112,6 +112,9 @@ function itemToHTML(item) {
     name +
     "</h4>" +
     "</div>" +
+        "<div class='col-xs-4 col-sm-12 align-right stock-item'>" +
+        "Stock : " + "<span class='item-stock-"+id+"'>" + stock + "</span>" +
+        "</div>" +
     "<div class='col-xs-4 col-sm-12 align-right price-item'>" +
     "Rp" + price +
     "</div>" +

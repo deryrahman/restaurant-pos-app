@@ -3,6 +3,16 @@ var authService = "http://localhost:8080/auth"
 
 function addItem(itemId, name, price) {
     // var item = getItemById(itemId)
+
+    var stock = parseInt($('.item-stock-'+itemId).first().text());
+    stock-=1
+    if(stock<0){
+        alert("Stock habis!")
+        return;
+    }
+    $('.item-stock-'+itemId).each(function(){
+        $(this).text(stock);
+    });
     if($('#sidebar-item-'+itemId).length){
         console.log(itemId)
         var cnt = parseInt($('#sidebar-count-item-'+itemId).text());
@@ -72,13 +82,30 @@ function editModalHTML(itemId, name, itemCount){
     "</div>" +
     "<div class='modal-footer'>" +
     "<button type='button' class='btn btn-danger' data-dismiss='modal'>Cancel</button>"+
-    "<button type='button' class='btn btn-success' data-dismiss='modal'>Save</button>"+
+    "<button type='button' class='btn btn-success' data-dismiss='modal' onclick='saveEdit("+itemId+")'>Save</button>"+
     "</div>"+
     "</div>"+
     "</div>"+
     "</div>"
     deleteModalHTML(itemId)
     $('#edit-item-modal').append(result)
+}
+
+function saveEdit(itemId){
+    var cnt = parseInt($('input[name=edit-count-'+itemId+']').val());
+    var stock = parseInt($('.item-stock-'+itemId).first().text()) + parseInt($('#sidebar-count-item-'+itemId).text());
+    console.log(stock)
+    stock-=cnt
+    console.log(stock)
+    if(stock<0){
+        alert("Stock habis!")
+        return;
+    }
+
+    $('.item-stock-'+itemId).each(function(){
+       $(this).text(stock);
+    });
+    $('#sidebar-count-item-'+itemId).text(cnt);
 }
 
 function getItemById(itemId) {
