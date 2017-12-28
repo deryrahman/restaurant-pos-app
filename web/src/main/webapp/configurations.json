@@ -14,6 +14,7 @@
   "pages": {
     "home": "index.html",
     "admin": "adminpage.html",
-    "login": "loginpage.html"
+    "login": "loginpage.html",
+    "manager": ""
   }
 }

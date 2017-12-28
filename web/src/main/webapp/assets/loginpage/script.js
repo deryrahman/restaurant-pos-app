@@ -51,6 +51,8 @@ $(document).ready(function() {
                     window.location.assign(config.pages.home);
                 } else if (userInfo.role === "admin") {
                     window.location.assign(config.pages.admin);
+                } else if (userInfo.role === "manager") {
+                    window.location.assign(config.pages.manager);
                 }
                 console.log(userInfo);
             }
@@ -68,12 +70,54 @@ $(document).ready(function() {
     };
 
     $('#register-form').submit(function (e) {
+        var userData = [{
+            name: $(this).find("#fullname").val(),
+            restaurantId: $(this).find("#restaurant-id").val(),
+            email: $(this).find("#email").val()
+        }];
+        console.log("userData: ");
+        console.log(userData);
+
+        var userIdentity = {
+            username: $(this).find("#new-username").val(),
+            password: $(this).find("#new-password").val(),
+            role: "cashier"
+        };
+        console.log("userIdentity: ");
+        console.log(userIdentity);
+        
+
         if (isFormValid()) {
-            console.log("OK");
+            console.log("Form is valid.");
+            
+            $.ajax(registerUserUrl, {
+                method: "POST",
+                contentType: "application/json",
+                data: userData
+            }).done(function (data) {
+                console.log("Successfully registered user. Response:");
+                console.log(data);
+                userIdentity.id = data.payload[0].id;
+
+                registerIdentity(userIdentity);
+            })
         }
 
         e.preventDefault();
     });
+
+    var registerIdentity = function (userIdentity) {
+        console.log("Registerint identity...");
+        console.log(userIdentity);
+
+        $.ajax(registerIdentityUrl, {
+            method: "POST",
+            contentType: "application/json",
+            data: userIdentity
+        }).done(function (data) {
+            console.log("Successful register user with id = " + data.userId);
+        })
+    };
 
     var isFormValid = function () {
         var validation = {
