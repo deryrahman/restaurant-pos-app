@@ -49,7 +49,7 @@ $(document).ready(function () {
     function initializeAdminPage() {
         setUsername();
         setCounts();
-        //generateSubpages();
+        generatePanels();
     }
 
     function setUsername() {
@@ -76,6 +76,39 @@ $(document).ready(function () {
             $("#item-count-badge").html(data.payload.length);
             $("#item-count-well").append(data.payload.length);
         });
+    }
+
+    function generatePanels() {
+        generateUserPanel();
+        //generateRestaurantPanel();
+        //generateCategoryPanel();
+        //generateItemPanel();
+    }
+
+    function generateUserPanel() {
+        var userList;
+
+        $.get(serviceUrls.user, function (data) {
+            userList = data.payload;
+            console.log(data);
+            console.log(userList);
+
+            userList.forEach(function (item) {
+                $("#user-table").append(userToTableRow(item));
+            })
+        });
+    }
+
+    function userToTableRow(userObject) {
+        row = "<tr>" +
+            "       <td>" + userObject.id + "</td>" +
+            "       <td>" + userObject.name + "</td>" +
+            "       <td>" + userObject.role + "</td>" +
+            "       <td>" + userObject.email + "</td>" +
+            "       <td>" + userObject.restaurantId + "</td>" +
+            "       <td><a role='button'>edit</a></td>" +
+            "</tr>";
+        return row;
     }
 
 
