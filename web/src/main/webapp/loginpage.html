@@ -16,11 +16,8 @@
             <div class="panel panel-login">
                 <div class="panel-heading">
                     <div class="row">
-                        <div class="col-xs-6">
+                        <div class="col-xs-12">
                             <a href="#" class="active" id="login-form-link">Login</a>
-                        </div>
-                        <div class="col-xs-6">
-                            <a href="#" id="register-form-link">Register</a>
                         </div>
                     </div>
                     <hr>
@@ -42,59 +39,6 @@
                                     <div class="row">
                                         <div class="col-sm-6 col-sm-offset-3">
                                             <input type="submit" name="login-submit" id="login-submit" onclick="login(this.form)" tabindex="4" class="form-control btn btn-login" value="Log In">
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                            <form id="register-form" action="#" method="post" role="form" style="display: none;" novalidate>
-                                <div class="form-group">
-                                    <label for="fullname">Full Name</label>
-                                    <div>
-                                        <input type="text" name="fullname" id="fullname" tabindex="1" class="form-control" value="" required>
-                                        <small class="form-text text-muted"></small>
-                                    </div>
-                                    <small id="fullname-warning" class="warning">Fullname warning</small>
-                                </div>
-                                <div class="form-group">
-                                    <label for="new-username">Username</label>
-                                    <div>
-                                        <input type="text" name="username" id="new-username" tabindex="1" class="form-control" value="" required>
-                                        <small class="form-text text-muted">The username should be 20 characters or less.</small>
-                                    </div>
-                                    <small id="username-warning" class="warning">Username warning</small>
-                                </div>
-                                <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <div>
-                                        <input type="email" name="email" id="email" tabindex="1" class="form-control" value="" required>
-                                    </div>
-                                    <small id="email-warning" class="warning">Email warning</small>
-                                </div>
-                                <div class="form-group">
-                                    <label for="new-password">Password</label>
-                                    <div>
-                                        <input type="password" name="password" id="new-password" tabindex="2" class="form-control" required>
-                                    </div>
-                                    <small id="password-warning" class="warning">Password warning</small>
-                                </div>
-                                <div class="form-group">
-                                    <label for="confirm-password">Confirm Password</label>
-                                    <div>
-                                        <input type="password" name="confirm-password" id="confirm-password" tabindex="2" class="form-control" required>
-                                    </div>
-                                    <small id="confirm-warning" class="warning">Confirm password warning</small>
-                                </div>
-                                <div class="form-group">
-                                    <label for="restaurant-id">Restaurant ID</label>
-                                    <div>
-                                        <input type="number" name="restaurant-id" id="restaurant-id" tabindex="2" class="form-control" value="" required>
-                                    </div>
-                                    <small id="restaurant-warning" class="warning">Restaurant ID warning</small>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-sm-6 col-sm-offset-3">
-                                            <input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Register Now">
                                         </div>
                                     </div>
                                 </div>
