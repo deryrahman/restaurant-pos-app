@@ -227,3 +227,57 @@ function proceedReceipt(){
         }
     });
 }
+
+function addMember(){
+    var memberId = $('input[name=member-id]').val()
+    var regisEmail = $('input[name=registration-member-email]').val()
+    var regisName = $('input[name=registration-member-name]').val()
+    var regisAddress = $('input[name=registration-member-address]').val()
+    var isNew = regisName || regisAddress || regisEmail
+    if(memberId ^ isNew){
+        if(isNew) {
+            var memberList = []
+            var member = {
+                "name" : regisName,
+                "address" : regisAddress,
+                "email" : regisEmail
+            }
+            memberList.push(member)
+            addNewMember(memberList)
+        } else {
+            addMemberById(memberId)
+        }
+        $('#add-member-modal').modal('hide')
+    } else {
+        alert("Fill only once")
+    }
+}
+
+function addNewMember(memberList) {
+    $.ajax(coreService+"/members", {
+        data : JSON.stringify(memberList),
+        contentType : 'application/json',
+        type : 'POST',
+        async : false,
+        success: function (data){
+            if(!data['success']){
+                alert("Failed to make receipt!")
+            } else {
+                alert("Member has been added")
+            }
+        }
+    });
+}
+
+function addMemberById(memberId) {
+    console.log(coreService+"/members/"+memberId)
+    $.getJSON(coreService+"/members/"+memberId, function (data) {
+        var payload = data["payload"]
+        alert(payload["name"])
+    })
+        .fail(function(data) {
+            console.log(data["message"])
+            alert("Member not found")
+            return;
+        })
+}
