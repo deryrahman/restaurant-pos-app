@@ -7,6 +7,7 @@ var categoryItem = {}
 function loadMain(){
     loadCategories()
     loadAllItem()
+    loadRestaurant()
 }
 
 // Categories
@@ -119,4 +120,16 @@ function itemToHTML(item) {
     "</div>" +
     "</div>";
     return result
+}
+
+function loadRestaurant(){
+    $.getJSON(coreService+"/restaurants/"+restaurantId, function (data) {
+        var payload = data["payload"]
+        $('#restaurant-branch').text(payload['address'])
+        $('#restaurant-phone').text(payload['phone'])
+    })
+        .fail(function (data) {
+            console.log(data["message"])
+            return;
+        })
 }
