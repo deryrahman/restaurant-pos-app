@@ -48,8 +48,7 @@ $(document).ready(function () {
 
     function initializeAdminPage() {
         setUsername();
-        setOverview();
-        //setStatistics();
+        setCounts();
         //generateSubpages();
     }
 
@@ -57,23 +56,28 @@ $(document).ready(function () {
         $("#username").html(userData.username);
     }
 
-    function setOverview() {
-        $.getJSON(serviceUrls.user, function (data) {
+    function setCounts() {
+        $.get(serviceUrls.user, function (data) {
             $("#user-count-badge").html(data.payload.length);
+            $("#user-count-well").append(data.payload.length);
         });
 
         $.get(serviceUrls.restaurant, function (data) {
             $("#restaurant-count-badge").html(data.payload.length);
+            $("#restaurant-count-well").append(data.payload.length);
         });
 
         $.get(serviceUrls.category, function (data) {
             $("#category-count-badge").html(data.payload.length);
+            $("#category-count-well").append(data.payload.length);
         });
 
         $.get(serviceUrls.item, function (data) {
             $("#item-count-badge").html(data.payload.length);
+            $("#item-count-well").append(data.payload.length);
         });
     }
+
 
     $('#logout-btn').click(function (e) {
         Cookies.remove("POSRESTAURANT");
