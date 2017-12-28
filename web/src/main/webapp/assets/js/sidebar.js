@@ -1,6 +1,9 @@
 var coreService = "http://localhost:8080/restaurant"
 var authService = "http://localhost:8080/auth"
 var tax = 5
+var itemIdCountList;
+
+
 function loadSidebar(){
     $('#invoice-tax').text(tax)
     hideReceiptButton()
@@ -18,7 +21,6 @@ function addItem(itemId, name, price) {
         $(this).text(stock);
     });
     if($('#sidebar-item-'+itemId).length){
-        console.log(itemId)
         var cnt = parseInt($('#sidebar-count-item-'+itemId).text());
         cnt+=1
         $('#sidebar-count-item-'+itemId).text(cnt);
@@ -26,7 +28,6 @@ function addItem(itemId, name, price) {
         $('#sidebar-subtotal-item-'+itemId).text(price*cnt);
         renderEditModal(itemId,name,cnt)
     } else {
-        console.log(itemId)
         var result = "<div id='sidebar-item-" + itemId + "' class='sidebar-item invoice-item padding-v-default invoice-item-with-delete pointer row' data-toggle='modal' data-target='#edit-item-modal-" + itemId + "'>" +
             "<div id='name-item-"+itemId+"' class='col-xs-6 invoice-item-name'> +" +
             name +
@@ -105,9 +106,7 @@ function saveEdit(itemId){
         return;
     }
     var stock = parseInt($('.item-stock-'+itemId).first().text()) + parseInt($('#sidebar-count-item-'+itemId).text());
-    console.log(stock)
     stock-=cnt
-    console.log(stock)
     if(stock<0){
         alert("Stock habis!")
         return;
@@ -135,7 +134,6 @@ function deleteItem(itemId) {
     var total = renderSubTotal(tax)
     renderTotal(total,tax)
     var n = $('.sidebar-item').length
-    console.log("length : " + n)
     if(n == 0){
         hideReceiptButton()
     }
@@ -177,4 +175,55 @@ function hideReceiptButton() {
 }
 function showReceiptButton() {
     $("#receipt-button").children().show();
+}
+
+function renderPayment(){
+    var total = parseInt($('#invoice-total').text())
+    var itemList = []
+    itemIdCountList = {}
+    $('.sidebar-item').each(function(){
+        var id = this.id.split("-")
+        var itemId = parseInt(id[id.length-1])
+        var name = $('#name-item-'+itemId).text()
+        var cnt = parseInt($('#sidebar-count-item-'+itemId).text())
+        var result = "<div id='payment-item-"+itemId+"' class='row'>" +
+        "<div class='payment-item-name col-xs-8'>"+name+"</div>" +
+        "<div class='payment-item-count col-xs-4'>"+cnt+"</div>" +
+        "</div>";
+        itemList.push(result)
+        itemIdCountList[itemId] = cnt
+    });
+    $('#payment-list').empty().append(itemList)
+    $('#payment-total').text(total)
+}
+
+function proceedReceipt(){
+    var itemList = []
+    $.each(itemIdCountList, function (key,val) {
+        var item = {
+            "itemId" : key,
+            "count" : val
+        }
+        itemList.push(item)
+    });
+    var receiptList = []
+    var receipt = {
+        "items" : itemList
+    };
+    receiptList.push(receipt)
+
+    $.ajax(coreService+"/receipts", {
+        data : JSON.stringify(receiptList),
+        contentType : 'application/json',
+        type : 'POST',
+        async : false,
+        success: function (data){
+            if(!data['success']){
+                alert("Failed to make receipt!")
+            } else {
+                alert("Receipt has been added")
+            }
+            $('#invoice-item-list').empty()
+        }
+    });
 }

@@ -64,7 +64,6 @@ function loadItemByCategoryId(categoryId) {
         var payload = data["payload"]
         var items = []
         $.each(payload, function (key, val) {
-            console.log(val)
             var itemId = val["itemId"]
             if($('#item-'+itemId) != null){
                 val["stock"] = parseInt($('.item-stock-'+itemId).first().text());
@@ -80,13 +79,11 @@ function loadItemByCategoryId(categoryId) {
 function loadAllItem() {
     $.getJSON(coreService+"/items", function (data) {
         if(!data["success"]){
-            console.log(data["message"])
             return;
         }
         var payload = data["payload"]
         var items = []
         $.each(payload, function (key, val) {
-            console.log(val)
             items.push(
                 itemToHTML(val)
             )
