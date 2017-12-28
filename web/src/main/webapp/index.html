@@ -57,23 +57,10 @@
 <script>
     document.write("<script type='text/javascript' src='/assets/js/sidebar.js?v=" + Date.now() + "'><\/script>");
     document.write("<script type='text/javascript' src='/assets/js/main.js?v=" + Date.now() + "'><\/script>");
+    document.write("<script type='text/javascript' src='/assets/js/config.js?v=" + Date.now() + "'><\/script>");
     $(document).ready(function(){
         var authService = "http://localhost:8080/auth"
         var token = Cookies.get('POSRESTAURANT')
-        var configUrl = "configurations.json";
-        var config;
-        $.ajax({
-            url: configUrl,
-            dataType: 'json',
-            async: false,
-            success: function (data) {
-                config = data
-            },
-            error: function () {
-                alert("Bad")
-                return;
-            }
-        });
 
         if(!token){
             window.location.assign(config.pages.login);

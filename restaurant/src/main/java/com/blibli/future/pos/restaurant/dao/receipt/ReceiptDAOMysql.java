@@ -25,6 +25,7 @@ public class ReceiptDAOMysql extends MysqlDAO<Receipt> implements ReceiptDAO{
         receipt.setMemberId(rs.getInt("member_id"));
         receipt.setTotalPrice(rs.getBigDecimal("total_price"));
         receipt.setNote(rs.getString("note"));
+        receipt.setTax(rs.getBigDecimal("tax"));
     }
 
     @Override

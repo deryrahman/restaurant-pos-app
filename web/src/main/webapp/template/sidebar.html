@@ -15,9 +15,12 @@
                             <span class="glyphicon glyphicon-remove hidden-lg"></span>
                         </div>
                         <div id="member-auth">
-                            <a href="#" data-toggle="modal" data-target="#add-member-modal">
+                            <a id="add-member" href="#" data-toggle="modal" data-target="#add-member-modal">
                                 <span class="glyphicon glyphicon-user"></span><span class="hidden-xs"> Add member</span>
                             </a><br>
+                            <div id="member-id" style="display: none"></div>
+                            <div id="member-name" style="display: none"></div><br>
+                            <a id="remove-member-name" style="display: none" href="#" onclick="removeMember()">X</a>
                         </div>
                     </div>
                 </div>

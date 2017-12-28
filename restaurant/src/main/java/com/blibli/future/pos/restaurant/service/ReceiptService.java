@@ -116,8 +116,10 @@ public class ReceiptService extends BaseRESTService{
                 }
                 receipt.setMemberId(receiptWithItem.getMemberId());
             }
-            if(receiptWithItem.getNote() != null || receiptWithItem.getNote().isEmpty()){
-                receipt.setNote(receiptWithItem.getNote());
+            if(receiptWithItem.getNote() != null){
+                if(!receiptWithItem.getNote().isEmpty()) {
+                    receipt.setNote(receiptWithItem.getNote());
+                }
             }
             if(receiptWithItem.getTax() != null){
                 receipt.setTax(receiptWithItem.getTax());

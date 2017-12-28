@@ -208,33 +208,46 @@ function proceedReceipt(){
     });
     var receiptList = []
     var receipt = {
+        "tax" : tax,
         "items" : itemList
     };
+    var memberId = $('#member-id').text()
+    var noteReceipt = $('#receipt-note').text()
+    if(memberId != ''){
+        receipt['memberId'] = parseInt(memberId)
+    }
+    if(noteReceipt != ''){
+        receipt['note'] = noteReceipt
+    }
     receiptList.push(receipt)
-
+    console.log(receiptList)
     $.ajax(coreService+"/receipts", {
         data : JSON.stringify(receiptList),
         contentType : 'application/json',
         type : 'POST',
         async : false,
-        success: function (data){
-            if(!data['success']){
-                alert("Failed to make receipt!")
-            } else {
-                alert("Receipt has been added")
-            }
+        success: function (){
+            alert("Receipt has been added")
+            window.location.assign(config.pages.home);
             $('#invoice-item-list').empty()
+        },
+        error: function (data) {
+            console.log(data["message"])
+            alert("Failed to make receipt!")
         }
     });
 }
 
 function addMember(){
     var memberId = $('input[name=member-id]').val()
+    var isId = $.trim(memberId) != ''
     var regisEmail = $('input[name=registration-member-email]').val()
     var regisName = $('input[name=registration-member-name]').val()
     var regisAddress = $('input[name=registration-member-address]').val()
-    var isNew = regisName || regisAddress || regisEmail
-    if(memberId ^ isNew){
+    var isNew = $.trim(regisName) != '' || $.trim(regisAddress) != '' || $.trim(regisEmail) != ''
+    console.log(isNew)
+    console.log(isId)
+    if(isId ^ isNew){
         if(isNew) {
             var memberList = []
             var member = {
@@ -254,17 +267,20 @@ function addMember(){
 }
 
 function addNewMember(memberList) {
+    console.log(memberList)
     $.ajax(coreService+"/members", {
         data : JSON.stringify(memberList),
         contentType : 'application/json',
         type : 'POST',
         async : false,
         success: function (data){
-            if(!data['success']){
-                alert("Failed to make receipt!")
-            } else {
-                alert("Member has been added")
-            }
+            var payload = data['payload']
+            alert("Member "+payload[0]['name']+" has been added")
+            addMemberById(payload[0]['id'])
+        },
+        error: function () {
+            console.log(data['message'])
+            alert("Failed to make receipt!")
         }
     });
 }
@@ -274,10 +290,27 @@ function addMemberById(memberId) {
     $.getJSON(coreService+"/members/"+memberId, function (data) {
         var payload = data["payload"]
         alert(payload["name"])
+        showMember(payload["name"], payload["id"])
     })
         .fail(function(data) {
             console.log(data["message"])
             alert("Member not found")
             return;
         })
+}
+
+function showMember(name,id) {
+    $('#add-member').hide()
+    $('#member-name').show()
+    $('#member-name').text(name)
+    $('#member-id').text(id)
+    $('#remove-member-name').show()
+}
+
+function removeMember(){
+    $('#add-member').show()
+    $('#member-name').hide()
+    $('#member-name').empty()
+    $('#member-id').empty()
+    $('#remove-member-name').hide()
 }
