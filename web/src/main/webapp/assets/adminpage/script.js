@@ -3,11 +3,8 @@ $(document).ready(function () {
     var token = Cookies.get("POSRESTAURANT");
     var config;
     var baseUrl;
-    var parserUrl;
-    var userServiceUrl;
-    var itemServiceUrl;
-    var categoryServiceUrl;
-    var restaurantServiceUrl;
+    var serviceUrls = {};
+    var userData = {};
 
     (function () {
         if (token === undefined) {
@@ -18,19 +15,29 @@ $(document).ready(function () {
         $.getJSON(configUrl, function (data) {
             config = data;
             baseUrl = config.baseUrl;
-            parserUrl = baseUrl + config.endpoints.parser;
-            userServiceUrl = baseUrl + config.endpoints.user;
-            itemServiceUrl = baseUrl + config.endpoints.item;
-            categoryServiceUrl = baseUrl + config.endpoints.category;
-            restaurantServiceUrl = baseUrl + config.endpoints.restaurant;
+            serviceUrls.parser = baseUrl + config.endpoints.parser;
+            serviceUrls.user = baseUrl + config.endpoints.user;
+            serviceUrls.item = baseUrl + config.endpoints.item;
+            serviceUrls.category = baseUrl + config.endpoints.category;
+            serviceUrls.restaurant = baseUrl + config.endpoints.restaurant;
         }).done(function () {
-            $.ajax(parserUrl, {
+            $.ajax(serviceUrls.parser, {
                 method: "POST",
                 contentType: "application/x-www-form-urlencoded",
                 data: {token: token}
-            }).fail(function () {
-                backToLoginPage("Your session is already expired. Please login again.");
-            });
+            })
+                .success(function (data) {
+                    userData = data.payload;
+                    if (userData.role === "admin") {
+                        console.log("Logged in as an admin.");
+                        initializeAdminPage();
+                    } else {
+                        backToLoginPage("You are not logged in as an admin. Please login as an admin.");
+                    }
+                })
+                .fail(function () {
+                    backToLoginPage("Your session is already expired. Please login again.");
+                });
         });
     })();
 
@@ -38,6 +45,40 @@ $(document).ready(function () {
         alert(message);
         window.location.replace(config.pages.login);
     }
+
+    function initializeAdminPage() {
+        setUsername();
+        setOverview();
+        //setStatistics();
+        //generateSubpages();
+    }
+
+    function setUsername() {
+        $("#username").html(userData.username);
+    }
+
+    function setOverview() {
+        $.getJSON(serviceUrls.user, function (data) {
+            $("#user-count-badge").html(data.payload.length);
+        });
+
+        $.get(serviceUrls.restaurant, function (data) {
+            $("#restaurant-count-badge").html(data.payload.length);
+        });
+
+        $.get(serviceUrls.category, function (data) {
+            $("#category-count-badge").html(data.payload.length);
+        });
+
+        $.get(serviceUrls.item, function (data) {
+            $("#item-count-badge").html(data.payload.length);
+        });
+    }
+
+    $('#logout-btn').click(function (e) {
+        Cookies.remove("POSRESTAURANT");
+        window.location.assign(config.pages.login);
+    });
 
     $('#show-users').click(function () {
         $('#panel-overview').hide();
