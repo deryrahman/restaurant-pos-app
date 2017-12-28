@@ -14,6 +14,7 @@ public class Receipt extends BaseResource {
     private Integer memberId;
     private BigDecimal totalPrice;
     private String note;
+    private BigDecimal tax;
 
     public Receipt() {
     }
@@ -75,6 +76,14 @@ public class Receipt extends BaseResource {
         this.note = note;
     }
 
+    public BigDecimal getTax() {
+        return tax;
+    }
+
+    public void setTax(BigDecimal tax) {
+        this.tax = tax;
+    }
+
     @Override
     public String toString() {
         return "Receipt{" +
@@ -83,8 +92,9 @@ public class Receipt extends BaseResource {
                 ", restaurantId=" + restaurantId +
                 ", userId=" + userId +
                 ", memberId=" + memberId +
-                ", totalPrice='" + totalPrice + '\'' +
+                ", totalPrice=" + totalPrice +
                 ", note='" + note + '\'' +
+                ", tax=" + tax +
                 '}';
     }
 

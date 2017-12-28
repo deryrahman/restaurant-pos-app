@@ -8,6 +8,7 @@ import com.blibli.future.pos.restaurant.common.model.custom.ItemWithStock;
 import com.blibli.future.pos.restaurant.common.model.custom.ReceiptWithItem;
 import com.blibli.future.pos.restaurant.dao.custom.itemwithstock.ItemWithStockDAOMysql;
 import com.blibli.future.pos.restaurant.dao.item.ItemDAOMysql;
+import com.blibli.future.pos.restaurant.dao.member.MemberDAOMysql;
 import com.blibli.future.pos.restaurant.dao.receipt.ReceiptDAOMysql;
 import com.blibli.future.pos.restaurant.dao.custom.receiptwithitem.ReceiptWithItemDAOMysql;
 import com.blibli.future.pos.restaurant.dao.restaurant.RestaurantDAOMysql;
@@ -15,6 +16,7 @@ import com.blibli.future.pos.restaurant.dao.restaurant.RestaurantDAOMysql;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("ALL")
@@ -25,6 +27,7 @@ public class ReceiptService extends BaseRESTService{
     private ItemDAOMysql itemDAO = new ItemDAOMysql();
     private RestaurantDAOMysql restaurantDAO = new RestaurantDAOMysql();
     private ItemWithStockDAOMysql itemWithStockDAO = new ItemWithStockDAOMysql();
+    private MemberDAOMysql memberDAO = new MemberDAOMysql();
 
     private ReceiptWithItem receiptWithItem;
     private List<ReceiptWithItem> receiptWithItemList;
@@ -45,14 +48,16 @@ public class ReceiptService extends BaseRESTService{
         if(receiptWithItemList.isEmpty()){
             throw new BadRequestException();
         }
+        this.receiptWithItemList = new ArrayList<>();
         for (ReceiptWithItem receiptWithItem : receiptWithItemList) {
             if(receiptWithItem.notValidAttribute()){
                 throw new BadRequestException(ErrorMessage.requiredValue(receiptWithItem));
             }
             insertReceipt(this.restaurantId, receiptWithItem);
+            this.receiptWithItemList.add(receiptWithItem);
         }
 
-        baseResponse = new BaseResponse(true, 201);
+        baseResponse = new BaseResponse(true, 201,this.receiptWithItemList);
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(201).entity(json).build();
     }
@@ -103,8 +108,22 @@ public class ReceiptService extends BaseRESTService{
             receipt.setId(receiptWithItem.getReceiptId());
             receipt.setRestaurantId(restaurantId);
             receipt.setTotalPrice(total);
-            // Temporary 1
-            receipt.setUserId(1);
+            receipt.setUserId(this.userId);
+            if(receiptWithItem.getMemberId() != null){
+                Integer memberId = receiptWithItem.getMemberId();
+                if(memberDAO.findById(memberId).isEmpty()){
+                    throw new NotFoundException(ErrorMessage.NotFoundFrom(new Member()));
+                }
+                receipt.setMemberId(receiptWithItem.getMemberId());
+            }
+            if(receiptWithItem.getNote() != null){
+                if(!receiptWithItem.getNote().isEmpty()) {
+                    receipt.setNote(receiptWithItem.getNote());
+                }
+            }
+            if(receiptWithItem.getTax() != null){
+                receipt.setTax(receiptWithItem.getTax());
+            }
 
             // Create receipt first
             receiptDAO.create(receipt);

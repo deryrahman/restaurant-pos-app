@@ -116,9 +116,6 @@ public class UserService extends BaseRESTService {
     @Produces("application/json")
     public Response get(@PathParam("id") int id) throws Exception {
         initializeRole();
-        if(!(userIs(ADMIN) || userIs(MANAGER))){
-            throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
-        }
         this.user = (User) th.runTransaction(conn -> {
             User user = userDAO.findById(id);
             if(user.isEmpty()){
@@ -126,6 +123,11 @@ public class UserService extends BaseRESTService {
             }
             if(userIs(MANAGER)){
                 if(user.getRestaurantId()!=this.restaurantId){
+                    throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
+                }
+            }
+            if(userIs(CASHIER)){
+                if(user.getId()!=id){
                     throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
                 }
             }

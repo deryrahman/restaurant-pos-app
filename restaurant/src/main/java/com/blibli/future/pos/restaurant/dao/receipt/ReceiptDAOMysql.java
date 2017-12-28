@@ -25,12 +25,13 @@ public class ReceiptDAOMysql extends MysqlDAO<Receipt> implements ReceiptDAO{
         receipt.setMemberId(rs.getInt("member_id"));
         receipt.setTotalPrice(rs.getBigDecimal("total_price"));
         receipt.setNote(rs.getString("note"));
+        receipt.setTax(rs.getBigDecimal("tax"));
     }
 
     @Override
     public void create(Receipt receipt) throws SQLException {
-            String query = "INSERT INTO receipts(restaurant_id, user_id, member_id, total_price, note)" +
-                    " VALUES(?, ?, ?, ?, ?)";
+            String query = "INSERT INTO receipts(restaurant_id, user_id, member_id, total_price, note, tax)" +
+                    " VALUES(?, ?, ?, ?, ?, ?)";
             ps = TransactionHelper.getConnection().prepareStatement(query);
             ps.setInt(1, receipt.getRestaurantId());
             ps.setInt(2, receipt.getUserId());
@@ -44,6 +45,12 @@ public class ReceiptDAOMysql extends MysqlDAO<Receipt> implements ReceiptDAO{
                 ps.setNull(5, Types.INTEGER);
             } else {
                 ps.setString(5, receipt.getNote());
+            }
+
+            if(receipt.getTax() == null){
+                ps.setNull(6, Types.INTEGER);
+            } else {
+                ps.setBigDecimal(6, receipt.getTax());
             }
 
             int affected = ps.executeUpdate();

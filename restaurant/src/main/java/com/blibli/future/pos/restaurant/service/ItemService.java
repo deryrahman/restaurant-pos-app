@@ -11,6 +11,7 @@ import com.blibli.future.pos.restaurant.dao.restaurant.RestaurantDAOMysql;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("ALL")
@@ -37,7 +38,7 @@ public class ItemService extends BaseRESTService{
         if(items.isEmpty()){
             throw new BadRequestException();
         }
-
+        this.items = new ArrayList<>();
         for (Item item : items) {
             if(item.getCategoryId() == null){
                 item.setCategoryId(1);
@@ -45,16 +46,17 @@ public class ItemService extends BaseRESTService{
             if(item.notValidAttribute()){
                 throw new BadRequestException(ErrorMessage.requiredValue(item));
             }
-            th.runTransaction(conn -> {
+            Item item1 = (Item) th.runTransaction(conn -> {
                 if(categoryDAO.findById(item.getCategoryId()).isEmpty()){
                     throw new NotFoundException(ErrorMessage.NotFoundFrom(new Category()));
                 }
                 itemDAO.create(item);
-                return null;
+                return item;
             });
+            this.items.add(item1);
         }
 
-        baseResponse = new BaseResponse(true, 201);
+        baseResponse = new BaseResponse(true, 201,this.items);
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(201).entity(json).build();
     }

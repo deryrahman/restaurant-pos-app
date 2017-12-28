@@ -31,7 +31,12 @@ public class RestaurantDAOMysql extends MysqlDAO<Restaurant> implements Restaura
         ps.setString(2, restaurant.getPhone());
 
         int affected = ps.executeUpdate();
-        if (affected == 0) {
+        if (affected > 0) {
+            ResultSet rs = ps.getGeneratedKeys();
+            if(rs.next()){
+                restaurant.setId(rs.getInt(1));
+            }
+        } else {
             throw new SQLException("No affected query. No restaurant inserting");
         }
     }

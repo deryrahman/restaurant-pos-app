@@ -7,6 +7,7 @@ import com.blibli.future.pos.restaurant.dao.member.MemberDAOMysql;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("ALL")
@@ -28,17 +29,19 @@ public class MemberService extends BaseRESTService {
         if (members.isEmpty()) {
             throw new BadRequestException();
         }
+        this.members = new ArrayList<>();
         for (Member member : members) {
             if (member.notValidAttribute()) {
                 throw new BadRequestException(ErrorMessage.requiredValue(new Member()));
             }
-            th.runTransaction(conn -> {
+            Member member1 = (Member) th.runTransaction(conn -> {
                 memberDAO.create(member);
-                return null;
+                return member;
             });
+            this.members.add(member1);
         }
 
-        baseResponse = new BaseResponse(true, 201);
+        baseResponse = new BaseResponse(true, 201,this.members);
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(201).entity(json).build();
     }

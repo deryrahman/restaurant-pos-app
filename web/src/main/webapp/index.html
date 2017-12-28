@@ -34,6 +34,8 @@
                 <li class="active"><a href="index.html">Admin Page</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="#" id="restaurant-branch"></a></li>
+                <li class="active"><a href="#" id="restaurant-phone"></a></li>
                 <li><a href="#">Iqbal</a></li>
                 <li><a href="login.html">Logout</a></li>
             </ul>
@@ -53,16 +55,62 @@
 <!-- Scripts -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script>
     document.write("<script type='text/javascript' src='/assets/js/sidebar.js?v=" + Date.now() + "'><\/script>");
     document.write("<script type='text/javascript' src='/assets/js/main.js?v=" + Date.now() + "'><\/script>");
+    document.write("<script type='text/javascript' src='/assets/js/config.js?v=" + Date.now() + "'><\/script>");
     $(document).ready(function(){
-        loadMain();
+        var authService = "http://localhost:8080/auth"
+        var coreService = "http://localhost:8080/restaurant"
+        var token = Cookies.get('POSRESTAURANT')
 
+        if(!token){
+            window.location.assign(config.pages.login);
+        }
+        $.ajax(authService+"/parseToken", {
+            method: "POST",
+            url: authService+"/parseToken",
+            contentType: "application/x-www-form-urlencoded",
+            async:false,
+            data: {token: token},
+            success: function (response) {
+                var userInfo = response.payload;
+                if (userInfo.role !== "cashier") {
+                    alert("Not permitted");
+                    window.location.assign(config.pages.admin);
+                }
+                userId = userInfo["id"]
+            },
+            error: function(){
+                window.location.assign(config.pages.login);
+            }
+        });
+
+
+        $.ajax(coreService+"/users/"+userId, {
+            method: "GET",
+            url: coreService+"/users/"+userId,
+            dataType: "json",
+            async:false,
+            success: function (data) {
+                var payload = data["payload"]
+                restaurantId = payload["restaurantId"]
+            },
+            error: function(){
+                alert("Restaurant id fail to invoke")
+            }
+        });
+
+        console.log("user id " + userId)
+        console.log("restaurant id " + restaurantId)
         // load
-        $('#sidebar-container').load('template/sidebar.html');
-        $('#page-homepage-container').load('template/page-homepage.html');
-
+        $('#sidebar-container').load('template/sidebar.html', function(){
+            loadSidebar();
+        });
+        $('#page-homepage-container').load('template/page-homepage.html', function () {
+            loadMain();
+        });
 
         $(".toggle-sidebar-in-main").click(function(){
             $("#sidebar").animate({width:'toggle'},'medium',function(){
