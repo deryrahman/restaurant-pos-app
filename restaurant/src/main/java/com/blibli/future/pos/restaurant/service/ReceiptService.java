@@ -16,6 +16,7 @@ import com.blibli.future.pos.restaurant.dao.restaurant.RestaurantDAOMysql;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("ALL")
@@ -47,14 +48,16 @@ public class ReceiptService extends BaseRESTService{
         if(receiptWithItemList.isEmpty()){
             throw new BadRequestException();
         }
+        this.receiptWithItemList = new ArrayList<>();
         for (ReceiptWithItem receiptWithItem : receiptWithItemList) {
             if(receiptWithItem.notValidAttribute()){
                 throw new BadRequestException(ErrorMessage.requiredValue(receiptWithItem));
             }
             insertReceipt(this.restaurantId, receiptWithItem);
+            this.receiptWithItemList.add(receiptWithItem);
         }
 
-        baseResponse = new BaseResponse(true, 201);
+        baseResponse = new BaseResponse(true, 201,this.receiptWithItemList);
         json = objectMapper.writeValueAsString(baseResponse);
         return Response.status(201).entity(json).build();
     }

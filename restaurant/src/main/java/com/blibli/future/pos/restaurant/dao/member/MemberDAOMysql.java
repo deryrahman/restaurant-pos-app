@@ -34,7 +34,12 @@ public class MemberDAOMysql extends MysqlDAO<Member> implements MemberDAO {
         ps.setString(3, member.getEmail());
 
         int affected = ps.executeUpdate();
-        if (affected <= 0) {
+        if (affected > 0) {
+            ResultSet rs = ps.getGeneratedKeys();
+            if(rs.next()){
+                member.setId(rs.getInt(1));
+            }
+        } else {
             throw new SQLException("No affected query. No member inserting");
         }
     }
