@@ -2,12 +2,16 @@ package com.blibli.future.pos.restaurant.common.model.custom;
 
 import com.blibli.future.pos.restaurant.common.model.BaseResource;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ReceiptWithItem extends BaseResource {
     private Integer receiptId;
+    private Integer memberId;
+    private String note;
+    private BigDecimal tax;
     private List<ItemOnReceipt> items;
 
     public ReceiptWithItem() {
@@ -19,6 +23,30 @@ public class ReceiptWithItem extends BaseResource {
 
     public void setReceiptId(Integer receiptId) {
         this.receiptId = receiptId;
+    }
+
+    public Integer getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(Integer memberId) {
+        this.memberId = memberId;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public BigDecimal getTax() {
+        return tax;
+    }
+
+    public void setTax(BigDecimal tax) {
+        this.tax = tax;
     }
 
     public List<ItemOnReceipt> getItems() {
@@ -33,6 +61,8 @@ public class ReceiptWithItem extends BaseResource {
     public String toString() {
         return "ReceiptWithItem{" +
                 "receiptId=" + receiptId +
+                ", note='" + note + '\'' +
+                ", tax=" + tax +
                 ", items=" + items +
                 '}';
     }

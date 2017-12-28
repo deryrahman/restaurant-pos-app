@@ -8,6 +8,7 @@ import com.blibli.future.pos.restaurant.common.model.custom.ItemWithStock;
 import com.blibli.future.pos.restaurant.common.model.custom.ReceiptWithItem;
 import com.blibli.future.pos.restaurant.dao.custom.itemwithstock.ItemWithStockDAOMysql;
 import com.blibli.future.pos.restaurant.dao.item.ItemDAOMysql;
+import com.blibli.future.pos.restaurant.dao.member.MemberDAOMysql;
 import com.blibli.future.pos.restaurant.dao.receipt.ReceiptDAOMysql;
 import com.blibli.future.pos.restaurant.dao.custom.receiptwithitem.ReceiptWithItemDAOMysql;
 import com.blibli.future.pos.restaurant.dao.restaurant.RestaurantDAOMysql;
@@ -25,6 +26,7 @@ public class ReceiptService extends BaseRESTService{
     private ItemDAOMysql itemDAO = new ItemDAOMysql();
     private RestaurantDAOMysql restaurantDAO = new RestaurantDAOMysql();
     private ItemWithStockDAOMysql itemWithStockDAO = new ItemWithStockDAOMysql();
+    private MemberDAOMysql memberDAO = new MemberDAOMysql();
 
     private ReceiptWithItem receiptWithItem;
     private List<ReceiptWithItem> receiptWithItemList;
@@ -103,8 +105,20 @@ public class ReceiptService extends BaseRESTService{
             receipt.setId(receiptWithItem.getReceiptId());
             receipt.setRestaurantId(restaurantId);
             receipt.setTotalPrice(total);
-            // Temporary 1
-            receipt.setUserId(1);
+            receipt.setUserId(this.userId);
+            if(receiptWithItem.getMemberId() != null){
+                Integer memberId = receiptWithItem.getMemberId();
+                if(memberDAO.findById(memberId).isEmpty()){
+                    throw new NotFoundException(ErrorMessage.NotFoundFrom(new Member()));
+                }
+                receipt.setMemberId(receiptWithItem.getMemberId());
+            }
+            if(receiptWithItem.getNote() != null || receiptWithItem.getNote().isEmpty()){
+                receipt.setNote(receiptWithItem.getNote());
+            }
+            if(receiptWithItem.getTax() != null){
+                receipt.setTax(receiptWithItem.getTax());
+            }
 
             // Create receipt first
             receiptDAO.create(receipt);
