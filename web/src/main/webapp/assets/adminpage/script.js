@@ -108,6 +108,49 @@ $(document).ready(function () {
         return row;
     }
 
+    $("#form-new-restaurant").submit(function (e) {
+        var newRestaurant = [{
+            address: $(this).find("#address").val(),
+            phone: $(this).find("#phone").val()
+        }];
+
+        sendCreateRequest("restaurant", newRestaurant);
+
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    $("#form-new-category").submit(function (e) {
+        var newCategory = [{
+            name: $(this).find("#category-name").val(),
+            description: $(this).find("#category-description").val()
+        }];
+
+        sendCreateRequest("category", newCategory);
+
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    function sendCreateRequest(objectName, newObjectList) {
+        $.ajax({
+            url: serviceUrls[objectName],
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(newObjectList)
+        }).done(function (data) {
+            alert("Successfully created new " + objectName + ".")
+            $("#form-new-" + objectName).find("input.form-control").val("");
+            loadData(objectName);
+
+            console.log(data);
+        }).fail(function (jqXHR) {
+            var message = JSON.parse(jqXHR.responseText).message;
+            alert("Failed to create new restaurant.\n" + message);
+
+            console.log(jqXHR.responseText);
+        });
+    }
 
     $('#logout-btn').click(function (e) {
         Cookies.remove("POSRESTAURANT");
