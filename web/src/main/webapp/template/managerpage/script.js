@@ -46,9 +46,11 @@ function loadoverview() {
     loadreceipts();
     loadmembers();
     loadrestaurants();
+    loadcategories();
+
 }
 
-function addToOverview(){
+function updateOverview(){
     var overviewCount = {
         'users' : users.length,
         'items' : items.length,
@@ -60,6 +62,19 @@ function addToOverview(){
     })
 }
 
+function updateBadge() {
+    var badgeCount = {
+        'users' : users.length,
+        'items' : items.length,
+        'receipts' : receipts.length,
+        'members' : members.length,
+        'categories' : members.length
+    };
+    $.each(badgeCount, function(key, val){
+        $('#show-'+key+' > .badge').text(val)
+    })
+}
+
 function write() {
     console.log(users)
     console.log(items)
@@ -68,12 +83,36 @@ function write() {
     console.log(categories)
 }
 
+function renderUserList() {
+    var userList = [];
+    var headerTable = "<tr><th>#ID</th><th>Username</th><th>Role</th><th>Email</th><th></th></tr>";
+    userList.push(headerTable);
+    users.forEach(function(user){
+        userList.push(userToHTML(user));
+    });
+    $('#user-list').empty().append(userList);
+}
+
+function userToHTML(user){
+    var result = "<tr>" +
+        "<td>"+user.id+"</td>"+
+        "<td>"+user.name+"</td>"+
+        "<td>"+user.role+"</td>"+
+        "<td>"+user.email+"</td>"+
+        "<td><a role='button'>edit</a></td>"+
+        "</tr>";
+    return result
+}
+
 function loadusers() {
     console.log("load users");
     getJSON(true,coreService+"/users", function(data){
         var payload = data["payload"];
         users = payload;
-        addToOverview();
+        updateOverview();
+        updateBadge();
+
+        renderUserList();
     });
 }
 
@@ -82,7 +121,8 @@ function loaditems() {
     getJSON(true,coreService+"/items", function(data){
         var payload = data["payload"];
         items = payload;
-        addToOverview();
+        updateOverview();
+        updateBadge();
     });
 }
 
@@ -91,7 +131,8 @@ function loadreceipts(){
     getJSON(true,coreService+"/receipts", function(data){
         var payload = data["payload"];
         receipts = payload;
-        addToOverview();
+        updateOverview();
+        updateBadge();
     });
 }
 
@@ -101,7 +142,8 @@ function loadmembers() {
     getJSON(true,coreService+"/members", function(data){
         var payload = data["payload"];
         members = payload;
-        addToOverview();
+        updateOverview();
+        updateBadge();
     });
 }
 
@@ -110,6 +152,7 @@ function loadcategories() {
     getJSON(true,coreService+"/categories", function(data){
         var payload = data["payload"];
         categories = payload;
+        updateBadge();
     });
 }
 
