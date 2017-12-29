@@ -17,9 +17,9 @@ import java.util.List;
 @SuppressWarnings("ALL")
 @Path("/categories")
 public class CategoryService extends BaseRESTService {
-    private CategoryDAOMysql categoryDAO = new CategoryDAOMysql();
-    private ItemDAOMysql itemDAO = new ItemDAOMysql();
-    private ItemWithStockDAOMysql itemWithStockDAO = new ItemWithStockDAOMysql();
+    private static final CategoryDAOMysql categoryDAO = new CategoryDAOMysql();
+    private static final ItemDAOMysql itemDAO = new ItemDAOMysql();
+    private static final ItemWithStockDAOMysql itemWithStockDAO = new ItemWithStockDAOMysql();
     private List<Category> categories;
     private List<Item> items;
     private Category category;
@@ -29,7 +29,7 @@ public class CategoryService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response create(List<Category> categories) throws Exception {
-        initializeRole();
+
         if(!userIs(ADMIN)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
@@ -112,7 +112,7 @@ public class CategoryService extends BaseRESTService {
     @Path("/{id}")
     @Produces("application/json")
     public Response delete(@PathParam("id") int id) throws Exception {
-        initializeRole();
+
         if(!userIs(ADMIN)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
@@ -143,7 +143,7 @@ public class CategoryService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response update(@PathParam("id") int id, Category category) throws Exception {
-        initializeRole();
+
         if(!userIs(ADMIN)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
@@ -183,7 +183,7 @@ public class CategoryService extends BaseRESTService {
     @Path("/{categoryId}/items")
     @Produces("application/json")
     public Response getAllItem(@PathParam("categoryId") int categoryId) throws Exception {
-        initializeRole();
+
         if(userIs(ADMIN)){
             items = (List<Item>) th.runTransaction(conn -> {
                 // check categoryId first

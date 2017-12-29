@@ -17,11 +17,10 @@ import java.util.List;
 @SuppressWarnings("ALL")
 @Path("/items")
 public class ItemService extends BaseRESTService{
-    private ItemDAOMysql itemDAO = new ItemDAOMysql();
-    private RestaurantDAOMysql restaurantDAO = new RestaurantDAOMysql();
-    private ItemWithStockDAOMysql itemWithStockDAO = new ItemWithStockDAOMysql();
-    private CategoryDAOMysql categoryDAO = new CategoryDAOMysql();
-
+    private static final ItemDAOMysql itemDAO = new ItemDAOMysql();
+    private static final RestaurantDAOMysql restaurantDAO = new RestaurantDAOMysql();
+    private static final ItemWithStockDAOMysql itemWithStockDAO = new ItemWithStockDAOMysql();
+    private static final CategoryDAOMysql categoryDAO = new CategoryDAOMysql();
     private List<Item> items;
     private Item item;
 
@@ -31,7 +30,7 @@ public class ItemService extends BaseRESTService{
     @Consumes("application/json")
     @Produces("application/json")
     public Response create(List<Item> items) throws Exception {
-        initializeRole();
+
         if(!userIs(ADMIN)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
@@ -64,7 +63,7 @@ public class ItemService extends BaseRESTService{
     @GET
     @Produces("application/json")
     public Response getAll() throws Exception {
-        initializeRole();
+
         if(userIs(ADMIN)){
             items = (List<Item>) th.runTransaction(conn -> {
                 List<Item> items = itemDAO.find("true");
@@ -112,7 +111,7 @@ public class ItemService extends BaseRESTService{
     @Path("/{id}")
     @Produces("application/json")
     public Response get(@PathParam("id") int id) throws Exception {
-        initializeRole();
+
         if(userIs(ADMIN)) {
             item = (Item) th.runTransaction(conn -> {
                 Item item = itemDAO.findById(id);
@@ -170,7 +169,7 @@ public class ItemService extends BaseRESTService{
     @Consumes("application/json")
     @Produces("application/json")
     public Response update(@PathParam("id") int id, Item item) throws Exception {
-        initializeRole();
+
         if(!userIs(ADMIN)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
@@ -205,7 +204,7 @@ public class ItemService extends BaseRESTService{
     @Produces("application/json")
     @Path("/stock")
     public Response addStock(List<ItemWithStock> itemWithStockList) throws Exception {
-        initializeRole();
+
         if(!userIs(MANAGER)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
@@ -249,7 +248,7 @@ public class ItemService extends BaseRESTService{
     @Consumes("application/json")
     @Produces("application/json")
     public Response updateStock(@PathParam("itemId") Integer itemId, ItemWithStock itemWithStock) throws Exception{
-        initializeRole();
+
         if(!userIs(MANAGER)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
@@ -282,7 +281,7 @@ public class ItemService extends BaseRESTService{
     @Path("/stock/{itemId}")
     @Produces("application/json")
     public Response deleteItemOnRestaurant(@PathParam("itemId") Integer itemId) throws Exception{
-        initializeRole();
+
         if(userIs(MANAGER)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }

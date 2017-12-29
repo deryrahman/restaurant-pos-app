@@ -20,13 +20,13 @@ import java.util.List;
 @SuppressWarnings("ALL")
 @Path("/restaurants")
 public class RestaurantService extends BaseRESTService {
-    private static RestaurantDAOMysql restaurantDAO = new RestaurantDAOMysql();
-    private static ItemDAOMysql itemDAO = new ItemDAOMysql();
-    private static ItemWithStockDAOMysql itemWithStockDAO = new ItemWithStockDAOMysql();
-    private static ReceiptDAOMysql receiptDAO = new ReceiptDAOMysql();
-    private static ReceiptWithItemDAOMysql receiptWithItemDAO = new ReceiptWithItemDAOMysql();
-    private static UserDAOMysql userDAO = new UserDAOMysql();
-    private static CategoryDAOMysql categoryDAO = new CategoryDAOMysql();
+    private static final RestaurantDAOMysql restaurantDAO = new RestaurantDAOMysql();
+    private static final ItemDAOMysql itemDAO = new ItemDAOMysql();
+    private static final ItemWithStockDAOMysql itemWithStockDAO = new ItemWithStockDAOMysql();
+    private static final ReceiptDAOMysql receiptDAO = new ReceiptDAOMysql();
+    private static final ReceiptWithItemDAOMysql receiptWithItemDAO = new ReceiptWithItemDAOMysql();
+    private static final UserDAOMysql userDAO = new UserDAOMysql();
+    private static final CategoryDAOMysql categoryDAO = new CategoryDAOMysql();
 
     private Restaurant restaurant;
     private Receipt receipt;
@@ -40,7 +40,7 @@ public class RestaurantService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response create(List<Restaurant> restaurants) throws Exception {
-        initializeRole();
+
         if(!userIs(ADMIN)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
@@ -141,7 +141,7 @@ public class RestaurantService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response update(@PathParam("id") int id, Restaurant restaurant) throws Exception {
-        initializeRole();
+
         if(!(userIs(ADMIN) || (this.restaurantId == id && userIs(MANAGER)))){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }

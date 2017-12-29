@@ -22,12 +22,12 @@ import java.util.List;
 @SuppressWarnings("ALL")
 @Path("/receipts")
 public class ReceiptService extends BaseRESTService{
-    private ReceiptDAOMysql receiptDAO = new ReceiptDAOMysql();
-    private ReceiptWithItemDAOMysql receiptWithItemDAO = new ReceiptWithItemDAOMysql();
-    private ItemDAOMysql itemDAO = new ItemDAOMysql();
-    private RestaurantDAOMysql restaurantDAO = new RestaurantDAOMysql();
-    private ItemWithStockDAOMysql itemWithStockDAO = new ItemWithStockDAOMysql();
-    private MemberDAOMysql memberDAO = new MemberDAOMysql();
+    private static final ReceiptDAOMysql receiptDAO = new ReceiptDAOMysql();
+    private static final ReceiptWithItemDAOMysql receiptWithItemDAO = new ReceiptWithItemDAOMysql();
+    private static final ItemDAOMysql itemDAO = new ItemDAOMysql();
+    private static final RestaurantDAOMysql restaurantDAO = new RestaurantDAOMysql();
+    private static final ItemWithStockDAOMysql itemWithStockDAO = new ItemWithStockDAOMysql();
+    private static final MemberDAOMysql memberDAO = new MemberDAOMysql();
 
     private ReceiptWithItem receiptWithItem;
     private List<ReceiptWithItem> receiptWithItemList;
@@ -40,7 +40,7 @@ public class ReceiptService extends BaseRESTService{
     @Consumes("application/json")
     @Produces("application/json")
     public Response create(List<ReceiptWithItem> receiptWithItemList) throws Exception {
-        initializeRole();
+
         if(!userIs(CASHIER)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
@@ -137,7 +137,7 @@ public class ReceiptService extends BaseRESTService{
     @GET
     @Produces("application/json")
     public Response getAll() throws Exception {
-        initializeRole();
+
         if(userIs(ADMIN)){
             receipts = (List<Receipt>) th.runTransaction(conn -> {
                 List<Receipt> receipts = receiptDAO.find("true");
@@ -188,7 +188,7 @@ public class ReceiptService extends BaseRESTService{
     @Path("/{id}")
     @Produces("application/json")
     public Response get(@PathParam("id") int id) throws Exception {
-        initializeRole();
+
         if(!(userIs(ADMIN) || userIs(MANAGER))){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
