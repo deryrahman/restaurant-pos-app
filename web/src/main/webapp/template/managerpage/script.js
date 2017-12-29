@@ -34,9 +34,13 @@ function generateToggle() {
     });
 }
 
+function renderUserInfo() {
+    $('#user-name').text(userInfo.name)
+}
 function loadScript() {
     generateToggle();
     loadoverview();
+    renderUserInfo();
 }
 
 function loadoverview() {
@@ -106,12 +110,18 @@ function userToHTML(user){
 
 function loadusers() {
     console.log("load users");
+    users = []
+    console.log("before : ");
+    console.log(users);
     getJSON(true,coreService+"/users", function(data){
         var payload = data["payload"];
+        console.log("payload : ")
+        console.log(payload)
         users = payload;
         updateOverview();
         updateBadge();
-
+        console.log("after : ");
+        console.log(users);
         renderUserList();
     });
 }
