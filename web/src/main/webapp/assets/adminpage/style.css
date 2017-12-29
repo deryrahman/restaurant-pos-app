@@ -117,3 +117,41 @@ body {
         background-color: #bf360c;
     }
 }
+
+/* Modal */
+.center {
+    margin-top:50px;
+}
+
+.modal-header {
+    color: #ff5722;
+    padding-bottom: 13px;
+    text-align: center;
+}
+
+.modal-body .btn-custom {
+    color: #ffffff;
+    background-color: #ff5722;
+    margin-left: 10px;
+}
+
+.modal-body .buttons {
+    margin-left: 30px;
+}
+
+
+.modal-footer {
+    padding: 0;
+}
+
+.modal-footer .btn-group button {
+    height:40px;
+    border-top-left-radius : 0;
+    border-top-right-radius : 0;
+    border: none;
+    border-right: 1px solid #ddd;
+}
+
+.modal-footer .btn-group:last-child > button {
+    border-right: 0;
+}
