@@ -22,8 +22,8 @@
                 <li class="active"><a href="index.html">Manager Page</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="#" id="restaurant-branch"></a></li>
-                <li class="active"><a href="#" id="restaurant-phone"></a></li>
+                <li class="active"><a href="#">RestaurantId #<span class="restaurant-id"></span></a></li>
+                <li class="active"><a href="#" class="restaurant-phone"></a></li>
                 <li><a href="#" id="user-name">Iqbal</a></li>
                 <li><a href="login.html">Logout</a></li>
             </ul>
@@ -54,7 +54,7 @@
                         <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
                          Overview
                     </a>
-                    <a href="#" class="list-group-item active main-bg-color" id="show-restaurants">
+                    <a href="#" class="list-group-item" id="show-restaurants">
                         <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
                         Restaurant Profile
                     </a>
@@ -90,28 +90,51 @@
                     <div class="panel-body">
                         <div class="col-md-3">
                             <div class="well dash-box">
-                                <h2><span class="glyphicon glyphicon-user" aria-hidden="true"></span> 21</h2>
+                                <h2><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span id="count-users">-</span></h2>
                                 <h4>Users</h4>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="well">
-                                <h2><span class="glyphicon glyphicon-glass" aria-hidden="true"></span> 8</h2>
+                                <h2><span class="glyphicon glyphicon-glass" aria-hidden="true"></span> <span id="count-items">-</span></h2>
                                 <h4>Items</h4>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="well">
-                                <h2><span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span> 3</h2>
-                                <h4>Restaurants</h4>
+                                <h2><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> <span id="count-receipts">-</span></h2>
+                                <h4>Reciepts</h4>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="well">
-                                <h2><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> 1233</h2>
-                                <h4>Reciepts</h4>
+                                <h2><span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span> <span id="count-members">-</span></h2>
+                                <h4>Members</h4>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Retaurants -->
+                <div class="panel panel-default" style="display:none" id="panel-restaurants">
+                    <div class="panel-heading main-bg-color">
+                        <h3 class="panel-title">Restaurant Profile</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="jumbotron">
+                            <h2>Restaurant Id #<span class="restaurant-id">-</span></h2>
+                            <p>Address : <span class="restaurant-address">-</span></p>
+                            <p>Phone number : <span class="restaurant-phone">-</span></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Address:</label>
+                            <input type="text" class="form-control" id="address">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone:</label>
+                            <input type="text" class="form-control" id="phone">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="saveEditRestaurant()">Save</button>
                     </div>
                 </div>
 
@@ -149,8 +172,104 @@
                     </div>
                 </div>
 
+                <!-- Receipts -->
+                <div class="panel panel-default" style="display:none" id="panel-receipts">
+                    <div class="panel-heading main-bg-color">
+                        <h3 class="panel-title">Items</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-default btn-block">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                New Item
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover">
+                            <tr>
+                                <th>#ID</th>
+                                <th>Item name</th>
+                                <th>Price</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Ayam Bakar</td>
+                                <td>35000</td>
+                                <td><a role="button">edit</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- Items -->
                 <div class="panel panel-default" style="display:none" id="panel-items">
+                    <div class="panel-heading main-bg-color">
+                        <h3 class="panel-title">Items</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-default btn-block">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                New Item
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover">
+                            <tr>
+                                <th>#ID</th>
+                                <th>Item name</th>
+                                <th>Price</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Ayam Bakar</td>
+                                <td>35000</td>
+                                <td><a role="button">edit</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="panel panel-default" style="display:none" id="panel-categories">
+                    <div class="panel-heading main-bg-color">
+                        <h3 class="panel-title">Items</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-default btn-block">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                New Item
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover">
+                            <tr>
+                                <th>#ID</th>
+                                <th>Item name</th>
+                                <th>Price</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Ayam Bakar</td>
+                                <td>35000</td>
+                                <td><a role="button">edit</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Members -->
+                <div class="panel panel-default" style="display:none" id="panel-members">
                     <div class="panel-heading main-bg-color">
                         <h3 class="panel-title">Items</h3>
                     </div>
@@ -192,6 +311,12 @@
 <!-- Scripts -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="script.js"></script>
+<script>
+    document.write("<script type='text/javascript' src='http://localhost:8080/assets/js/config.js?v=" + Date.now() + "'><\/script>");
+    document.write("<script type='text/javascript' src='script.js?v=" + Date.now() + "'><\/script>");
+    $(document).ready(function () {
+        loadScript();
+    });
+</script>
 </body>
 </html>
