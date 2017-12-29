@@ -20,6 +20,16 @@ $(document).ready(function () {
         item: ["#ID", "Item Name", "Price", "Category", "Status", ""]
     };
     var createRequestBody = {
+        user: {
+            "name": "#fullname",
+            "email": "#email",
+            "restaurantId": "#restaurant-id"
+        },
+        userIdentity: {
+            "username": "#new-username",
+            "password": "#password",
+            "role": "input[name='role']:checked"
+        },
         restaurant: {
             "address": "#address",
             "phone": "#phone"
@@ -36,6 +46,7 @@ $(document).ready(function () {
         }
     };
 
+    // Get configurations and check cookie
     (function () {
         if (token === undefined) {
             backToLoginPage("You are not logged in. Please login.");
@@ -76,16 +87,20 @@ $(document).ready(function () {
         window.location.replace(config.pages.login);
     }
 
+    // Initialize all functionality
     function initializeAdminPage() {
         setUsername();
         loadAllData();
         bindShowPanelToClickEvent();
+        bindModalsToSubmitEvent();
     }
 
+    // Set navbar username
     function setUsername() {
         $("#username").html(userData.username);
     }
 
+    // Get and load all data from core service
     function loadAllData() {
         loadData("user");
         loadData("restaurant");
@@ -124,26 +139,21 @@ $(document).ready(function () {
         return row;
     }
 
-    $("#form-new-restaurant").submit(function (e) {
-        sendCreateRequest("restaurant");
+    // Bind CREATE API to modals submit event
+    function bindModalsToSubmitEvent() {
+        addSubmitEventToModal("restaurant");
+        addSubmitEventToModal("category");
+        addSubmitEventToModal("item");
+    }
 
-        e.preventDefault();
-        e.stopPropagation();
-    });
+    function addSubmitEventToModal(modalName) {
+        $("#form-new-" + modalName).submit(function (e) {
+            sendCreateRequest(modalName);
 
-    $("#form-new-category").submit(function (e) {
-        sendCreateRequest("category");
-
-        e.preventDefault();
-        e.stopPropagation();
-    });
-
-    $("#form-new-item").submit(function (e) {
-        sendCreateRequest("item");
-
-        e.preventDefault();
-        e.stopPropagation();
-    });
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    }
 
     function sendCreateRequest(objectName) {
         var newObjectList = [];
@@ -177,11 +187,7 @@ $(document).ready(function () {
         return newObject;
     }
 
-    $('#logout-btn').click(function (e) {
-        Cookies.remove("POSRESTAURANT");
-        window.location.assign(config.pages.login);
-    });
-
+    // Bind show panel to button click event
     function bindShowPanelToClickEvent() {
         showPanelButtonOnclick("overview");
         showPanelButtonOnclick("users");
@@ -199,5 +205,11 @@ $(document).ready(function () {
             $(this).addClass('active main-bg-color');
         });
     }
+
+    // Bind loging out to logout button
+    $('#logout-btn').click(function (e) {
+        Cookies.remove("POSRESTAURANT");
+        window.location.assign(config.pages.login);
+    });
 
 });
