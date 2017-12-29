@@ -5,8 +5,20 @@ $(document).ready(function () {
     var baseUrl;
     var serviceUrls = {};
     var userData = {};
+
     var dataLists = {};
-    var tableHeaders = {};
+    var tableStructures = {
+        user: ["id", "name", "role", "email", "restaurantId"],
+        restaurant: ["id", "address", "phone"],
+        category: ["id", "name", "description"],
+        item: ["id", "name", "price", "categoryId", "status"]
+    };
+    var tableHeaders = {
+        user: ["#ID", "Name", "Role", "Email", "Restaurant", ""],
+        restaurant: ["#ID", "Address", "Phone", ""],
+        category: ["#ID", "Name", "Description", ""],
+        item: ["#ID", "Item Name", "Price", "Category", "Status", ""]
+    };
 
     (function () {
         if (token === undefined) {
@@ -59,32 +71,17 @@ $(document).ready(function () {
     }
 
     function loadAllData() {
-        var userTableHeader =
-            "<tr>\n" +
-            "    <th>#ID</th>\n" +
-            "    <th>Username</th>\n" +
-            "    <th>Role</th>\n" +
-            "    <th>Email</th>\n" +
-            "    <th>Restaurant</th>\n" +
-            "    <th></th>\n" +
-            "</tr>";
-
-        loadData("user", userTableHeader, userToTableRow);
-
-        $.get(serviceUrls.restaurant, function (data) {
-            $("#restaurant-count-badge").html(data.payload.length);
-            $("#restaurant-count-well").append(data.payload.length);
-        });
-
-        $.get(serviceUrls.category, function (data) {
-            $("#category-count-badge").html(data.payload.length);
-            $("#category-count-well").append(data.payload.length);
-        });
-
-        loadItemData();
+        loadData("user");
+        loadData("restaurant");
+        loadData("category");
+        loadData("item");
     }
 
-    function loadData(dataName, tableHeader, toTableRowFunction) {
+    function loadData(dataName) {
+        var tableHeader = "<tr><th>"
+            + tableHeaders[dataName].join("</th><th>")
+            + "</th></tr>";
+
         $.get(serviceUrls[dataName], function (data) {
             dataLists[dataName] = data.payload;
 
@@ -93,92 +90,21 @@ $(document).ready(function () {
 
             $("#"+dataName+"-table").html(tableHeader);
             dataLists[dataName].forEach(function (item) {
-                $("#"+dataName+"-table").append(toTableRowFunction(item));
+                $("#"+dataName+"-table").append(toTableRow(dataName, item));
             })
         });
     }
 
-    function userToTableRow(userObject) {
-        row = "<tr>" +
-            "       <td>" + userObject.id + "</td>" +
-            "       <td>" + userObject.name + "</td>" +
-            "       <td>" + userObject.role + "</td>" +
-            "       <td>" + userObject.email + "</td>" +
-            "       <td>" + userObject.restaurantId + "</td>" +
-            "       <td><a role='button'>edit</a></td>" +
-            "</tr>";
-        return row;
-    }
+    function toTableRow(dataName, object) {
+        var columns = tableStructures[dataName];
+        var button = "<td><a role='button'>edit</a></td>";
 
-    function loadRestaurantData() {
-        var restaurantList;
-        var restaurantTableHeader =
-            "<tr>\n" +
-            "    <th>#ID</th>\n" +
-            "    <th>Address</th>\n" +
-            "    <th>Phone</th>\n" +
-            "    <th></th>\n" +
-            "</tr>";
-
-        $.get(serviceUrls.restaurant, function (data) {
-            restaurantList = data.payload;
-
-            $("#restaurant-count-badge").html(restaurantList.length);
-            $("#restaurant-count-well").append(restaurantList.length);
-
-            $("#restaurant-table").html(restaurantTableHeader);
-            restaurantList.forEach(function (user) {
-                $("#restaurant-table").append(userToTableRow(user));
-            })
-        })
-    }
-
-    function userToTableRow(userObject) {
-        row = "<tr>" +
-            "       <td>" + userObject.id + "</td>" +
-            "       <td>" + userObject.name + "</td>" +
-            "       <td>" + userObject.role + "</td>" +
-            "       <td>" + userObject.email + "</td>" +
-            "       <td>" + userObject.restaurantId + "</td>" +
-            "       <td><a role='button'>edit</a></td>" +
-            "</tr>";
-        return row;
-    }
-
-    function loadItemData() {
-        var itemList;
-        var itemTableHeader =
-            "<tr>\n" +
-            "    <th>#ID</th>\n" +
-            "    <th>Item name</th>\n" +
-            "    <th>Price</th>\n" +
-            "    <th>Category</th>\n" +
-            "    <th>Status</th>\n" +
-            "    <th></th>\n" +
-            "</tr>";
-
-        $.get(serviceUrls.item, function (data) {
-            itemList = data.payload;
-
-            $("#item-count-badge").html(itemList.length);
-            $("#item-count-well").append(itemList.length);
-
-            $("#item-table").html(itemTableHeader);
-            itemList.forEach(function (item) {
-                $("#item-table").append(itemToTableRow(item));
-            });
+        var row = "<tr>";
+        columns.forEach(function (columnName) {
+            row += "<td>" + object[columnName] + "</td>";
         });
-    }
+        row += button + "</tr>";
 
-    function itemToTableRow(itemObject) {
-        row = "<tr>" +
-            "       <td>" + itemObject.id + "</td>" +
-            "       <td>" + itemObject.name + "</td>" +
-            "       <td>" + itemObject.price + "</td>" +
-            "       <td>" + itemObject.categoryId + "</td>" +
-            "       <td>" + itemObject.status + "</td>" +
-            "       <td><a role='button'>edit</a></td>" +
-            "</tr>";
         return row;
     }
 
@@ -192,6 +118,7 @@ $(document).ready(function () {
         showPanelButtonOnclick("overview");
         showPanelButtonOnclick("users");
         showPanelButtonOnclick("restaurants");
+        showPanelButtonOnclick("categories");
         showPanelButtonOnclick("items");
     }
 

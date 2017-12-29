@@ -78,6 +78,11 @@ body {
     color: #ffffff !important;
 }
 
+#main {
+    overflow: auto;
+    padding-bottom: 50px;
+}
+
 /* Header */
 #header {
     background-color: #333333;
@@ -88,11 +93,10 @@ body {
 }
 
 #footer {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    padding: 1rem;
+    position: relative;
+    clear: both;
+    margin-top: -50px;
+    height: 50px;
     background-color: #efefef;
     text-align: center;
 }
