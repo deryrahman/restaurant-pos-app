@@ -67,7 +67,7 @@ function updateBadge() {
         'users' : users.length,
         'items' : items.length,
         'receipts' : receipts.length,
-        'members' : members.length,
+        'members' : categories.length,
         'categories' : members.length
     };
     $.each(badgeCount, function(key, val){
@@ -116,6 +116,33 @@ function loadusers() {
     });
 }
 
+function itemListToHTML(item) {
+    var categoryName;
+    categories.forEach(function(data){
+        if(data.id == item.categoryId){
+            categoryName = data.name;
+        }
+    })
+    var result = "<tr>"+
+        "<td>"+item.itemId+"</td>"+
+        "<td>"+item.itemName+"</td>"+
+        "<td>"+item.price+"</td>"+
+        "<td>"+item.stock+"</td>"+
+        "<td>"+categoryName+"</td>"+
+        "<td><a role='button'>edit</a></td>"+
+        "</tr>";
+    return result;
+}
+function renderItemList() {
+    var itemList = [];
+    var headerTable = "<tr><th>#ID</th><th>Item name</th><th>Price</th><th>Stock</th><th>Category</th><th></th></tr>";
+    itemList.push(headerTable);
+    loadcategories()
+    items.forEach(function(item){
+        itemList.push(itemListToHTML(item));
+    });
+    $('#item-list').empty().append(itemList);
+}
 function loaditems() {
     console.log("load items");
     getJSON(true,coreService+"/items", function(data){
@@ -123,6 +150,8 @@ function loaditems() {
         items = payload;
         updateOverview();
         updateBadge();
+
+        renderItemList();
     });
 }
 
@@ -134,13 +163,12 @@ function receiptToHTML(receipt) {
         "<td>"+receipt.memberId+"</td>"+
         "<td>"+receipt.totalPrice+"</td>"+
         "<td>"+receipt.tax+"</td>"+
-        "<td><a role='button'>edit</a></td>"+
         "</tr>";
     return result;
 }
 function renderReceiptList() {
     var receiptList = [];
-    var headerTable = "<tr><th>#ID</th><th>Date</th><th>Cashier Id</th><th>Member Id</th><th>Total</th><th>Tax</th><th></th></tr>";
+    var headerTable = "<tr><th>#ID</th><th>Date</th><th>Cashier Id</th><th>Member Id</th><th>Total</th><th>Tax</th></tr>";
     receiptList.push(headerTable);
     receipts.forEach(function(receipt){
         receiptList.push(receiptToHTML(receipt));
@@ -159,6 +187,25 @@ function loadreceipts(){
     });
 }
 
+function memberListToHTML(member) {
+    var result = "<tr>"+
+        "<td>"+member.id+"</td>"+
+        "<td>"+member.timestampCreated+"</td>"+
+        "<td>"+member.name+"</td>"+
+        "<td>"+member.email+"</td>"+
+        "<td>"+member.address+"</td>"+
+        "</tr>";
+    return result;
+}
+function renderMemberList() {
+    var memberList = [];
+    var headerTable = "<tr><th>#ID</th><th>Date Join</th><th>Name</th><th>Email</th><th>Address</th></tr>";
+    memberList.push(headerTable);
+    members.forEach(function(member){
+        memberList.push(memberListToHTML(member));
+    });
+    $('#member-list').empty().append(memberList);
+}
 function loadmembers() {
     console.log("load members");
 
@@ -167,15 +214,36 @@ function loadmembers() {
         members = payload;
         updateOverview();
         updateBadge();
+
+        renderMemberList();
     });
 }
 
+function categoryListToHTML(category) {
+    var result = "<tr>" +
+        "<td>"+category.id+"</td>"+
+        "<td>"+category.name+"</td>"+
+        "<td>"+category.description+"</td>"+
+        "</tr>";
+    return result
+}
+function renderCategoryList() {
+    var categoryList = [];
+    var headerTable = "<tr><th>#ID</th><th>Name</th><th>Description</th></tr>";
+    categoryList.push(headerTable);
+    categories.forEach(function(category){
+        categoryList.push(categoryListToHTML(category));
+    });
+    $('#category-list').empty().append(categoryList);
+}
 function loadcategories() {
     console.log("load categories");
     getJSON(true,coreService+"/categories", function(data){
         var payload = data["payload"];
         categories = payload;
         updateBadge();
+
+        renderCategoryList();
     });
 }
 
