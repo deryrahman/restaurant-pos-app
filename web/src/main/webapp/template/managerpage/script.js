@@ -126,6 +126,27 @@ function loaditems() {
     });
 }
 
+function receiptToHTML(receipt) {
+    var result = "<tr>"+
+        "<td>"+receipt.id+"</td>"+
+        "<td>"+receipt.timestampCreated+"</td>"+
+        "<td>"+receipt.userId+"</td>"+
+        "<td>"+receipt.memberId+"</td>"+
+        "<td>"+receipt.totalPrice+"</td>"+
+        "<td>"+receipt.tax+"</td>"+
+        "<td><a role='button'>edit</a></td>"+
+        "</tr>";
+    return result;
+}
+function renderReceiptList() {
+    var receiptList = [];
+    var headerTable = "<tr><th>#ID</th><th>Date</th><th>Cashier Id</th><th>Member Id</th><th>Total</th><th>Tax</th><th></th></tr>";
+    receiptList.push(headerTable);
+    receipts.forEach(function(receipt){
+        receiptList.push(receiptToHTML(receipt));
+    });
+    $('#receipt-list').empty().append(receiptList);
+}
 function loadreceipts(){
     console.log("load receipts");
     getJSON(true,coreService+"/receipts", function(data){
@@ -133,6 +154,8 @@ function loadreceipts(){
         receipts = payload;
         updateOverview();
         updateBadge();
+
+        renderReceiptList();
     });
 }
 
