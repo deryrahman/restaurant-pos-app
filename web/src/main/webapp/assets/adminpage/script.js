@@ -19,6 +19,22 @@ $(document).ready(function () {
         category: ["#ID", "Name", "Description", ""],
         item: ["#ID", "Item Name", "Price", "Category", "Status", ""]
     };
+    var createRequestBody = {
+        restaurant: {
+            "address": "#address",
+            "phone": "#phone"
+        },
+        category: {
+            "name": "#category-name",
+            "description": "#category-description"
+        },
+        item: {
+            "name": "#item-name",
+            "price": "#item-price",
+            "categoryId": "#category-id",
+            "status": "#item-status"
+        }
+    };
 
     (function () {
         if (token === undefined) {
@@ -109,30 +125,30 @@ $(document).ready(function () {
     }
 
     $("#form-new-restaurant").submit(function (e) {
-        var newRestaurant = [{
-            address: $(this).find("#address").val(),
-            phone: $(this).find("#phone").val()
-        }];
-
-        sendCreateRequest("restaurant", newRestaurant);
+        sendCreateRequest("restaurant");
 
         e.preventDefault();
         e.stopPropagation();
     });
 
     $("#form-new-category").submit(function (e) {
-        var newCategory = [{
-            name: $(this).find("#category-name").val(),
-            description: $(this).find("#category-description").val()
-        }];
-
-        sendCreateRequest("category", newCategory);
+        sendCreateRequest("category");
 
         e.preventDefault();
         e.stopPropagation();
     });
 
-    function sendCreateRequest(objectName, newObjectList) {
+    $("#form-new-item").submit(function (e) {
+        sendCreateRequest("item");
+
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    function sendCreateRequest(objectName) {
+        var newObjectList = [];
+        newObjectList.push(createNewObject(objectName));
+
         $.ajax({
             url: serviceUrls[objectName],
             method: "POST",
@@ -150,6 +166,15 @@ $(document).ready(function () {
 
             console.log(jqXHR.responseText);
         });
+    }
+
+    function createNewObject(objectName) {
+        var template = createRequestBody[objectName];
+        var newObject = {};
+        $.each(template, function (field, elmtId) {
+            newObject[field] = $("#form-new-" + objectName).find(elmtId).val();
+        });
+        return newObject;
     }
 
     $('#logout-btn').click(function (e) {
