@@ -6,7 +6,7 @@
     "parser": "/auth/parseToken",
     "user": "/core/users",
     "restaurant": "/core/restaurants",
-    "receipts": "/core/receipts",
+    "receipt": "/core/receipts",
     "item": "/core/items",
     "category": "/core/categories",
     "member": "/core/members"
