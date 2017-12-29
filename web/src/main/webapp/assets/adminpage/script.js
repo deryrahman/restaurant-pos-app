@@ -6,6 +6,47 @@ $(document).ready(function () {
     var serviceUrls = {};
     var userData = {};
 
+    var dataLists = {};
+    var tableStructures = {
+        user: ["id", "name", "role", "email", "restaurantId"],
+        restaurant: ["id", "address", "phone"],
+        category: ["id", "name", "description"],
+        item: ["id", "name", "price", "categoryId", "status"]
+    };
+    var tableHeaders = {
+        user: ["#ID", "Name", "Role", "Email", "Restaurant", ""],
+        restaurant: ["#ID", "Address", "Phone", ""],
+        category: ["#ID", "Name", "Description", ""],
+        item: ["#ID", "Item Name", "Price", "Category", "Status", ""]
+    };
+    var createRequestBody = {
+        user: {
+            "name": "#fullname",
+            "email": "#email",
+            "restaurantId": "#restaurant-id"
+        },
+        userIdentity: {
+            "username": "#new-username",
+            "password": "#password",
+            "role": "input[name='role']:checked"
+        },
+        restaurant: {
+            "address": "#address",
+            "phone": "#phone"
+        },
+        category: {
+            "name": "#category-name",
+            "description": "#category-description"
+        },
+        item: {
+            "name": "#item-name",
+            "price": "#item-price",
+            "categoryId": "#category-id",
+            "status": "#item-status"
+        }
+    };
+
+    // Get configurations and check cookie
     (function () {
         if (token === undefined) {
             backToLoginPage("You are not logged in. Please login.");
@@ -46,105 +87,129 @@ $(document).ready(function () {
         window.location.replace(config.pages.login);
     }
 
+    // Initialize all functionality
     function initializeAdminPage() {
         setUsername();
-        setCounts();
-        generatePanels();
+        loadAllData();
+        bindShowPanelToClickEvent();
+        bindModalsToSubmitEvent();
     }
 
+    // Set navbar username
     function setUsername() {
         $("#username").html(userData.username);
     }
 
-    function setCounts() {
-        $.get(serviceUrls.user, function (data) {
-            $("#user-count-badge").html(data.payload.length);
-            $("#user-count-well").append(data.payload.length);
-        });
-
-        $.get(serviceUrls.restaurant, function (data) {
-            $("#restaurant-count-badge").html(data.payload.length);
-            $("#restaurant-count-well").append(data.payload.length);
-        });
-
-        $.get(serviceUrls.category, function (data) {
-            $("#category-count-badge").html(data.payload.length);
-            $("#category-count-well").append(data.payload.length);
-        });
-
-        $.get(serviceUrls.item, function (data) {
-            $("#item-count-badge").html(data.payload.length);
-            $("#item-count-well").append(data.payload.length);
-        });
+    // Get and load all data from core service
+    function loadAllData() {
+        loadData("user");
+        loadData("restaurant");
+        loadData("category");
+        loadData("item");
     }
 
-    function generatePanels() {
-        generateUserPanel();
-        //generateRestaurantPanel();
-        //generateCategoryPanel();
-        //generateItemPanel();
-    }
+    function loadData(dataName) {
+        var tableHeader = "<tr><th>"
+            + tableHeaders[dataName].join("</th><th>")
+            + "</th></tr>";
 
-    function generateUserPanel() {
-        var userList;
+        $.get(serviceUrls[dataName], function (data) {
+            dataLists[dataName] = data.payload;
 
-        $.get(serviceUrls.user, function (data) {
-            userList = data.payload;
-            console.log(data);
-            console.log(userList);
+            $("#"+dataName+"-count-badge").html(dataLists[dataName].length);
+            $("#"+dataName+"-count-well").append(dataLists[dataName].length);
 
-            userList.forEach(function (item) {
-                $("#user-table").append(userToTableRow(item));
+            $("#"+dataName+"-table").html(tableHeader);
+            dataLists[dataName].forEach(function (item) {
+                $("#"+dataName+"-table").append(toTableRow(dataName, item));
             })
         });
     }
 
-    function userToTableRow(userObject) {
-        row = "<tr>" +
-            "       <td>" + userObject.id + "</td>" +
-            "       <td>" + userObject.name + "</td>" +
-            "       <td>" + userObject.role + "</td>" +
-            "       <td>" + userObject.email + "</td>" +
-            "       <td>" + userObject.restaurantId + "</td>" +
-            "       <td><a role='button'>edit</a></td>" +
-            "</tr>";
+    function toTableRow(dataName, object) {
+        var columns = tableStructures[dataName];
+        var button = "<td><a role='button'>edit</a></td>";
+
+        var row = "<tr>";
+        columns.forEach(function (columnName) {
+            row += "<td>" + object[columnName] + "</td>";
+        });
+        row += button + "</tr>";
+
         return row;
     }
 
+    // Bind CREATE API to modals submit event
+    function bindModalsToSubmitEvent() {
+        addSubmitEventToModal("restaurant");
+        addSubmitEventToModal("category");
+        addSubmitEventToModal("item");
+    }
 
+    function addSubmitEventToModal(modalName) {
+        $("#form-new-" + modalName).submit(function (e) {
+            sendCreateRequest(modalName);
+
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    }
+
+    function sendCreateRequest(objectName) {
+        var newObjectList = [];
+        newObjectList.push(createNewObject(objectName));
+
+        $.ajax({
+            url: serviceUrls[objectName],
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(newObjectList)
+        }).done(function (data) {
+            alert("Successfully created new " + objectName + ".")
+            $("#form-new-" + objectName).find("input.form-control").val("");
+            loadData(objectName);
+
+            console.log(data);
+        }).fail(function (jqXHR) {
+            var message = JSON.parse(jqXHR.responseText).message;
+            alert("Failed to create new restaurant.\n" + message);
+
+            console.log(jqXHR.responseText);
+        });
+    }
+
+    function createNewObject(objectName) {
+        var template = createRequestBody[objectName];
+        var newObject = {};
+        $.each(template, function (field, elmtId) {
+            newObject[field] = $("#form-new-" + objectName).find(elmtId).val();
+        });
+        return newObject;
+    }
+
+    // Bind show panel to button click event
+    function bindShowPanelToClickEvent() {
+        showPanelButtonOnclick("overview");
+        showPanelButtonOnclick("users");
+        showPanelButtonOnclick("restaurants");
+        showPanelButtonOnclick("categories");
+        showPanelButtonOnclick("items");
+    }
+
+    function showPanelButtonOnclick(panelName) {
+        $("#show-"+panelName).click(function () {
+            $(".panel.panel-default").hide();
+            $("#panel-"+panelName).show();
+
+            $("a[id|='show']").removeClass('active main-bg-color');
+            $(this).addClass('active main-bg-color');
+        });
+    }
+
+    // Bind loging out to logout button
     $('#logout-btn').click(function (e) {
         Cookies.remove("POSRESTAURANT");
         window.location.assign(config.pages.login);
     });
 
-    $('#show-users').click(function () {
-        $('#panel-overview').hide();
-        $('#panel-items').hide();
-        $('#panel-users').show();
-
-        $('#show-overview').removeClass('active main-bg-color');
-        $('#show-items').removeClass('active main-bg-color');
-        $('#show-users').addClass('active main-bg-color');
-
-    });
-
-    $('#show-overview').click(function () {
-        $('#panel-users').hide();
-        $('#panel-items').hide();
-        $('#panel-overview').show();
-
-        $('#show-users').removeClass('active main-bg-color');
-        $('#show-items').removeClass('active main-bg-color');
-        $('#show-overview').addClass('active main-bg-color');
-    });
-
-    $('#show-items').click(function () {
-        $('#panel-users').hide();
-        $('#panel-overview').hide();
-        $('#panel-items').show();
-
-        $('#show-users').removeClass('active main-bg-color');
-        $('#show-overview').removeClass('active main-bg-color');
-        $('#show-items').addClass('active main-bg-color');
-    });
 });
