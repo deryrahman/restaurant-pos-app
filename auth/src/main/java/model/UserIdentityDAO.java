@@ -38,12 +38,10 @@ public class UserIdentityDAO {
     public List<UserIdentity> find(String filter) throws SQLException {
         List<UserIdentity> userIdentities = new ArrayList<>();
         connection = DataSource.getConnection();
-        String query = "SELECT * FROM users_identity WHERE ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        String query = "SELECT * FROM users_identity WHERE " + filter;
+        Statement statement = connection.createStatement();
 
-        preparedStatement.setString(1, filter);
-
-        ResultSet rs = preparedStatement.executeQuery();
+        ResultSet rs = statement.executeQuery(query);
         while (rs.next()) {
             UserIdentity user = new UserIdentity(rs.getLong("id"),
                     rs.getString("username"),
@@ -52,8 +50,8 @@ public class UserIdentityDAO {
             userIdentities.add(user);
         }
 
-        rs.close();;
-        preparedStatement.close();
+        rs.close();
+        statement.close();
         connection.close();
 
         return userIdentities;
