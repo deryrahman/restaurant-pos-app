@@ -61,6 +61,15 @@ public class UserIdentityServlet extends HttpServlet {
         }
     }
 
+    private List<IdentityPayload> toPayloadList(List<UserIdentity> userIdentities) {
+        List<IdentityPayload> payloads = new ArrayList<>();
+        for (UserIdentity uid :
+                userIdentities) {
+            payloads.add(new IdentityPayload(uid));
+        }
+        return payloads;
+    }
+
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
         PrintWriter output = response.getWriter();
@@ -73,12 +82,17 @@ public class UserIdentityServlet extends HttpServlet {
         try {
             if (isPathProvided(request.getPathInfo())) {
                 long id = getIdFromPath(request.getPathInfo());
+                UserIdentityService.findById(id);
+
                 jsonBody = extractBody(request);
                 Map<String, Object> userMap = jsonToMap(jsonBody);
-                UserIdentity userIdentity = UserIdentityService.updateFromMap(userMap);
-                payloads.add(new IdentityPayload(userIdentity));
+                userMap.put("id", id);
+                UserIdentity updatedUserIdentity = UserIdentityService.updateFromMap(userMap);
+
+                payloads.add(new IdentityPayload(updatedUserIdentity));
                 message = "Successfully updated user identity.";
                 response.setStatus(HttpServletResponse.SC_OK);
+
             } else {
                 message = "Invalid HTTP method.";
                 response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -95,6 +109,10 @@ public class UserIdentityServlet extends HttpServlet {
             message = e.getMessage();
             response.setStatus(HttpServletResponse.SC_CONFLICT);
 
+        } catch (DataNotFoundException e) {
+            message = e.getMessage();
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+
         } catch (Exception e) {
             message = e.getMessage();
             e.printStackTrace();
@@ -107,21 +125,13 @@ public class UserIdentityServlet extends HttpServlet {
         }
     }
 
+
     private boolean isPathProvided(String pathInfo) {
         return !(pathInfo == null || pathInfo.equals("/"));
     }
 
     private long getIdFromPath(String pathInfo) throws NumberFormatException {
         return Long.parseLong(pathInfo.substring(1));
-    }
-
-    private List<IdentityPayload> toPayloadList(List<UserIdentity> userIdentities) {
-        List<IdentityPayload> payloads = new ArrayList<>();
-        for (UserIdentity uid :
-                userIdentities) {
-            payloads.add(new IdentityPayload(uid));
-        }
-        return payloads;
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

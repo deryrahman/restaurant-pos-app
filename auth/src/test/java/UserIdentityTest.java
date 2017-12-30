@@ -4,9 +4,12 @@ import model.uid.UserIdentity;
 
 public class UserIdentityTest {
     public static void main(String[] args) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(new UserIdentity(1L, "iqbal", "iqbal", "admin"));
+        Object test = "Test";
+        Object test2 = 8;
+        String a = test.toString();
+        String b = test2.toString();
 
-        System.out.println(json);
+        System.out.println(a);
+        System.out.println(b);
     }
 }

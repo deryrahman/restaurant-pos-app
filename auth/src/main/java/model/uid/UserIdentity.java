@@ -1,5 +1,7 @@
 package model.uid;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class UserIdentity {
     private long id;
     private String username;
@@ -37,7 +39,15 @@ public class UserIdentity {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+    public void setPassword(String password, boolean isPasswordHashed) {
+        if (isPasswordHashed) {
+            this.password = password;
+        } else {
+            this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+        }
     }
 
     public String getRole() {
