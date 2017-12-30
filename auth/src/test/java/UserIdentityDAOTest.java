@@ -1,6 +1,5 @@
-import exception.FailedCRUDOperationException;
-import model.UserIdentity;
-import model.UserIdentityDAO;
+import model.uid.UserIdentity;
+import model.uid.UserIdentityDAO;
 
 import java.sql.SQLException;
 import java.util.List;

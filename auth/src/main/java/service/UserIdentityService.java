@@ -1,8 +1,8 @@
 package service;
 
 import exception.DataNotFoundException;
-import model.UserIdentity;
-import model.UserIdentityDAO;
+import model.uid.UserIdentity;
+import model.uid.UserIdentityDAO;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
@@ -36,22 +36,22 @@ public class UserIdentityService {
         return findResult.get(0);
     }
 
-    public static long createFromMap(Map<String, Object> userIdentityMap) throws SQLException {
+    public static UserIdentity createFromMap(Map<String, Object> userIdentityMap) throws SQLException {
         return createNew(mapToUserIdentityObject(userIdentityMap));
     }
 
-    public static long createNew(UserIdentity newUserIdentity) throws SQLException {
+    public static UserIdentity createNew(UserIdentity newUserIdentity) throws SQLException {
         userIdentityDAO.create(newUserIdentity);
-        return newUserIdentity.getId();
+        return newUserIdentity;
     }
 
-    public static long updateFromMap(Map<String, Object> userIdentityMap) throws SQLException {
+    public static UserIdentity updateFromMap(Map<String, Object> userIdentityMap) throws SQLException {
         return update(mapToUserIdentityObject(userIdentityMap));
     }
 
-    public static long update(UserIdentity userIdentity) throws SQLException {
+    public static UserIdentity update(UserIdentity userIdentity) throws SQLException {
         userIdentityDAO.update(userIdentity);
-        return userIdentity.getId();
+        return userIdentity;
     }
 
     public static void delete(long id) throws SQLException {
@@ -59,7 +59,7 @@ public class UserIdentityService {
     }
 
     private static UserIdentity mapToUserIdentityObject(Map<String, Object> userIdentityMap) {
-        long id = (long) userIdentityMap.get("id");
+        long id = Long.parseLong(userIdentityMap.get("id").toString());
         String username = (String) userIdentityMap.get("username");
         String plainPassword = (String) userIdentityMap.get("password");
         String role = (String) userIdentityMap.get("role");

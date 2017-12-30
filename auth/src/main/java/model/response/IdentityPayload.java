@@ -1,19 +1,24 @@
-package model;
+package model.response;
 
-public class UserIdentity {
+import model.uid.UserIdentity;
+
+public class IdentityPayload {
     private long id;
     private String username;
-    private String password;
     private String role;
 
-    public UserIdentity(long id, String username, String password, String role) {
+    public IdentityPayload() {}
+
+    public IdentityPayload(long id, String username, String role) {
         this.id = id;
         this.username = username;
-        this.password = password;
         this.role = role;
     }
 
-    public UserIdentity() {
+    public IdentityPayload(UserIdentity userIdentity) {
+        this.id = userIdentity.getId();
+        this.username = userIdentity.getUsername();
+        this.role = userIdentity.getRole();
     }
 
     public long getId() {
@@ -32,14 +37,6 @@ public class UserIdentity {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getRole() {
         return role;
     }
@@ -50,10 +47,9 @@ public class UserIdentity {
 
     @Override
     public String toString() {
-        return "UserIdentity{" +
+        return "IdentityPayload{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
                 ", role='" + role + '\'' +
                 '}';
     }
