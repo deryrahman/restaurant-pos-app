@@ -2,20 +2,25 @@ package service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import exception.DataNotFoundException;
 import exception.InvalidTokenRequestException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.crypto.MacProvider;
+import model.UserIdentity;
 
 import java.security.Key;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TokenGenerator {
-    private final static long ttlMillis = 24 * 60 * 60 * 1000;
+public class TokenService {
+    private final static long ttlMillis = 10 * 60 * 1000;
     static Key key = MacProvider.generateKey();
 
-    public static String generateJwtFromMap (Map<String, String> userInfo) throws InvalidTokenRequestException {
+    public static String generateJwtFromMap (Map<String, String> userInfo)
+            throws InvalidTokenRequestException, SQLException, DataNotFoundException {
+
         String username = userInfo.get("username");
         String ipAddress = userInfo.get("ipAddress");
         String userAgent = userInfo.get("userAgent");
@@ -32,15 +37,20 @@ public class TokenGenerator {
             throw new InvalidTokenRequestException("Field not found: userAgent");
         }
 
-        return generateJwt(username, ipAddress, userAgent);
+        UserIdentity userIdentity = UserIdentityService.findByUsername(username);
+        long userId = userIdentity.getId();
+        String role = userIdentity.getRole();
+
+        return generateJwt(userId, username, role, ipAddress, userAgent);
     }
 
-    public static String generateJwt(String username,
-                                     String ipAddres,
+    public static String generateJwt(long userId,
+                                     String username,
+                                     String role,
+                                     String ipAddress,
                                      String userAgent) {
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-        String role = UserService.getRoleByUsername(username);
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
         long nowMillis = System.currentTimeMillis();
         long expMillis = nowMillis + ttlMillis;
@@ -48,7 +58,8 @@ public class TokenGenerator {
         Date exp = new Date(expMillis);
 
         Map<String, Object> customClaims = new HashMap<>();
-        customClaims.put("ipa", ipAddres);
+        customClaims.put("uid", userId);
+        customClaims.put("ipa", ipAddress);
         customClaims.put("uag", userAgent);
         customClaims.put("role", role);
         String jwt = Jwts.builder()
@@ -63,9 +74,6 @@ public class TokenGenerator {
     }
 
     public static Map<String, Object> parseJwt(String jwt) {
-        Map<String, Object> payload;
-        Map<String, Object> parsedInfo = new HashMap<>();
-
         Claims claims;
         claims = Jwts.parser()
                 .setSigningKey(key)
@@ -82,8 +90,8 @@ public class TokenGenerator {
         String ipAddress = claims.get("ipa", String.class);
         String userAgent = claims.get("uag", String.class);
         String role = claims.get("role", String.class);
-        String refreshToken = generateJwt(username, ipAddress, userAgent);
-        Long userId = UserService.getIdByUsername(username);
+        Long userId = claims.get("uid", Long.class);
+        String refreshToken = generateJwt(userId, username, role, ipAddress, userAgent);
 
         payload.put("username", username);
         payload.put("ipAddress", ipAddress);

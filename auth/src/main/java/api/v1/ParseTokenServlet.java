@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import exception.UnsupportedMediaTypeException;
 import io.jsonwebtoken.ExpiredJwtException;
-import service.TokenGenerator;
+import service.TokenService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,7 +17,6 @@ import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet(name = "ParseTokenServlet")
 public class ParseTokenServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
@@ -61,7 +60,7 @@ public class ParseTokenServlet extends HttpServlet {
     private Map<String, Object> parseTokenFromRequest(HttpServletRequest request) throws Exception {
         if (request.getContentType().equals("application/x-www-form-urlencoded")) {
             String token = request.getParameter("token");
-            return TokenGenerator.parseJwt(token);
+            return TokenService.parseJwt(token);
 
         } else {
             throw new UnsupportedMediaTypeException();

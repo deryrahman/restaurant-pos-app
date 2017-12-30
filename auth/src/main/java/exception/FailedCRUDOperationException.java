@@ -1,6 +1,6 @@
 package exception;
 
-public class FailedCRUDOperationException extends Exception {
+public class FailedCRUDOperationException extends AuthenticationServiceException {
     public FailedCRUDOperationException() {
         super();
     }

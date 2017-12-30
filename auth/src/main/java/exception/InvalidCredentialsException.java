@@ -1,6 +1,6 @@
 package exception;
 
-public class InvalidCredentialsException extends Exception {
+public class InvalidCredentialsException extends AuthenticationServiceException {
     public InvalidCredentialsException() {
     }
 
