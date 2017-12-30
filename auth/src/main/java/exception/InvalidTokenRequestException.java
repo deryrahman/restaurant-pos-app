@@ -1,6 +1,6 @@
 package exception;
 
-public class InvalidTokenRequestException extends Exception {
+public class InvalidTokenRequestException extends AuthenticationServiceException {
     public InvalidTokenRequestException() {
     }
 
