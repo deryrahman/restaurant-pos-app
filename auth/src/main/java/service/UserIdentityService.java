@@ -3,9 +3,11 @@ package service;
 import exception.DataNotFoundException;
 import model.UserIdentity;
 import model.UserIdentityDAO;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 public class UserIdentityService {
     private static UserIdentityDAO userIdentityDAO = new UserIdentityDAO();
@@ -34,9 +36,17 @@ public class UserIdentityService {
         return findResult.get(0);
     }
 
+    public static long createFromMap(Map<String, Object> userIdentityMap) throws SQLException {
+        return createNew(mapToUserIdentityObject(userIdentityMap));
+    }
+
     public static long createNew(UserIdentity newUserIdentity) throws SQLException {
         userIdentityDAO.create(newUserIdentity);
         return newUserIdentity.getId();
+    }
+
+    public static long updateFromMap(Map<String, Object> userIdentityMap) throws SQLException {
+        return update(mapToUserIdentityObject(userIdentityMap));
     }
 
     public static long update(UserIdentity userIdentity) throws SQLException {
@@ -46,6 +56,20 @@ public class UserIdentityService {
 
     public static void delete(long id) throws SQLException {
         userIdentityDAO.delete(id);
+    }
+
+    private static UserIdentity mapToUserIdentityObject(Map<String, Object> userIdentityMap) {
+        long id = (long) userIdentityMap.get("id");
+        String username = (String) userIdentityMap.get("username");
+        String plainPassword = (String) userIdentityMap.get("password");
+        String role = (String) userIdentityMap.get("role");
+
+        return new UserIdentity(id, username, hashPassword(plainPassword), role);
+    }
+
+    private static String hashPassword(String plainPassword) {
+        String salt = BCrypt.gensalt();
+        return BCrypt.hashpw(plainPassword, salt);
     }
 
 }
