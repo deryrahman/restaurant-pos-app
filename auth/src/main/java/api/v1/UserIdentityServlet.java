@@ -36,13 +36,14 @@ public class UserIdentityServlet extends HttpServlet {
                 long id = getIdFromPath(request.getPathInfo());
                 UserIdentity user = UserIdentityService.findById(id);
                 payloads.add(new IdentityPayload(user));
+                message = "Successfully get user identity.";
 
             } else {
                 List<UserIdentity> userIdentities = UserIdentityService.getAll();
                 payloads = toPayloadList(userIdentities);
+                message = "Successfully get all user identities.";
 
             }
-            message = "Successfully get all user identities.";
             response.setStatus(HttpServletResponse.SC_OK);
 
         } catch (DataNotFoundException | NumberFormatException e) {
@@ -56,6 +57,7 @@ public class UserIdentityServlet extends HttpServlet {
         } finally {
             ResponseBody<IdentityPayload> responseBody = new ResponseBody<>(message, payloads);
             output.write(responseBody.toJSON());
+            output.close();
         }
     }
 
@@ -97,7 +99,7 @@ public class UserIdentityServlet extends HttpServlet {
             message = e.getMessage();
             response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 
-        } catch (EmptyDataException | IOException e) {
+        } catch (EmptyDataException | IOException | NullPointerException e) {
             message = new UserIdentity().toString();
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
@@ -105,10 +107,15 @@ public class UserIdentityServlet extends HttpServlet {
             message = e.getMessage();
             response.setStatus(HttpServletResponse.SC_CONFLICT);
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             message = e.getMessage();
+            e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
+        } finally {
+            ResponseBody<IdentityPayload> responseBody = new ResponseBody<>(message, payloads);
+            output.write(responseBody.toJSON());
+            output.close();
         }
 
     }

@@ -59,7 +59,7 @@ public class UserIdentityService {
     }
 
     private static UserIdentity mapToUserIdentityObject(Map<String, Object> userIdentityMap) {
-        long id = (long) userIdentityMap.get("id");
+        long id = Long.parseLong(userIdentityMap.get("id").toString());
         String username = (String) userIdentityMap.get("username");
         String plainPassword = (String) userIdentityMap.get("password");
         String role = (String) userIdentityMap.get("role");
