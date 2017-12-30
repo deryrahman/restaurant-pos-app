@@ -1,8 +1,8 @@
 package service;
 
 import exception.DataNotFoundException;
-import model.UserIdentity;
-import model.UserIdentityDAO;
+import model.uid.UserIdentity;
+import model.uid.UserIdentityDAO;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;

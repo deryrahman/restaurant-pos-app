@@ -1,4 +1,4 @@
-package model;
+package model.uid;
 
 public class UserIdentity {
     private long id;

@@ -1,12 +1,10 @@
 package service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import exception.DataNotFoundException;
 import exception.InvalidTokenRequestException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.crypto.MacProvider;
-import model.UserIdentity;
+import model.uid.UserIdentity;
 
 import java.security.Key;
 import java.sql.SQLException;

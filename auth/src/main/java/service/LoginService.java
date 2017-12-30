@@ -2,7 +2,7 @@ package service;
 
 import exception.DataNotFoundException;
 import exception.InvalidCredentialsException;
-import model.UserIdentity;
+import model.uid.UserIdentity;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;

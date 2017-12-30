@@ -1,5 +1,5 @@
 import exception.DataNotFoundException;
-import model.UserIdentity;
+import model.uid.UserIdentity;
 import service.UserIdentityService;
 
 import java.sql.SQLException;

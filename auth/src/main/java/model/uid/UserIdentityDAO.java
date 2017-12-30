@@ -1,8 +1,5 @@
-package model;
+package model.uid;
 
-import exception.BadDataException;
-import exception.DatabaseFailureException;
-import exception.FailedCRUDOperationException;
 import util.DataSource;
 
 import java.sql.*;
