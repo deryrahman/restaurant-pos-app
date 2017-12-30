@@ -51,10 +51,10 @@ public class UserIdentity {
     @Override
     public String toString() {
         return "UserIdentity{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
+                "id:" + id +
+                ", username:'" + username + '\'' +
+                ", password:'" + password + '\'' +
+                ", role:'" + role + '\'' +
                 '}';
     }
 }
