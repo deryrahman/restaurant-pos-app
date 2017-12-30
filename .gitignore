@@ -26,3 +26,7 @@ gradle/
 
 # Project
 *JDBCConn.java
+/auth/src/main/java/util/MySQLConfiguration.java
+/.ideaDataSources/
+/restaurant-pos-app.ipr
+*.orig
