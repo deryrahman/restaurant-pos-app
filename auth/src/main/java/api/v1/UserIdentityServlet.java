@@ -61,6 +61,52 @@ public class UserIdentityServlet extends HttpServlet {
         }
     }
 
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        PrintWriter output = response.getWriter();
+
+        String message = "";
+        List<IdentityPayload> payloads = new ArrayList<>();
+
+        String jsonBody;
+
+        try {
+            if (isPathProvided(request.getPathInfo())) {
+                long id = getIdFromPath(request.getPathInfo());
+                jsonBody = extractBody(request);
+                Map<String, Object> userMap = jsonToMap(jsonBody);
+                UserIdentity userIdentity = UserIdentityService.updateFromMap(userMap);
+                payloads.add(new IdentityPayload(userIdentity));
+                message = "Successfully updated user identity.";
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else {
+                message = "Invalid HTTP method.";
+                response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            }
+        } catch (UnsupportedMediaTypeException e) {
+            message = e.getMessage();
+            response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+
+        } catch (EmptyDataException | IOException | NullPointerException e) {
+            message = new UserIdentity().toString();
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+        } catch (SQLIntegrityConstraintViolationException e) {
+            message = e.getMessage();
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+
+        } catch (Exception e) {
+            message = e.getMessage();
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+        } finally {
+            ResponseBody<IdentityPayload> responseBody = new ResponseBody<>(message, payloads);
+            output.write(responseBody.toJSON());
+            output.close();
+        }
+    }
+
     private boolean isPathProvided(String pathInfo) {
         return !(pathInfo == null || pathInfo.equals("/"));
     }
@@ -123,10 +169,6 @@ public class UserIdentityServlet extends HttpServlet {
     private Map<String, Object> jsonToMap(String jsonBody) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(jsonBody, new TypeReference<Map<String, Object>>(){});
-    }
-
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
     }
 
     private String extractBody(HttpServletRequest request) throws IOException, EmptyDataException, UnsupportedMediaTypeException {
