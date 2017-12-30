@@ -1,7 +1,9 @@
 package api.v1;
 
+import exception.AuthenticationServiceException;
 import exception.InvalidCredentialsException;
 import exception.UnsupportedMediaTypeException;
+import service.LoginService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,11 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-import static service.TokenGenerator.generateJwt;
-import static service.UserService.isValid;
+import static service.TokenService.generateJwtFromMap;
 
-@WebServlet(name = "LoginServlet")
 public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
@@ -32,8 +35,12 @@ public class LoginServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
             output.write(e.getMessage());
 
-        } catch (InvalidCredentialsException e) {
+        } catch (AuthenticationServiceException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            output.write(e.getMessage());
+
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             output.write(e.getMessage());
 
         } finally {
@@ -61,7 +68,8 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    private String generateTokenFromRequest(HttpServletRequest request) throws InvalidCredentialsException, UnsupportedMediaTypeException {
+    private String generateTokenFromRequest(HttpServletRequest request)
+            throws AuthenticationServiceException, UnsupportedMediaTypeException, SQLException {
         if (request.getContentType().equals("application/x-www-form-urlencoded")) {
 
             String username = request.getParameter("username");
@@ -69,8 +77,12 @@ public class LoginServlet extends HttpServlet {
             String ipAddress = request.getRemoteAddr();
             String userAgent = request.getHeader("User-Agent");
 
-            if (isValid(username, password)) {
-                return generateJwt(username, ipAddress, userAgent);
+            if (LoginService.isValidCredential(username, password)) {
+                Map<String, String> userInfo = new HashMap<>();
+                userInfo.put("username", username);
+                userInfo.put("userAgent", userAgent);
+                userInfo.put("ipAddress", ipAddress);
+                return generateJwtFromMap(userInfo);
             } else {
                 throw new InvalidCredentialsException("Invalid username or password.");
             }
