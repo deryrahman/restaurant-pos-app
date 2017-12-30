@@ -17,7 +17,6 @@ import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet(name = "ParseTokenServlet")
 public class ParseTokenServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
