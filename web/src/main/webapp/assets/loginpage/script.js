@@ -14,6 +14,8 @@ $(document).ready(function() {
     });
 
     $('#login-form').submit(function (e) {
+        $("#overlay").show();
+
         var data = {
             username: $(this).find("#username").val(),
             password: $(this).find("#password").val()
@@ -46,6 +48,7 @@ $(document).ready(function() {
             console.log(userInfo);
 
         }).fail(function (jqXHR) {
+            $("#overlay").hide();
             if (jqXHR.status === 401) {
                 $('#credential-warning').show();
             } else {
