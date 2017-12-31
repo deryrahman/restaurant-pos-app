@@ -135,8 +135,9 @@ body {
     margin-left: 10px;
 }
 
-.btn-update {
+.btn-submit, .btn-update {
     display: none;
+    padding-left: 9px;
 }
 
 .modal-body .buttons {

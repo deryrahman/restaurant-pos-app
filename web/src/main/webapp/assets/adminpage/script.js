@@ -147,6 +147,17 @@ $(document).ready(function () {
             var newObject = tableRowToObject(modalName, row);
             console.log(newObject);
 
+            $("#submit-"+modalName).hide();
+            $("#update-"+modalName).show();
+
+            fillModalForms(modalName, newObject);
+        });
+    }
+
+    function fillModalForms(dataName, object) {
+        var template = createRequestBody[dataName];
+        $.each(template, function (field, elmtId) {
+            $("#form-new-"+dataName).find(elmtId).val(object[field]);
         });
     }
 
@@ -247,11 +258,11 @@ $(document).ready(function () {
         });
     }
 
-    function createNewObject(objectName) {
-        var template = createRequestBody[objectName];
+    function createNewObject(dataName) {
+        var template = createRequestBody[dataName];
         var newObject = {};
         $.each(template, function (field, elmtId) {
-            newObject[field] = $("#form-new-" + objectName).find(elmtId).val();
+            newObject[field] = $("#form-new-" + dataName).find(elmtId).val();
         });
         return newObject;
     }
@@ -280,5 +291,10 @@ $(document).ready(function () {
         Cookies.remove("POSRESTAURANT");
         window.location.assign(config.pages.login);
     });
+
+    $(".btn-new").click(function () {
+        $(".btn-update").hide();
+        $(".btn-submit").show();
+    })
 
 });
