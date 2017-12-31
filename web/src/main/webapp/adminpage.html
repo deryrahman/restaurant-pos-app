@@ -18,12 +18,16 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                    <h3 class="modal-title" id="lineModalLabel">Register New User</h3>
+                    <h3 class="modal-title modal-element-new" id="lineModalLabel">Register New User</h3>
+                    <h3 class="modal-title modal-element-edit">Edit User</h3>
                 </div>
                 <div class="modal-body" id="form-new-userIdentity">
 
                     <!-- Form Content -->
                     <form id="form-new-user">
+                        <div class="modal-element-edit">
+                            <label>User #ID: </label><span class="modal-id"></span>
+                        </div>
                         <div class="form-group">
                             <label for="fullname">Full Name</label>
                             <input id="fullname" name="name" placeholder="Name" type="text" class="form-control" >
@@ -57,8 +61,8 @@
                         <div class="row buttons">
                             <div class="col-sm-4 col-sm-offset-8">
                                 <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
-                                <button id="update-user" type="button" class="btn btn-custom btn-update">Update</button>
-                                <button id="submit-user" type="submit" class="btn btn-custom btn-submit">Submit</button>
+                                <button id="submit-user" type="submit" class="btn btn-custom btn-submit modal-element-new">Submit</button>
+                                <button id="update-user" type="button" class="btn btn-custom btn-update modal-element-edit">Update</button>
                             </div>
                         </div>
                     </form>
@@ -75,12 +79,17 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                    <h3 class="modal-title">Register New Restaurant</h3>
+                    <h3 class="modal-title modal-element-new">Register New Restaurant</h3>
+                    <h3 class="modal-title modal-element-edit">Edit Restaurant</h3>
                 </div>
                 <div class="modal-body">
+                    <!--<span class="modal-element-edit"><strong>Restaurant #ID: </strong><span id="modal-id"></span><br></span>-->
 
                     <!-- Form Content -->
                     <form id="form-new-restaurant">
+                        <div class="modal-element-edit">
+                            <label>Restaurant #ID: </label><span class="modal-id"></span>
+                        </div>
                         <div class="form-group">
                             <label for="address">Restaurant Address</label>
                             <input id="address" name="address" placeholder="Address" type="text" class="form-control" >
@@ -92,8 +101,8 @@
                         <div class="row buttons">
                             <div class="col-sm-4 col-sm-offset-8">
                                 <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
-                                <button id="submit-restaurant" type="submit" class="btn btn-custom btn-submit">Submit</button>
-                                <button id="update-restaurant" type="button" class="btn btn-custom btn-update">Update</button>
+                                <button id="submit-restaurant" type="submit" class="btn btn-custom btn-submit modal-element-new">Submit</button>
+                                <button id="update-restaurant" type="button" class="btn btn-custom btn-update modal-element-edit">Update</button>
                             </div>
                         </div>
                     </form>
@@ -110,12 +119,16 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                    <h3 class="modal-title">Create New Category</h3>
+                    <h3 class="modal-title modal-element-new">Create New Category</h3>
+                    <h3 class="modal-title modal-element-edit">Edit Category</h3>
                 </div>
                 <div class="modal-body">
 
                     <!-- Form Content -->
                     <form id="form-new-category">
+                        <div class="modal-element-edit">
+                            <label>Category #ID: </label><span class="modal-id"></span>
+                        </div>
                         <div class="form-group">
                             <label for="category-name">Category Name</label>
                             <input id="category-name" name="name" placeholder="Name" type="text" class="form-control" >
@@ -127,8 +140,8 @@
                         <div class="row buttons">
                             <div class="col-sm-4 col-sm-offset-8">
                                 <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
-                                <button id="submit-category" type="submit" class="btn btn-custom btn-submit">Submit</button>
-                                <button id="update-category" type="button" class="btn btn-custom btn-update">Update</button>                            </div>
+                                <button id="submit-category" type="submit" class="btn btn-custom btn-submit modal-element-new">Submit</button>
+                                <button id="update-category" type="button" class="btn btn-custom btn-update modal-element-edit">Update</button>                            </div>
                         </div>
                     </form>
 
@@ -144,12 +157,16 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                    <h3 class="modal-title">Create New Item</h3>
+                    <h3 class="modal-title modal-element-new">Create New Item</h3>
+                    <h3 class="modal-title modal-element-edit">Edit Restaurant</h3>
                 </div>
                 <div class="modal-body">
 
                     <!-- Form Content -->
                     <form id="form-new-item">
+                        <div class="modal-element-edit">
+                            <label>Item #ID: </label><span class="modal-id"></span>
+                        </div>
                         <div class="form-group">
                             <label for="item-name">Item Name</label>
                             <input id="item-name" name="name" placeholder="Name" type="text" class="form-control" >
@@ -173,8 +190,8 @@
                         <div class="row buttons">
                             <div class="col-sm-4 col-sm-offset-8">
                                 <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
-                                <button id="submit-item" type="submit" class="btn btn-custom btn-submit">Submit</button>
-                                <button id="update-item" type="button" class="btn btn-custom btn-update">Update</button>                            </div>
+                                <button id="submit-item" type="submit" class="btn btn-custom btn-submit modal-element-new">Submit</button>
+                                <button id="update-item" type="button" class="btn btn-custom btn-update modal-element-edit">Update</button>                            </div>
                         </div>
                     </form>
 

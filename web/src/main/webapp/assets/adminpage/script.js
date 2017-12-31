@@ -95,6 +95,7 @@ $(document).ready(function () {
         loadAllData();
         bindShowPanelToClickEvent();
         bindModalsToSubmitEvent();
+        bindNewButtonsToModals();
     }
 
     // Set navbar username
@@ -147,17 +148,25 @@ $(document).ready(function () {
             var newObject = tableRowToObject(modalName, row);
             console.log(newObject);
 
-            $("#submit-"+modalName).hide();
-            $("#update-"+modalName).show();
-
-            fillModalForms(modalName, newObject);
+            modifyModalInterface(modalName, newObject);
         });
     }
 
-    function fillModalForms(dataName, object) {
-        var template = createRequestBody[dataName];
+    function modifyModalInterface(modalName, object) {
+        var modalForm = $("#modal-new-"+modalName);
+        modalForm.find(".modal-element-new").hide();
+        modalForm
+            .find(".modal-element-edit").show()
+            .find(".modal-id").html(object.id);
+
+
+        fillModalForms(modalName, object);
+    }
+
+    function fillModalForms(modalName, object) {
+        var template = createRequestBody[modalName];
         $.each(template, function (field, elmtId) {
-            $("#form-new-"+dataName).find(elmtId).val(object[field]);
+            $("#form-new-"+modalName).find(elmtId).val(object[field]);
         });
     }
 
@@ -245,7 +254,7 @@ $(document).ready(function () {
             data: JSON.stringify(dataToBeSent)
         }).done(function (data) {
             alert("Successfully created new " + dataName + ".");
-            $("#form-new-" + dataName).find("input.form-control").val("");
+            emptyModalForm(dataName);
             loadData(dataName);
 
             successfullyCreatedObject = data.payload[0];
@@ -292,9 +301,29 @@ $(document).ready(function () {
         window.location.assign(config.pages.login);
     });
 
-    $(".btn-new").click(function () {
-        $(".btn-update").hide();
-        $(".btn-submit").show();
-    })
+    function bindNewButtonsToModals() {
+        bindNewButtonToModal("user");
+        bindNewButtonToModal("restaurant");
+        bindNewButtonToModal("category");
+        bindNewButtonToModal("item");
+    }
+
+    function bindNewButtonToModal(modalName) {
+        $("#btn-new-"+modalName).click(function () {
+            revertModalInterface(modalName);
+        });
+    }
+
+    function revertModalInterface(modalName) {
+        var modalForm = $("#modal-new-"+modalName);
+        modalForm.find(".modal-element-edit").hide();
+        modalForm.find(".modal-element-new").show();
+
+        emptyModalForm(modalName);
+    }
+
+    function emptyModalForm(modalName) {
+        $("#form-new-" + modalName).find("input.form-control").val("");
+    }
 
 });
