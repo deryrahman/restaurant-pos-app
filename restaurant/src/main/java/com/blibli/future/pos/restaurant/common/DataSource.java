@@ -14,7 +14,7 @@ public class DataSource {
     private static HikariDataSource ds;
 
     static {
-        ServletContext ctx = ApplicationUtility.getServletContext();
+        ServletContext ctx = ApplicationContex.getServletContext();
         Config cfg = (Config) ctx.getAttribute("restaurantConfig");
         config.setDriverClassName("com.mysql.jdbc.Driver");
         config.setJdbcUrl(cfg.getJdbc().getUrl());

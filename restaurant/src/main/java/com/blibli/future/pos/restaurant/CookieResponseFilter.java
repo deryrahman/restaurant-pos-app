@@ -5,6 +5,7 @@ import org.apache.log4j.MDC;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -24,6 +25,7 @@ public class CookieResponseFilter implements ContainerResponseFilter {
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
         Cookie cookie = null;
+        HttpSession session = httpRequest.getSession();
         if (httpRequest.getCookies() != null) {
             for (Cookie cookie1 : httpRequest.getCookies()) {
                 if (cookie1.getName().equals("POSRESTAURANT")) {
@@ -34,7 +36,8 @@ public class CookieResponseFilter implements ContainerResponseFilter {
         if(cookie == null){
             throw new NotAuthorizedException("Not valid cookie");
         }
-        cookie.setValue((String) MDC.get("refreshToken"));
+        String refreshToken = (String) session.getAttribute("refreshToken");
+        cookie.setValue(refreshToken);
         cookie.setMaxAge(60*60*24*365);
         cookie.setPath("/");
         httpResponse.addCookie(cookie);

@@ -1,6 +1,6 @@
 package com.blibli.future.pos.restaurant;
 
-import com.blibli.future.pos.restaurant.common.ApplicationUtility;
+import com.blibli.future.pos.restaurant.common.ApplicationContex;
 import com.blibli.future.pos.restaurant.common.model.Config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -25,7 +25,7 @@ public class ServiceServletContextListener implements ServletContextListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ApplicationUtility.setServletContext(servletContext);
+        ApplicationContex.setServletContext(servletContext);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.blibli.future.pos.restaurant.common.ErrorMessage;
 import com.blibli.future.pos.restaurant.common.model.BaseResponse;
 import com.blibli.future.pos.restaurant.common.model.User;
 import com.blibli.future.pos.restaurant.dao.user.UserDAOMysql;
+import org.slf4j.MDC;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -13,17 +14,25 @@ import java.util.List;
 @SuppressWarnings("ALL")
 @Path("/users")
 public class UserService extends BaseRESTService {
-    private static UserDAOMysql userDAO = new UserDAOMysql();
-
+    private static final UserDAOMysql userDAO = new UserDAOMysql();
     private User user;
     private List<User> users;
+
+    public static void initUser(Integer id) throws Exception {
+        userId = id;
+        User user = (User) th.runTransaction(conn -> {
+            return (new UserDAOMysql()).findById(id);
+        });
+        restaurantId = user.getRestaurantId();
+        ROLE = user.getRole();
+    }
 
     // ---- BEGIN /users ----
     @POST
     @Consumes("application/json")
     @Produces("application/json")
     public Response create(List<User> users) throws Exception {
-        initializeRole();
+
         if(!(userIs(ADMIN) || userIs(MANAGER))){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
@@ -67,7 +76,7 @@ public class UserService extends BaseRESTService {
     @GET
     @Produces("application/json")
     public Response getAll() throws Exception {
-        initializeRole();
+
         if(userIs(ADMIN)) {
             users = (List<User>) th.runTransaction(conn -> {
                 List<User> users = userDAO.find("true");
@@ -115,7 +124,7 @@ public class UserService extends BaseRESTService {
     @Path("/{id}")
     @Produces("application/json")
     public Response get(@PathParam("id") int id) throws Exception {
-        initializeRole();
+
         this.user = (User) th.runTransaction(conn -> {
             User user = userDAO.findById(id);
             if(user.isEmpty()){
@@ -150,7 +159,7 @@ public class UserService extends BaseRESTService {
     @Path("/{id}")
     @Produces("application/json")
     public Response delete(@PathParam("id") int id) throws Exception {
-        initializeRole();
+
         if(!(userIs(ADMIN) || userIs(MANAGER))){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
@@ -178,7 +187,7 @@ public class UserService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response update(@PathParam("id") int id, User user) throws Exception {
-        initializeRole();
+
         if(!(userIs(ADMIN) || userIs(MANAGER))){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }

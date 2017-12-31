@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manager Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+
+        <div class="navbar-header">
+            <a href="#" class="navbar-brand">PEREGRINE</a>
+        </div>
+
+        <div>
+            <ul class="nav navbar-nav navbar-left">
+                <li class="active"><a href="index.html">Manager Page</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="#">RestaurantId #<span class="restaurant-id">-</span></a></li>
+                <li class="active"><a href="#" class="restaurant-phone">-</a></li>
+                <li><a href="#" id="user-name">-</a></li>
+                <li><a href="login.html">Logout</a></li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+
+<header id="header">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10">
+                <h1>Dashboard <small>Manage Users and Items</small></h1>
+            </div>
+            <div class="col-md-2">
+
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="main">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group">
+                    <a href="#" class="list-group-item active main-bg-color" id="show-overview">
+                        <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                         Overview
+                    </a>
+                    <a href="#" class="list-group-item" id="show-restaurants">
+                        <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                        Restaurant Profile
+                    </a>
+                    <a role="button" class="list-group-item" id="show-users">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                        <span class="badge">-</span>
+                         Users</a>
+                    <a href="#" class="list-group-item" id="show-receipts">
+                        <span class="glyphicon glyphicon-glass" aria-hidden="true"></span>
+                        <span class="badge">-</span>
+                        Receipts</a>
+                    <a href="#" class="list-group-item" id="show-items">
+                        <span class="glyphicon glyphicon-glass" aria-hidden="true"></span>
+                        <span class="badge">-</span>
+                        Items</a>
+                    <a href="#" class="list-group-item" id="show-categories">
+                        <span class="glyphicon glyphicon-glass" aria-hidden="true"></span>
+                        <span class="badge">-</span>
+                        Categories</a>
+                    <a href="#" class="list-group-item" id="show-members">
+                        <span class="glyphicon glyphicon-glass" aria-hidden="true"></span>
+                        <span class="badge">-</span>
+                        Members</a>
+                </div>
+            </div>
+            <div class="col-md-9">
+
+                <!-- Statistics -->
+                <div class="panel panel-default" style="display:block" id="panel-overview">
+                    <div class="panel-heading main-bg-color">
+                        <h3 class="panel-title">Statistics</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-3">
+                            <div class="well dash-box">
+                                <h2><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span id="count-users">-</span></h2>
+                                <h4>Users</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="well">
+                                <h2><span class="glyphicon glyphicon-glass" aria-hidden="true"></span> <span id="count-items">-</span></h2>
+                                <h4>Items</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="well">
+                                <h2><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> <span id="count-receipts">-</span></h2>
+                                <h4>Reciepts</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="well">
+                                <h2><span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span> <span id="count-members">-</span></h2>
+                                <h4>Members</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Retaurants -->
+                <div class="panel panel-default" style="display:none" id="panel-restaurants">
+                    <div class="panel-heading main-bg-color">
+                        <h3 class="panel-title">Restaurant Profile</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="jumbotron">
+                            <h2>Restaurant Id #<span class="restaurant-id">-</span></h2>
+                            <p>Address : <span class="restaurant-address">-</span></p>
+                            <p>Phone number : <span class="restaurant-phone">-</span></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Address:</label>
+                            <input type="text" class="form-control" id="address">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone:</label>
+                            <input type="text" class="form-control" id="phone">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="saveEditRestaurant()">Save</button>
+                    </div>
+                </div>
+
+                <!-- Users -->
+                <div class="panel panel-default" style="display:none" id="panel-users">
+                    <div class="panel-heading main-bg-color">
+                        <h3 class="panel-title">Users</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#new-user">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                 New User
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover" id="user-list">
+                            <!--Here user list-->
+                        </table>
+                    </div>
+                </div>
+                <!--Modal new user-->
+                <div id="new-user" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">New User</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                    <input id="name" type="text" class="form-control" name="name" placeholder="Name">
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                                    <input id="email" type="text" class="form-control" name="email" placeholder="Email">
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                    <input id="password" type="password" class="form-control" name="password" placeholder="Password">
+                                </div>
+
+                                <div class="dropdown" id="role-dropdown">
+                                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span id="role-select">Cashier</span>
+                                        <span class="caret"></span></button>
+                                    <ul class="dropdown-menu">
+                                        <li id="role-select-admin" class="disabled"><a href="#">Admin</a></li>
+                                        <li id="role-select-manager" onclick="roleSelect('manager')"><a href="#">Manager</a></li>
+                                        <li id="role-select-cashier" class="active" onclick="roleSelect('cashier')"><a href="#">Cashier</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <script>
+                                function roleSelect(role){
+                                    $('#role-dropdown ul li').each(function(){
+                                        if($(this).attr('class') == 'disabled'){
+                                            return true;
+                                        }
+                                        if(this.id == 'role-select-'+role){
+                                            $(this).attr('class','active')
+                                            $('#role-select').text($(this).text())
+                                        } else {
+                                            $(this).attr('class','')
+                                        }
+                                    });
+                                }
+                                function addNewUser(){
+
+                                }
+                            </script>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-success" data-dismiss="modal" onclick="addNewUser()">Save</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!--Modal edit user-->
+
+                <!-- Receipts -->
+                <div class="panel panel-default" style="display:none" id="panel-receipts">
+                    <div class="panel-heading main-bg-color">
+                        <h3 class="panel-title">Receipts</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">
+                            <!--<button type="button" class="btn btn-default btn-block">-->
+                                <!--<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>-->
+                                <!--New Item-->
+                            <!--</button>-->
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover" id="receipt-list">
+                            <!--Here receipt list-->
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Items -->
+                <div class="panel panel-default" style="display:none" id="panel-items">
+                    <div class="panel-heading main-bg-color">
+                        <h3 class="panel-title">Items</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-default btn-block">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                New Item
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover" id="item-list">
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="panel panel-default" style="display:none" id="panel-categories">
+                    <div class="panel-heading main-bg-color">
+                        <h3 class="panel-title">Categories</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">
+                            <!--<button type="button" class="btn btn-default btn-block">-->
+                                <!--<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>-->
+                                <!--New Item-->
+                            <!--</button>-->
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover" id="category-list">
+                            <!--Here category List-->
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Members -->
+                <div class="panel panel-default" style="display:none" id="panel-members">
+                    <div class="panel-heading main-bg-color">
+                        <h3 class="panel-title">Members</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">
+                            <!--<button type="button" class="btn btn-default btn-block">-->
+                                <!--<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>-->
+                                <!--New Item-->
+                            <!--</button>-->
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover" id="member-list">
+                            <!--Here member list-->
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer id="footer">
+    <p>Peregrine by Future Program &copy; 2017</p>
+</footer>
+
+<!-- Scripts -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+    document.write("<script type='text/javascript' src='http://localhost:8080/assets/js/config.js?v=" + Date.now() + "'><\/script>");
+    document.write("<script type='text/javascript' src='script.js?v=" + Date.now() + "'><\/script>");
+    $(document).ready(function () {
+        loadScript();
+    });
+</script>
+</body>
+</html>

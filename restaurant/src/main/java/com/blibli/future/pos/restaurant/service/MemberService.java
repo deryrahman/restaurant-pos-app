@@ -13,7 +13,7 @@ import java.util.List;
 @SuppressWarnings("ALL")
 @Path("/members")
 public class MemberService extends BaseRESTService {
-    private MemberDAOMysql memberDAO = new MemberDAOMysql();
+    private static final MemberDAOMysql memberDAO = new MemberDAOMysql();
     private Member member;
     private List<Member> members;
 
@@ -22,7 +22,7 @@ public class MemberService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response create(List<Member> members) throws Exception {
-        initializeRole();
+
         if(!userIs(CASHIER)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
@@ -113,7 +113,7 @@ public class MemberService extends BaseRESTService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response update(@PathParam("id") int id, Member member) throws Exception {
-        initializeRole();
+
         if(!userIs(CASHIER)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
