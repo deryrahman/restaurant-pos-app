@@ -2,7 +2,7 @@
   "baseUrl": "http://localhost:8080",
   "endpoints": {
     "login": "/auth/login",
-    "register": "/auth/register",
+    "userIdentity": "/auth/userIdentities",
     "parser": "/auth/parseToken",
     "user": "/core/users",
     "restaurant": "/core/restaurants",

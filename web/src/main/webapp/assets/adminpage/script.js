@@ -23,7 +23,8 @@ $(document).ready(function () {
         user: {
             "name": "#fullname",
             "email": "#email",
-            "restaurantId": "#restaurant-id"
+            "restaurantId": "#restaurant-id",
+            "role": "input[name='role']:checked"
         },
         userIdentity: {
             "username": "#new-username",
@@ -58,6 +59,7 @@ $(document).ready(function () {
             baseUrl = config.baseUrl;
             serviceUrls.parser = baseUrl + config.endpoints.parser;
             serviceUrls.user = baseUrl + config.endpoints.user;
+            serviceUrls.userIdentity = baseUrl + config.endpoints.userIdentity;
             serviceUrls.item = baseUrl + config.endpoints.item;
             serviceUrls.category = baseUrl + config.endpoints.category;
             serviceUrls.restaurant = baseUrl + config.endpoints.restaurant;
@@ -141,6 +143,7 @@ $(document).ready(function () {
 
     // Bind CREATE API to modals submit event
     function bindModalsToSubmitEvent() {
+        addSubmitEventToUserModal();
         addSubmitEventToModal("restaurant");
         addSubmitEventToModal("category");
         addSubmitEventToModal("item");
@@ -148,28 +151,58 @@ $(document).ready(function () {
 
     function addSubmitEventToModal(modalName) {
         $("#form-new-" + modalName).submit(function (e) {
-            sendCreateRequest(modalName);
+            var dataToBeSent = [];
+            dataToBeSent.push(createNewObject(modalName));
+            sendCreateRequest(modalName, dataToBeSent);
 
             e.preventDefault();
             e.stopPropagation();
         });
     }
 
-    function sendCreateRequest(objectName) {
-        var newObjectList = [];
-        newObjectList.push(createNewObject(objectName));
+    function addSubmitEventToUserModal() {
+        $("#form-new-user").submit(function (e) {
+            var newUserIdentity = createNewObject("userIdentity");
+            var userList = [];
+            userList.push(createNewObject("user"));
 
-        $.ajax({
-            url: serviceUrls[objectName],
+            sendCreateRequest("user", userList)
+                .then(function (data) {
+                    console.log(data);
+                    newUserIdentity.id = data.payload[0].id;
+
+                    console.log(newUserIdentity);
+                    $.ajax(serviceUrls.userIdentity, {
+                        method: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(newUserIdentity)
+                    }).done(function (data) {
+                        console.log(data);
+                    }).fail(function (jqXHR) {
+                        console.log(JSON.parse(jqXHR.responseText));
+                    });
+                });
+
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    }
+
+    function sendCreateRequest(dataName, dataToBeSent) {
+        var successfullyCreatedObject = {};
+
+        return $.ajax({
+            url: serviceUrls[dataName],
             method: "POST",
             contentType: "application/json",
-            data: JSON.stringify(newObjectList)
+            data: JSON.stringify(dataToBeSent)
         }).done(function (data) {
-            alert("Successfully created new " + objectName + ".")
-            $("#form-new-" + objectName).find("input.form-control").val("");
-            loadData(objectName);
+            alert("Successfully created new " + dataName + ".");
+            $("#form-new-" + dataName).find("input.form-control").val("");
+            loadData(dataName);
 
-            console.log(data);
+            successfullyCreatedObject = data.payload[0];
+            console.log(successfullyCreatedObject);
         }).fail(function (jqXHR) {
             var message = JSON.parse(jqXHR.responseText).message;
             alert("Failed to create new restaurant.\n" + message);
