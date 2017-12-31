@@ -119,7 +119,7 @@ $(document).ready(function () {
             dataLists[dataName] = data.payload;
 
             $("#"+dataName+"-count-badge").html(dataLists[dataName].length);
-            $("#"+dataName+"-count-well").append(dataLists[dataName].length);
+            $("#"+dataName+"-count-well").html(dataLists[dataName].length);
 
             $("#"+dataName+"-table").html(tableHeader);
             dataLists[dataName].forEach(function (item) {
