@@ -135,6 +135,10 @@ body {
     margin-left: 10px;
 }
 
+.btn-update {
+    display: none;
+}
+
 .modal-body .buttons {
     margin-left: 30px;
 }

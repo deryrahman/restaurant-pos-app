@@ -115,24 +115,60 @@ $(document).ready(function () {
             + tableHeaders[dataName].join("</th><th>")
             + "</th></tr>";
 
-        $.get(serviceUrls[dataName], function (data) {
-            dataLists[dataName] = data.payload;
+        $.get(serviceUrls[dataName])
+            .done(function (data) {
+                dataLists[dataName] = data.payload;
 
-            $("#"+dataName+"-count-badge").html(dataLists[dataName].length);
-            $("#"+dataName+"-count-well").html(dataLists[dataName].length);
+                $("#"+dataName+"-count-badge").html(dataLists[dataName].length);
+                $("#"+dataName+"-count-well").html(dataLists[dataName].length);
 
-            $("#"+dataName+"-table").html(tableHeader);
-            dataLists[dataName].forEach(function (item) {
-                $("#"+dataName+"-table").append(toTableRow(dataName, item));
+                $("#"+dataName+"-table").html(tableHeader);
+                dataLists[dataName].forEach(function (item) {
+                    $("#"+dataName+"-table").append(objectToTableRow(dataName, item));
+                })
             })
+            .then(function () {
+                bindEditButtonToModal(dataName);
+            });
+    }
+
+    function bindEditButtonToModal(modalName) {
+        var targetId = "#modal-new-"+modalName;
+
+        $("#"+modalName+"-table").find(".btn-edit")
+            .addClass("btn-edit-"+modalName)
+            .attr({
+                "data-toggle": "modal",
+                "data-target": targetId
+            });
+
+        $(".btn-edit-"+modalName).click(function (event) {
+            var row = $(event.target).parent().siblings();
+            var newObject = tableRowToObject(modalName, row);
+            console.log(newObject);
+
         });
     }
 
-    function toTableRow(dataName, object) {
-        var columns = tableStructures[dataName];
-        var button = "<td><a role='button'>edit</a></td>";
+    function tableRowToObject(dataName, row) {
+        var objectProperties = tableStructures[dataName];
+        var newObject = {};
 
-        var row = "<tr>";
+        var propertyName;
+        for (var i = 0; i < row.length; i++) {
+            propertyName = objectProperties[i];
+            newObject[propertyName] = row[i].innerHTML;
+        }
+
+        return newObject;
+    }
+
+    function objectToTableRow(dataName, object) {
+        var columns = tableStructures[dataName];
+        var button = "<td><a class='btn-edit' role='button'>edit</a></td>";
+
+        var rowId = dataName + object.id;
+        var row = "<tr id='"+rowId+"'>";
         columns.forEach(function (columnName) {
             row += "<td>" + object[columnName] + "</td>";
         });
@@ -239,7 +275,7 @@ $(document).ready(function () {
         });
     }
 
-    // Bind loging out to logout button
+    // Bind logging out to logout button
     $('#logout-btn').click(function (e) {
         Cookies.remove("POSRESTAURANT");
         window.location.assign(config.pages.login);
