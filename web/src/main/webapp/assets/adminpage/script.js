@@ -96,6 +96,7 @@ $(document).ready(function () {
         bindShowPanelToClickEvent();
         bindModalsToSubmitEvent();
         bindNewButtonsToModals();
+        bindUpdateButtonsToClickEvent();
     }
 
     // Set navbar username
@@ -208,7 +209,7 @@ $(document).ready(function () {
     function addSubmitEventToModal(modalName) {
         $("#form-new-" + modalName).submit(function (e) {
             var dataToBeSent = [];
-            dataToBeSent.push(createNewObject(modalName));
+            dataToBeSent.push(formInputToObject(modalName));
             sendCreateRequest(modalName, dataToBeSent);
 
             e.preventDefault();
@@ -218,9 +219,9 @@ $(document).ready(function () {
 
     function addSubmitEventToUserModal() {
         $("#form-new-user").submit(function (e) {
-            var newUserIdentity = createNewObject("userIdentity");
+            var newUserIdentity = formInputToObject("userIdentity");
             var userList = [];
-            userList.push(createNewObject("user"));
+            userList.push(formInputToObject("user"));
 
             sendCreateRequest("user", userList)
                 .then(function (data) {
@@ -267,13 +268,52 @@ $(document).ready(function () {
         });
     }
 
-    function createNewObject(dataName) {
+    function formInputToObject(dataName) {
         var template = createRequestBody[dataName];
         var newObject = {};
         $.each(template, function (field, elmtId) {
             newObject[field] = $("#form-new-" + dataName).find(elmtId).val();
         });
         return newObject;
+    }
+
+    // Bind UPDATE API to update button click event
+    function bindUpdateButtonsToClickEvent() {
+        addClickEventToUpdateButton("restaurant");
+        addClickEventToUpdateButton("category");
+        addClickEventToUpdateButton("item");
+    }
+
+    function addClickEventToUpdateButton(modalName) {
+        $("#update-"+modalName).click(function (e) {
+            var rowId = $("#form-new-"+modalName).find(".modal-id").html();
+            var dataToBeSent = formInputToObject(modalName);
+            dataToBeSent.id = Number(rowId);
+
+            console.log(dataToBeSent);
+            sendUpdateRequest(modalName, dataToBeSent)
+                .then(function () {
+                    loadData(modalName);
+                    closeModal(modalName);
+                });
+        });
+    }
+
+    function sendUpdateRequest(dataName, dataToBeSent) {
+        var updateUrl = serviceUrls[dataName] + "/" + dataToBeSent.id;
+        return $.ajax(updateUrl, {
+            method: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(dataToBeSent)
+        }).done(function (data) {
+            console.log(data.payload);
+            alert("Successfully updated " + dataName + ".")
+        }).fail(function (jqXHR) {
+            var message = JSON.parse(jqXHR.responseText).message;
+            alert("Failed to update " + dataName +".\n" + message);
+
+            console.log(jqXHR.responseText);
+        });
     }
 
     // Bind show panel to button click event
@@ -302,13 +342,13 @@ $(document).ready(function () {
     });
 
     function bindNewButtonsToModals() {
-        bindNewButtonToModal("user");
-        bindNewButtonToModal("restaurant");
-        bindNewButtonToModal("category");
-        bindNewButtonToModal("item");
+        addClickEventToNewButton("user");
+        addClickEventToNewButton("restaurant");
+        addClickEventToNewButton("category");
+        addClickEventToNewButton("item");
     }
 
-    function bindNewButtonToModal(modalName) {
+    function addClickEventToNewButton(modalName) {
         $("#btn-new-"+modalName).click(function () {
             revertModalInterface(modalName);
         });
@@ -324,6 +364,10 @@ $(document).ready(function () {
 
     function emptyModalForm(modalName) {
         $("#form-new-" + modalName).find("input.form-control").val("");
+    }
+
+    function closeModal(modalName) {
+        $("#modal-new-"+modalName).modal("hide");
     }
 
 });
