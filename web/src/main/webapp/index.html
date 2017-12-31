@@ -57,40 +57,10 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script>
-    document.write("<script type='text/javascript' src='/assets/js/sidebar.js?v=" + Date.now() + "'><\/script>");
-    document.write("<script type='text/javascript' src='/assets/js/main.js?v=" + Date.now() + "'><\/script>");
-    document.write("<script type='text/javascript' src='/assets/js/config.js?v=" + Date.now() + "'><\/script>");
-    $(document).ready(function(){
-        if (userRole !== "cashier") {
-            alert("Not permitted");
-            window.location.assign(config.pages.admin);
-        }
+    document.write("<script type='text/javascript' src='/assets/mainpage/script.js?v=" + Date.now() + "'><\/script>");
+    document.write("<script type='text/javascript' src='/assets/mainpage/sidebar.js?v=" + Date.now() + "'><\/script>");
+    document.write("<script type='text/javascript' src='/assets/mainpage/main.js?v=" + Date.now() + "'><\/script>");
+    document.write("<script type='text/javascript' src='/assets/mainpage/config.js?v=" + Date.now() + "'><\/script>");
 
-        // load
-        $('#sidebar-container').load('template/sidebar.html', function(){
-            loadSidebar();
-        });
-        $('#page-homepage-container').load('template/page-homepage.html', function () {
-            loadMain();
-        });
-
-        $(".toggle-sidebar-in-main").click(function(){
-            $("#sidebar").animate({width:'toggle'},'medium',function(){
-                $("#inside-wrapper-sidebar").fadeToggle('fast');
-            });
-            $(".overlay").fadeToggle('slow');
-        });
-        $(".overlay, .toggle-sidebar-in-sidebar, #add-item").click(function(){
-            $("#inside-wrapper-sidebar").fadeToggle(10,function(){
-                $("#sidebar").animate({width:'toggle'},'medium');
-                $(".overlay").fadeToggle('slow');
-            });
-        });
-        $(".toggle-search").click(function(){
-            $('.search-bar').css('position','absolute');
-            $('.logo').fadeToggle('fast');
-            $('.search-bar').fadeToggle('fast');
-        });
-    });
 </script>
 </html>
