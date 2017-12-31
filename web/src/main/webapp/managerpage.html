@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Manager Page</title>
+    <title>Admin | Peregrine</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/adminpage/style.css">
 </head>
 <body>
 
@@ -41,18 +41,86 @@
                             <label for="password">Password</label>
                             <input id="password" name="password" placeholder="Password" type="password" class="form-control" >
                         </div>
-                        <!--<div class="form-group">-->
-                            <!--<label for="restaurant-id">Restaurant ID</label>-->
-                            <!--<input id="restaurant-id" name="restaurantId" placeholder="Restaurant ID" type="number" class="form-control" >-->
-                        <!--</div>-->
+                        <div class="form-group">
+                            <label for="restaurant-id">Restaurant ID</label>
+                            <input id="restaurant-id" name="restaurantId" placeholder="Restaurant ID" type="number" class="form-control" >
+                        </div>
                         <div id="role" class="radio">
                             <small class="help-block">Choose role:</small>
                             <label class="radio-inline">
                                 <input id="radio-manager" name="role" value="manager" type="radio" checked> Manager
                             </label>
                             <label class="radio-inline">
-                                <input id="radio-admin" name="role" value="cashier" type="radio"> Cashier
+                                <input id="radio-admin" name="role" value="admin" type="radio"> Admin
                             </label>
+                        </div>
+                        <div class="row buttons">
+                            <div class="col-sm-4 col-sm-offset-8">
+                                <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
+                                <button type="submit" class="btn btn-custom">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Restaurant Modal -->
+    <div class="modal fade" id="modal-new-restaurant" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h3 class="modal-title">Register New Restaurant</h3>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Form Content -->
+                    <form id="form-new-restaurant">
+                        <div class="form-group">
+                            <label for="address">Restaurant Address</label>
+                            <input id="address" name="address" placeholder="Address" type="text" class="form-control" >
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Restaurant Phone Number</label>
+                            <input id="phone" name="phone" placeholder="Phone Number" type="number" class="form-control" >
+                        </div>
+                        <div class="row buttons">
+                            <div class="col-sm-4 col-sm-offset-8">
+                                <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
+                                <button type="submit" class="btn btn-custom">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Category Modal -->
+    <div class="modal fade" id="modal-new-category" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h3 class="modal-title">Create New Category</h3>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Form Content -->
+                    <form id="form-new-category">
+                        <div class="form-group">
+                            <label for="category-name">Category Name</label>
+                            <input id="category-name" name="name" placeholder="Name" type="text" class="form-control" >
+                        </div>
+                        <div class="form-group">
+                            <label for="category-description">Category Description</label>
+                            <input id="category-description" name="description" placeholder="Description" type="text" class="form-control" >
                         </div>
                         <div class="row buttons">
                             <div class="col-sm-4 col-sm-offset-8">
@@ -92,18 +160,14 @@
                             <label for="category-id">Category ID</label>
                             <input id="category-id" name="categoryId" placeholder="Category ID" type="number" class="form-control" value="1">
                         </div>
-                        <div class="form-group">
-                            <label for="stock">Stock</label>
-                            <input id="stock" name="categoryId" placeholder="Category ID" type="number" class="form-control" value="1">
+                        <div id="item-status-selection" class="form-group">
+                            <label for="item-status">Select status:</label>
+                            <select id="item-status" name="status" class="form-control">
+                                <option value="publish">Publish</option>
+                                <option value="draft">Draft</option>
+                                <option value="trash">Trash</option>
+                            </select>
                         </div>
-                        <!--<div id="item-status-selection" class="form-group">-->
-                            <!--<label for="item-status">Select status:</label>-->
-                            <!--<select id="item-status" name="status" class="form-control">-->
-                                <!--<option value="publish">Publish</option>-->
-                                <!--<option value="draft">Draft</option>-->
-                                <!--<option value="trash">Trash</option>-->
-                            <!--</select>-->
-                        <!--</div>-->
                         <div class="row buttons">
                             <div class="col-sm-4 col-sm-offset-8">
                                 <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
@@ -120,7 +184,6 @@
 
 </div>
 
-
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
 
@@ -130,13 +193,11 @@
 
         <div>
             <ul class="nav navbar-nav navbar-left">
-                <li class="active"><a href="../../assets/managerpage/index.html">Manager Page</a></li>
+                <li class="active"><a href="#">Admin Page</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="#">RestaurantId #<span class="restaurant-id">-</span></a></li>
-                <li class="active"><a href="#" class="restaurant-phone">-</a></li>
-                <li><a href="#" id="user-name">-</a></li>
-                <li><a href="login.html">Logout</a></li>
+                <li><a id="username" href="#">username</a></li>
+                <li><a id="logout-btn" href="#">Logout</a></li>
             </ul>
         </div>
 
@@ -163,32 +224,24 @@
                 <div class="list-group">
                     <a href="#" class="list-group-item active main-bg-color" id="show-overview">
                         <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
-                         Overview
-                    </a>
-                    <a href="#" class="list-group-item" id="show-restaurants">
-                        <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
-                        Restaurant Profile
+                        Overview
                     </a>
                     <a role="button" class="list-group-item" id="show-users">
                         <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-                        <span class="badge">-</span>
-                         Users</a>
-                    <a href="#" class="list-group-item" id="show-receipts">
-                        <span class="glyphicon glyphicon-glass" aria-hidden="true"></span>
-                        <span class="badge">-</span>
-                        Receipts</a>
+                        <span id="user-count-badge" class="badge">0</span>
+                        Users</a>
+                    <a role="button" class="list-group-item" id="show-restaurants">
+                        <span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>
+                        <span id="restaurant-count-badge" class="badge">0</span>
+                        Restaurants</a>
+                    <a href="#" class="list-group-item" id="show-categories">
+                        <span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span>
+                        <span id="category-count-badge" class="badge">0</span>
+                        Categories</a>
                     <a href="#" class="list-group-item" id="show-items">
                         <span class="glyphicon glyphicon-glass" aria-hidden="true"></span>
-                        <span class="badge">-</span>
+                        <span id="item-count-badge" class="badge">0</span>
                         Items</a>
-                    <a href="#" class="list-group-item" id="show-categories">
-                        <span class="glyphicon glyphicon-glass" aria-hidden="true"></span>
-                        <span class="badge">-</span>
-                        Categories</a>
-                    <a href="#" class="list-group-item" id="show-members">
-                        <span class="glyphicon glyphicon-glass" aria-hidden="true"></span>
-                        <span class="badge">-</span>
-                        Members</a>
                 </div>
             </div>
             <div class="col-md-9">
@@ -201,112 +254,81 @@
                     <div class="panel-body">
                         <div class="col-md-3">
                             <div class="well dash-box">
-                                <h2><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span id="count-users">-</span></h2>
+                                <h2 id="user-count-well"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> </h2>
                                 <h4>Users</h4>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="well">
-                                <h2><span class="glyphicon glyphicon-glass" aria-hidden="true"></span> <span id="count-items">-</span></h2>
+                                <h2 id="restaurant-count-well"><span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span> </h2>
+                                <h4>Restaurants</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="well">
+                                <h2 id="category-count-well"><span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span> </h2>
+                                <h4>Categories</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="well">
+                                <h2 id="item-count-well"><span class="glyphicon glyphicon-glass" aria-hidden="true"></span> </h2>
                                 <h4>Items</h4>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="well">
-                                <h2><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> <span id="count-receipts">-</span></h2>
-                                <h4>Reciepts</h4>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="well">
-                                <h2><span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span> <span id="count-members">-</span></h2>
-                                <h4>Members</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Retaurants -->
-                <div class="panel panel-default" style="display:none" id="panel-restaurants">
-                    <div class="panel-heading main-bg-color">
-                        <h3 class="panel-title">Restaurant Profile</h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="jumbotron">
-                            <h2>Restaurant Id #<span class="restaurant-id">-</span></h2>
-                            <p>Address : <span class="restaurant-address">-</span></p>
-                            <p>Phone number : <span class="restaurant-phone">-</span></p>
-                        </div>
-                        <div class="form-group">
-                            <label for="address">Address:</label>
-                            <input type="text" class="form-control" id="address">
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Phone:</label>
-                            <input type="text" class="form-control" id="phone">
-                        </div>
-                        <button type="button" class="btn btn-primary" onclick="saveEditRestaurant()">Save</button>
                     </div>
                 </div>
 
                 <!-- Users -->
                 <div class="panel panel-default" style="display:none" id="panel-users">
                     <div class="panel-heading main-bg-color">
-                        <h3 class="panel-title">Users</h3>
+                        <h3 class="panel-title">Manage Users</h3>
                     </div>
                     <div class="panel-body">
                         <div class="col-md-10"></div>
                         <div class="col-md-2">
-                            <button id="btn-new-user" type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#modal-new-user">
+                            <button id="btn-new-user" data-toggle="modal" data-target="#modal-new-user" type="button" class="btn btn-default btn-block">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                 New User
+                                New User
                             </button>
                         </div>
                     </div>
                     <div class="panel-body">
-                        <table class="table table-hover" id="user-list">
-                            <!--Here user list-->
+                        <table id="user-table" class="table table-hover">
+                            <tr>
+                                <th>#ID</th>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Email</th>
+                                <th>Restaurant</th>
+                                <th></th>
+                            </tr>
                         </table>
                     </div>
                 </div>
 
-                <!-- Receipts -->
-                <div class="panel panel-default" style="display:none" id="panel-receipts">
+                <!-- Restaurants -->
+                <div class="panel panel-default" style="display:none" id="panel-restaurants">
                     <div class="panel-heading main-bg-color">
-                        <h3 class="panel-title">Receipts</h3>
+                        <h3 class="panel-title">Manage Restaurants</h3>
                     </div>
                     <div class="panel-body">
-                        <div class="col-md-10"></div>
-                        <div class="col-md-2">
-                            <!--<button type="button" class="btn btn-default btn-block">-->
-                                <!--<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>-->
-                                <!--New Item-->
-                            <!--</button>-->
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <table class="table table-hover" id="receipt-list">
-                            <!--Here receipt list-->
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Items -->
-                <div class="panel panel-default" style="display:none" id="panel-items">
-                    <div class="panel-heading main-bg-color">
-                        <h3 class="panel-title">Items</h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="col-md-10"></div>
-                        <div class="col-md-2">
-                            <button id="btn-new-item" type="button" data-target="#modal-new-item" class="btn btn-default btn-block">
+                        <div class="col-md-9"></div>
+                        <div class="col-md-3">
+                            <button id="btn-new-restaurant" data-toggle="modal" data-target="#modal-new-restaurant" type="button" class="btn btn-default btn-block">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                New Item
+                                New Restaurant
                             </button>
                         </div>
                     </div>
                     <div class="panel-body">
-                        <table class="table table-hover" id="item-list">
+                        <table id="restaurant-table" class="table table-hover">
+                            <tr>
+                                <th>#ID</th>
+                                <th>Address</th>
+                                <th>Phone</th>
+                                <th></th>
+                            </tr>
                         </table>
                     </div>
                 </div>
@@ -314,41 +336,53 @@
                 <!-- Categories -->
                 <div class="panel panel-default" style="display:none" id="panel-categories">
                     <div class="panel-heading main-bg-color">
-                        <h3 class="panel-title">Categories</h3>
+                        <h3 class="panel-title">Manage Categories</h3>
                     </div>
                     <div class="panel-body">
-                        <div class="col-md-10"></div>
-                        <div class="col-md-2">
-                            <!--<button type="button" class="btn btn-default btn-block">-->
-                                <!--<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>-->
-                                <!--New Item-->
-                            <!--</button>-->
+                        <div class="col-md-9"></div>
+                        <div class="col-md-3">
+                            <button id="btn-new-category" data-toggle="modal" data-target="#modal-new-category" type="button" class="btn btn-default btn-block">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                New Category
+                            </button>
                         </div>
                     </div>
                     <div class="panel-body">
-                        <table class="table table-hover" id="category-list">
-                            <!--Here category List-->
+                        <table id="category-table" class="table table-hover">
+                            <tr>
+                                <th>#ID</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th></th>
+                            </tr>
                         </table>
                     </div>
                 </div>
 
-                <!-- Members -->
-                <div class="panel panel-default" style="display:none" id="panel-members">
+                <!-- Items -->
+                <div class="panel panel-default" style="display:none" id="panel-items">
                     <div class="panel-heading main-bg-color">
-                        <h3 class="panel-title">Members</h3>
+                        <h3 class="panel-title">Manage Items</h3>
                     </div>
                     <div class="panel-body">
                         <div class="col-md-10"></div>
                         <div class="col-md-2">
-                            <!--<button type="button" class="btn btn-default btn-block">-->
-                                <!--<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>-->
-                                <!--New Item-->
-                            <!--</button>-->
+                            <button id="btn-new-item" data-toggle="modal" data-target="#modal-new-item" type="button" class="btn btn-default btn-block">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                New Item
+                            </button>
                         </div>
                     </div>
                     <div class="panel-body">
-                        <table class="table table-hover" id="member-list">
-                            <!--Here member list-->
+                        <table id="item-table" class="table table-hover">
+                            <tr>
+                                <th>#ID</th>
+                                <th>Item name</th>
+                                <th>Price</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
                         </table>
                     </div>
                 </div>
@@ -363,13 +397,8 @@
 
 <!-- Scripts -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script>
-    document.write("<script type='text/javascript' src='http://localhost:8080/assets/js/config.js?v=" + Date.now() + "'><\/script>");
-    document.write("<script type='text/javascript' src='script.js?v=" + Date.now() + "'><\/script>");
-    $(document).ready(function () {
-        loadScript();
-    });
-</script>
+<script type="text/javascript" src="assets/adminpage/script.js"></script>
 </body>
 </html>

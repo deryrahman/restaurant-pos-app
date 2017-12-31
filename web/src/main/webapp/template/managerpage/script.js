@@ -81,8 +81,8 @@ function updateBadge() {
         'users' : users.length,
         'items' : items.length,
         'receipts' : receipts.length,
-        'members' : categories.length,
-        'categories' : members.length
+        'members' : members.length,
+        'categories' : categories.length
     };
     $.each(badgeCount, function(key, val){
         $('#show-'+key+' > .badge').text(val)
