@@ -6,6 +6,20 @@ var categories = [];
 var restaurants = [];
 var restaurant = {};
 
+// prevent double request
+var isLoadUsers = false;
+var isLoadReceipts = false;
+var isLoadItems = false;
+var isLoadMembers = false;
+var isLoadCategories = false;
+var isLoadRestaurants = false;
+
+function loadScript() {
+    generateToggle();
+    loadoverview();
+    renderUserInfo();
+}
+
 function getTabList() {
     var list = [];
     $('.list-group-item').each(function(){
@@ -15,6 +29,7 @@ function getTabList() {
     });
     return list;
 }
+
 function generateToggle() {
     var tabList = getTabList();
     console.log(tabList)
@@ -36,11 +51,6 @@ function generateToggle() {
 
 function renderUserInfo() {
     $('#user-name').text(userInfo.name)
-}
-function loadScript() {
-    generateToggle();
-    loadoverview();
-    renderUserInfo();
 }
 
 function loadoverview() {
@@ -71,8 +81,8 @@ function updateBadge() {
         'users' : users.length,
         'items' : items.length,
         'receipts' : receipts.length,
-        'members' : categories.length,
-        'categories' : members.length
+        'members' : members.length,
+        'categories' : categories.length
     };
     $.each(badgeCount, function(key, val){
         $('#show-'+key+' > .badge').text(val)
@@ -87,16 +97,7 @@ function write() {
     console.log(categories)
 }
 
-function renderUserList() {
-    var userList = [];
-    var headerTable = "<tr><th>#ID</th><th>Username</th><th>Role</th><th>Email</th><th></th></tr>";
-    userList.push(headerTable);
-    users.forEach(function(user){
-        userList.push(userToHTML(user));
-    });
-    $('#user-list').empty().append(userList);
-}
-
+// User panel
 function userToHTML(user){
     var result = "<tr>" +
         "<td>"+user.id+"</td>"+
@@ -107,25 +108,34 @@ function userToHTML(user){
         "</tr>";
     return result
 }
-
+function renderUserList() {
+    var userList = [];
+    var headerTable = "<tr><th>#ID</th><th>Username</th><th>Role</th><th>Email</th><th></th></tr>";
+    userList.push(headerTable);
+    users.forEach(function(user){
+        userList.push(userToHTML(user));
+    });
+    $('#user-list').empty().append(userList);
+}
 function loadusers() {
     console.log("load users");
-    users = []
-    console.log("before : ");
-    console.log(users);
-    getJSON(true,coreService+"/users", function(data){
-        var payload = data["payload"];
-        console.log("payload : ")
-        console.log(payload)
-        users = payload;
-        updateOverview();
-        updateBadge();
-        console.log("after : ");
-        console.log(users);
-        renderUserList();
-    });
+    users = [];
+    if(isLoadUsers){
+        return;
+    } else {
+        isLoadUsers = true;
+        getJSON(true,coreService+"/users", function(data){
+            isLoadUsers = false;
+            var payload = data["payload"];
+            users = payload;
+            updateOverview();
+            updateBadge();
+            renderUserList();
+        });
+    }
 }
 
+// Item panel
 function itemListToHTML(item) {
     var categoryName;
     categories.forEach(function(data){
@@ -155,16 +165,23 @@ function renderItemList() {
 }
 function loaditems() {
     console.log("load items");
-    getJSON(true,coreService+"/items", function(data){
-        var payload = data["payload"];
-        items = payload;
-        updateOverview();
-        updateBadge();
+    if(isLoadItems){
+        return;
+    } else {
+        isLoadItems = true;
+        getJSON(true,coreService+"/items", function(data){
+            isLoadItems = false;
+            var payload = data["payload"];
+            items = payload;
+            updateOverview();
+            updateBadge();
 
-        renderItemList();
-    });
+            renderItemList();
+        });
+    }
 }
 
+// Receipts panel
 function receiptToHTML(receipt) {
     var result = "<tr>"+
         "<td>"+receipt.id+"</td>"+
@@ -187,16 +204,23 @@ function renderReceiptList() {
 }
 function loadreceipts(){
     console.log("load receipts");
-    getJSON(true,coreService+"/receipts", function(data){
-        var payload = data["payload"];
-        receipts = payload;
-        updateOverview();
-        updateBadge();
+    if(isLoadReceipts){
+        return;
+    } else {
+        isLoadReceipts = true;
+        getJSON(true,coreService+"/receipts", function(data){
+            isLoadReceipts = false;
+            var payload = data["payload"];
+            receipts = payload;
+            updateOverview();
+            updateBadge();
 
-        renderReceiptList();
-    });
+            renderReceiptList();
+        });
+    }
 }
 
+// Members panel
 function memberListToHTML(member) {
     var result = "<tr>"+
         "<td>"+member.id+"</td>"+
@@ -218,17 +242,23 @@ function renderMemberList() {
 }
 function loadmembers() {
     console.log("load members");
+    if(isLoadMembers){
+        return;
+    } else {
+        isLoadMembers = true;
+        getJSON(true,coreService+"/members", function(data){
+            isLoadMembers = false;
+            var payload = data["payload"];
+            members = payload;
+            updateOverview();
+            updateBadge();
 
-    getJSON(true,coreService+"/members", function(data){
-        var payload = data["payload"];
-        members = payload;
-        updateOverview();
-        updateBadge();
-
-        renderMemberList();
-    });
+            renderMemberList();
+        });
+    }
 }
 
+// Categories panel
 function categoryListToHTML(category) {
     var result = "<tr>" +
         "<td>"+category.id+"</td>"+
@@ -248,14 +278,21 @@ function renderCategoryList() {
 }
 function loadcategories() {
     console.log("load categories");
-    getJSON(true,coreService+"/categories", function(data){
-        var payload = data["payload"];
-        categories = payload;
-        updateBadge();
+    if(isLoadCategories){
+        return;
+    } else {
+        isLoadCategories = true;
+        getJSON(true,coreService+"/categories", function(data){
+            isLoadCategories = false;
+            var payload = data["payload"];
+            categories = payload;
+            updateBadge();
 
-        renderCategoryList();
-    });
+            renderCategoryList();
+        });
+    }
 }
+
 
 function loadrestaurants() {
     console.log("load restaurants");
@@ -282,7 +319,6 @@ function loadrestaurants() {
         $('#phone').val(restaurant.phone)
     });
 }
-
 function saveEditRestaurant(){
     var restaurant1 = {
         'address' : $('#address').val(),
