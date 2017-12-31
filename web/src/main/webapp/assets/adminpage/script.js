@@ -97,6 +97,7 @@ $(document).ready(function () {
         bindModalsToSubmitEvent();
         bindNewButtonsToModals();
         bindUpdateButtonsToClickEvent();
+        bindDeleteButtonsToClickEvent();
     }
 
     // Set navbar username
@@ -314,6 +315,40 @@ $(document).ready(function () {
 
             console.log(jqXHR.responseText);
         });
+    }
+
+    // Bind DELETE API to delete button click event
+    function bindDeleteButtonsToClickEvent() {
+        addClickEventToDeleteButton("user");
+        addClickEventToDeleteButton("restaurant");
+        addClickEventToDeleteButton("category");
+        addClickEventToDeleteButton("item");
+    }
+
+    function addClickEventToDeleteButton(modalName) {
+        $("#delete-"+modalName).click(function () {
+            var rowId = $("#form-new-"+modalName).find(".modal-id").html();
+            sendDeleteRequest(modalName, Number(rowId))
+                .then(function () {
+                    loadData(modalName);
+                    closeModal(modalName);
+                });
+        });
+    }
+
+    function sendDeleteRequest(dataName, objectId) {
+        var deletUrl = serviceUrls[dataName] + "/" + objectId;
+        return $.ajax(deletUrl, {
+            method: "DELETE"
+        }).done(function (data) {
+            console.log(data);
+            alert("Successfully deleted " + dataName + ".")
+        }).fail(function (jqXHR) {
+            var message = JSON.parse(jqXHR.responseText).message;
+            alert("Failed to update " + dataName +".\n" + message);
+
+            console.log(jqXHR.responseText);
+        })
     }
 
     // Bind show panel to button click event
