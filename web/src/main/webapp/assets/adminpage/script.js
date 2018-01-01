@@ -211,7 +211,11 @@ $(document).ready(function () {
         $("#form-new-" + modalName).submit(function (e) {
             var dataToBeSent = [];
             dataToBeSent.push(formInputToObject(modalName));
-            sendCreateRequest(modalName, dataToBeSent);
+            sendCreateRequest(modalName, dataToBeSent)
+                .then(function () {
+                    emptyModalForm(modalName);
+                    loadData(modalName);
+                });
 
             e.preventDefault();
             e.stopPropagation();
@@ -226,19 +230,21 @@ $(document).ready(function () {
 
             sendCreateRequest("user", userList)
                 .then(function (data) {
-                    console.log(data);
                     newUserIdentity.id = data.payload[0].id;
 
-                    console.log(newUserIdentity);
-                    $.ajax(serviceUrls.userIdentity, {
+                    return $.ajax(serviceUrls.userIdentity, {
                         method: "POST",
                         contentType: "application/json",
                         data: JSON.stringify(newUserIdentity)
-                    }).done(function (data) {
-                        console.log(data);
-                    }).fail(function (jqXHR) {
-                        console.log(JSON.parse(jqXHR.responseText));
                     });
+                })
+                .done(function (data) {
+                    emptyModalForm("user");
+                    loadData("user");
+                    console.log(data);
+                })
+                .fail(function (jqXHR) {
+                    console.log(JSON.parse(jqXHR.responseText));
                 });
 
             e.preventDefault();
@@ -247,8 +253,6 @@ $(document).ready(function () {
     }
 
     function sendCreateRequest(dataName, dataToBeSent) {
-        var successfullyCreatedObject = {};
-
         return $.ajax({
             url: serviceUrls[dataName],
             method: "POST",
@@ -256,11 +260,7 @@ $(document).ready(function () {
             data: JSON.stringify(dataToBeSent)
         }).done(function (data) {
             alert("Successfully created new " + dataName + ".");
-            emptyModalForm(dataName);
-            loadData(dataName);
-
-            successfullyCreatedObject = data.payload[0];
-            console.log(successfullyCreatedObject);
+            console.log(data.payload);
         }).fail(function (jqXHR) {
             var message = JSON.parse(jqXHR.responseText).message;
             alert("Failed to create new restaurant.\n" + message);
@@ -280,6 +280,7 @@ $(document).ready(function () {
 
     // Bind UPDATE API to update button click event
     function bindUpdateButtonsToClickEvent() {
+        addClickEventToUserUpdateButton();
         addClickEventToUpdateButton("restaurant");
         addClickEventToUpdateButton("category");
         addClickEventToUpdateButton("item");
@@ -296,6 +297,34 @@ $(document).ready(function () {
                 .then(function () {
                     loadData(modalName);
                     closeModal(modalName);
+                });
+        });
+    }
+
+    function addClickEventToUserUpdateButton() {
+        $("#update-user").click(function (e) {
+            var rowId = $("#form-new-user").find(".modal-id").html();
+            var dataToBeSent = formInputToObject("user");
+            dataToBeSent.id = Number(rowId);
+
+            console.log(dataToBeSent);
+            sendUpdateRequest("user", dataToBeSent)
+                .then(function () {
+                    var updateUrl = serviceUrls.userIdentity + "/" + dataToBeSent.id;
+                    dataToBeSent = formInputToObject("userIdentity")
+                    return $.ajax(updateUrl, {
+                        method: "PUT",
+                        contentType: "application/json",
+                        data: JSON.stringify(dataToBeSent)
+                    });
+                })
+                .done(function (data) {
+                    closeModal("user");
+                    loadData("user");
+                    console.log(data);
+                })
+                .fail(function (jqXHR) {
+                    console.log(JSON.parse(jqXHR.responseText));
                 });
         });
     }
