@@ -134,6 +134,8 @@ $(document).ready(function () {
 
     function modifyModalInterface(modalName, object) {
         var modalForm = $("#modal-new-"+modalName);
+        modalForm.find("#submit-"+modalName).attr("type", "button");
+        modalForm.find("#update-"+modalName).attr("type", "submit");
         modalForm.find(".modal-element-new").hide();
         modalForm
             .find(".modal-element-edit").show()
@@ -184,14 +186,14 @@ $(document).ready(function () {
 
     // Bind CREATE API to modals submit event
     function bindModalsToSubmitEvent() {
-        addSubmitEventToUserModal();
-        addSubmitEventToModal("restaurant");
-        addSubmitEventToModal("category");
-        addSubmitEventToModal("item");
+        addClickEventToUserSubmitButton();
+        addClickEventToSubmitButton("restaurant");
+        addClickEventToSubmitButton("category");
+        addClickEventToSubmitButton("item");
     }
 
-    function addSubmitEventToModal(modalName) {
-        $("#form-new-" + modalName).submit(function (e) {
+    function addClickEventToSubmitButton(modalName) {
+        $("#submit-" + modalName).click(function (e) {
             var dataToBeSent = [];
             dataToBeSent.push(formInputToObject(modalName));
             sendCreateRequest(modalName, dataToBeSent)
@@ -205,7 +207,7 @@ $(document).ready(function () {
         });
     }
 
-    function addSubmitEventToUserModal() {
+    function addClickEventToUserSubmitButton() {
         $("#form-new-user").submit(function (e) {
             var newUserIdentity = formInputToObject("userIdentity");
             var userList = [];
@@ -281,6 +283,8 @@ $(document).ready(function () {
                     loadData(modalName);
                     closeModal(modalName);
                 });
+            e.preventDefault();
+            e.stopPropagation();
         });
     }
 
@@ -309,6 +313,8 @@ $(document).ready(function () {
                 .fail(function (jqXHR) {
                     console.log(JSON.parse(jqXHR.responseText));
                 });
+            e.preventDefault();
+            e.stopPropagation();
         });
     }
 
@@ -403,6 +409,8 @@ $(document).ready(function () {
 
     function revertModalInterface(modalName) {
         var modalForm = $("#modal-new-"+modalName);
+        modalForm.find("#submit-"+modalName).attr("type", "submit");
+        modalForm.find("#update-"+modalName).attr("type", "button");
         modalForm.find(".modal-element-edit").hide();
         modalForm.find(".modal-element-new").show();
 
@@ -417,4 +425,22 @@ $(document).ready(function () {
         $("#modal-new-"+modalName).modal("hide");
     }
 
+}).ajaxSend(function (event, jqXHR, settings) {
+    if (settings.method === "PUT" ||
+        settings.method === "POST" ||
+        settings.method === "DELETE") {
+        $(".modal-body")
+            .find("input, button")
+            .prop("disabled", true);
+    } else {
+        $(".modal-body")
+            .find("input, button")
+            .prop("disabled", false);
+    }
+}).ajaxStop(function (event, jqXHR, settings) {
+        if (settings.method === "PUT" || setting.method === "POST") {
+            $(".modal-body")
+                .find("input, button")
+                .prop("disabled", false);
+        }
 });
