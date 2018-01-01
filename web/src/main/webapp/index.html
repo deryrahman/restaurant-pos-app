@@ -80,13 +80,13 @@
 
         <ul class="list-unstyled CTAs">
             <li>
-                <button id="btn-new-restaurant" data-toggle="modal" data-target="#modal-new-restaurant" type="button" class="btn btn-default btn-block main-bg-color-inverted">
+                <button data-toggle="modal" data-target="#modal-remove-all" type="button" class="btn btn-default btn-block main-bg-color-inverted">
                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                     Remove All
                 </button>
             </li>
             <li>
-                <button id="btn-new-restaurant" data-toggle="modal" data-target="#modal-new-restaurant" type="button" class="btn btn-default btn-block">
+                <button data-toggle="modal" data-target="#modal-new-receipt" type="button" class="btn btn-default btn-block">
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     Make Receipt
                 </button>
@@ -132,142 +132,127 @@
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
                     <h3 class="modal-title" id="lineModalLabel">Add Member</h3>
                 </div>
+                <form id="form-add-member">
                 <div class="modal-body">
-
                     <!-- Form Content -->
-                    <form id="form-add-member">
-                        <div class="form-group">
-                            <label for="member-id">Member Id</label>
-                            <input id="member-id" name="member-id" placeholder="Member ID" type="text" class="form-control" >
-                        </div>
-                        <div class="row buttons">
-                            <div class="col-sm-4 col-sm-offset-8">
-                                <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
-                                <button type="submit" class="btn btn-custom">Submit</button>
-                            </div>
-                        </div>
-                    </form>
+                    <div class="form-group">
+                        <label for="member-id">Member Id</label>
+                        <input id="member-id" name="member-id" placeholder="Member ID" type="text" class="form-control" >
+                    </div>
 
+                    <button data-toggle="modal" data-target="#modal-new-member" type="button" class="btn btn-default btn-block">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        Add Member
+                    </button>
                 </div>
-                <div class="modal-footer"></div>
+                <div class="modal-footer">
+                    <div class="row buttons">
+                        <div class="col-sm-4 col-sm-offset-8">
+                            <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
+                            <button type="submit" class="btn btn-custom">Submit</button>
+                        </div>
+                    </div>
+                </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- New Restaurant Modal -->
-    <div class="modal fade" id="modal-new-restaurant" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+
+    <!-- New Member Modal -->
+    <div class="modal fade" id="modal-new-member" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                    <h3 class="modal-title">Register New Restaurant</h3>
+                    <h3 class="modal-title" id="lineModalLabel">Add Member</h3>
                 </div>
-                <div class="modal-body">
-
-                    <!-- Form Content -->
-                    <form id="form-new-restaurant">
+                    <div class="modal-body">
+                        <!-- Form Content -->
                         <div class="form-group">
-                            <label for="address">Restaurant Address</label>
+                            <label for="name">Member Name</label>
+                            <input id="name" name="name" placeholder="Name" type="text" class="form-control" >
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Member Address</label>
                             <input id="address" name="address" placeholder="Address" type="text" class="form-control" >
                         </div>
                         <div class="form-group">
-                            <label for="phone">Restaurant Phone Number</label>
-                            <input id="phone" name="phone" placeholder="Phone Number" type="number" class="form-control" >
+                            <label for="email">Member Email</label>
+                            <input id="email" name="email" placeholder="Email" type="text" class="form-control" >
                         </div>
+                    </div>
+                    <div class="modal-footer">
                         <div class="row buttons">
                             <div class="col-sm-4 col-sm-offset-8">
                                 <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
                                 <button type="submit" class="btn btn-custom">Submit</button>
                             </div>
                         </div>
-                    </form>
-
-                </div>
-                <div class="modal-footer"></div>
+                    </div>
             </div>
         </div>
     </div>
 
-    <!-- New Category Modal -->
-    <div class="modal fade" id="modal-new-category" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <!-- New Receipt Modal -->
+    <div class="modal fade" id="modal-new-receipt" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                    <h3 class="modal-title">Create New Category</h3>
+                    <h3 class="modal-title">New Receipt</h3>
                 </div>
                 <div class="modal-body">
-
-                    <!-- Form Content -->
-                    <form id="form-new-category">
-                        <div class="form-group">
-                            <label for="category-name">Category Name</label>
-                            <input id="category-name" name="name" placeholder="Name" type="text" class="form-control" >
-                        </div>
-                        <div class="form-group">
-                            <label for="category-description">Category Description</label>
-                            <input id="category-description" name="description" placeholder="Description" type="text" class="form-control" >
-                        </div>
-                        <div class="row buttons">
-                            <div class="col-sm-4 col-sm-offset-8">
-                                <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
-                                <button type="submit" class="btn btn-custom">Submit</button>
-                            </div>
-                        </div>
-                    </form>
-
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Count</th>
+                            <th>Price</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Item 1</td>
+                            <td>20</td>
+                            <td>Rp 200000</td>
+                        </tr>
+                        <tr>
+                            <td>Item 2</td>
+                            <td>29</td>
+                            <td>Rp 290000</td>
+                        </tr>
+                        <tr>
+                            <td>Item 3</td>
+                            <td>10</td>
+                            <td>Rp 100000</td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td><b>Subtotal</b></td>
+                                <td></td>
+                                <td>Rp 600000</td>
+                            </tr>
+                            <tr>
+                                <td><b>Total</b></td>
+                                <td>Tax : 5%</td>
+                                <td>Rp 600000</td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
-                <div class="modal-footer"></div>
+                <div class="modal-footer">
+                    <div class="row buttons">
+                        <div class="col-sm-4 col-sm-offset-8">
+                            <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
+                            <button type="submit" class="btn btn-custom">Submit</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- New Item Modal -->
-    <div class="modal fade" id="modal-new-item" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                    <h3 class="modal-title">Create New Item</h3>
-                </div>
-                <div class="modal-body">
-
-                    <!-- Form Content -->
-                    <form id="form-new-item">
-                        <div class="form-group">
-                            <label for="item-name">Item Name</label>
-                            <input id="item-name" name="name" placeholder="Name" type="text" class="form-control" >
-                        </div>
-                        <div class="form-group">
-                            <label for="item-price">Item Price</label>
-                            <input id="item-price" name="price" placeholder="Price" type="number" class="form-control" >
-                        </div>
-                        <div class="form-group">
-                            <label for="category-id">Category ID</label>
-                            <input id="category-id" name="categoryId" placeholder="Category ID" type="number" class="form-control" value="1">
-                        </div>
-                        <div id="item-status-selection" class="form-group">
-                            <label for="item-status">Select status:</label>
-                            <select id="item-status" name="status" class="form-control">
-                                <option value="publish">Publish</option>
-                                <option value="draft">Draft</option>
-                                <option value="trash">Trash</option>
-                            </select>
-                        </div>
-                        <div class="row buttons">
-                            <div class="col-sm-4 col-sm-offset-8">
-                                <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
-                                <button type="submit" class="btn btn-custom">Submit</button>
-                            </div>
-                        </div>
-                    </form>
-
-                </div>
-                <div class="modal-footer"></div>
-            </div>
-        </div>
-    </div>
-
 </div>
 
 </body>

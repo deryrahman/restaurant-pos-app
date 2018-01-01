@@ -11,7 +11,8 @@ var tableStructures = {
     user: ["id", "name", "role", "email", "restaurantId"],
     restaurant: ["id", "address", "phone"],
     category: ["id", "name", "description"],
-    item: ["id", "name", "price", "categoryId", "status"]
+    item: ["id", "name", "price", "categoryId", "status"],
+    itemWithStock: ["itemId", "itemName","stock","price","categoryId"]
 };
 var tableHeaders = {
     user: ["#ID", "Name", "Role", "Email", "Restaurant", ""],
@@ -220,11 +221,14 @@ function loadItemByCategoryId(id) {
     getJSON(true,url,function (data) {
         var payload = data.payload;
         var items = [];
+        dataLists.items = []
         payload.forEach(function(item){
+            dataLists.items.push(item)
             items.push(
                 itemToHTML(item)
             )
         });
+        console.log(dataLists);
         $("#category-panel-" + id).empty().append(items);
     });
 }
@@ -265,5 +269,13 @@ function loadNavCategory() {
 }
 
 function addItem(id){
+
+}
+
+function renderSidebar(){
+
+}
+
+function renderMain(){
 
 }
