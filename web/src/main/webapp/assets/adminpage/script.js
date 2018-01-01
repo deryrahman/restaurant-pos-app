@@ -64,7 +64,11 @@ $(document).ready(function () {
 
     // Set navbar username
     function setUsername() {
-        $("#username").html(userData.username);
+        sendSpecificGetRequest("user", userData.id)
+            .done(function (data) {
+                var name = data.payload.name;
+                $("#username").html("Hello, " + name);
+            })
     }
 
     // Get and load all data from core service
