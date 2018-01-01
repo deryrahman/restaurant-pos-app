@@ -1,11 +1,12 @@
 $(document).ready(function () {
 
     var token = Cookies.get("POSRESTAURANT");
+    var userData = {};
+    var userIdentities = [];
+
     var config;
     var baseUrl;
     var serviceUrls = {};
-    var userData = {};
-
     var tableStructures = {};
     var tableHeaders = {};
     var requestBodyFormat = {};
@@ -68,7 +69,9 @@ $(document).ready(function () {
 
     // Get and load all data from core service
     function loadAllData() {
-        loadData("user");
+        loadUserIdentity().then(function () {
+            loadData("user");
+        });
         loadData("restaurant");
         loadData("category");
         loadData("item");
@@ -88,12 +91,26 @@ $(document).ready(function () {
 
                 $("#"+dataName+"-table").html(tableHeader);
                 dataList.forEach(function (item) {
+                    if (dataName === "user") {
+                        item.username = userIdentities[item.id];
+                    }
                     $("#"+dataName+"-table").append(objectToTableRow(dataName, item));
                 })
             })
             .then(function () {
                 bindEditButtonToModal(dataName);
             });
+    }
+
+    function loadUserIdentity() {
+        return $.get(serviceUrls.userIdentity)
+            .done(function (data) {
+                var userList = data.payload;
+                userList.forEach(function (item) {
+                    userIdentities[item.id] = item.username;
+                });
+                console.log(userIdentities);
+            })
     }
 
     function bindEditButtonToModal(modalName) {
@@ -158,6 +175,11 @@ $(document).ready(function () {
         row += button + "</tr>";
 
         return row;
+    }
+
+    function sendSpecificGetRequest(dataName, objectId) {
+        var getUrl = serviceUrls[dataName] + "/" + objectId;
+        return $.get(getUrl)
     }
 
     // Bind CREATE API to modals submit event

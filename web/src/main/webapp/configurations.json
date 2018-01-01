@@ -45,13 +45,13 @@
     }
   },
   "tableHeaders": {
-    "user": ["#ID", "Name", "Role", "Email", "Restaurant", ""],
+    "user": ["#ID", "Name", "Username", "Role", "Email", "Restaurant", ""],
     "restaurant": ["#ID", "Address", "Phone", ""],
     "category": ["#ID", "Name", "Description", ""],
     "item": ["#ID", "Item Name", "Price", "Category", "Status", ""]
   },
   "tableStructures": {
-    "user": ["id", "name", "role", "email", "restaurantId"],
+    "user": ["id", "name", "username", "role", "email", "restaurantId"],
     "restaurant": ["id", "address", "phone"],
     "category": ["id", "name", "description"],
     "item": ["id", "name", "price", "categoryId", "status"]
