@@ -109,7 +109,6 @@ $(document).ready(function () {
                 userList.forEach(function (item) {
                     userIdentities[item.id] = item.username;
                 });
-                console.log(userIdentities);
             })
     }
 
@@ -126,7 +125,6 @@ $(document).ready(function () {
         $(".btn-edit-"+modalName).click(function (event) {
             var row = $(event.target).parent().siblings();
             var newObject = tableRowToObject(modalName, row);
-            console.log(newObject);
 
             modifyModalInterface(modalName, newObject);
         });
@@ -141,7 +139,6 @@ $(document).ready(function () {
             .find(".modal-element-edit").show()
             .find(".modal-id").html(object.id);
 
-
         fillModalForms(modalName, object);
     }
 
@@ -150,6 +147,12 @@ $(document).ready(function () {
         $.each(template, function (field, elmtId) {
             $("#form-new-"+modalName).find(elmtId).val(object[field]);
         });
+
+        var username;
+        if (modalName === "user") {
+            username = object.username;
+            $("#new-username").val(username);
+        }
     }
 
     function tableRowToObject(dataName, row) {
@@ -226,7 +229,6 @@ $(document).ready(function () {
                 .done(function (data) {
                     emptyModalForm("user");
                     loadData("user");
-                    console.log(data);
                 })
                 .fail(function (jqXHR) {
                     console.log(JSON.parse(jqXHR.responseText));
@@ -245,10 +247,10 @@ $(document).ready(function () {
             data: JSON.stringify(dataToBeSent)
         }).done(function (data) {
             alert("Successfully created new " + dataName + ".");
-            console.log(data.payload);
+
         }).fail(function (jqXHR) {
             var message = JSON.parse(jqXHR.responseText).message;
-            alert("Failed to create new restaurant.\n" + message);
+            alert("Failed to create new " + dataName + ".\n" + message);
 
             console.log(jqXHR.responseText);
         });
@@ -277,7 +279,6 @@ $(document).ready(function () {
             var dataToBeSent = formInputToObject(modalName);
             dataToBeSent.id = Number(rowId);
 
-            console.log(dataToBeSent);
             sendUpdateRequest(modalName, dataToBeSent)
                 .then(function () {
                     loadData(modalName);
@@ -294,7 +295,6 @@ $(document).ready(function () {
             var dataToBeSent = formInputToObject("user");
             dataToBeSent.id = Number(rowId);
 
-            console.log(dataToBeSent);
             sendUpdateRequest("user", dataToBeSent)
                 .then(function () {
                     var updateUrl = serviceUrls.userIdentity + "/" + dataToBeSent.id;
@@ -308,7 +308,6 @@ $(document).ready(function () {
                 .done(function (data) {
                     closeModal("user");
                     loadData("user");
-                    console.log(data);
                 })
                 .fail(function (jqXHR) {
                     console.log(JSON.parse(jqXHR.responseText));
@@ -325,7 +324,6 @@ $(document).ready(function () {
             contentType: "application/json",
             data: JSON.stringify(dataToBeSent)
         }).done(function (data) {
-            console.log(data.payload);
             alert("Successfully updated " + dataName + ".")
         }).fail(function (jqXHR) {
             var message = JSON.parse(jqXHR.responseText).message;
@@ -359,7 +357,6 @@ $(document).ready(function () {
         return $.ajax(deletUrl, {
             method: "DELETE"
         }).done(function (data) {
-            console.log(data);
             alert("Successfully deleted " + dataName + ".")
         }).fail(function (jqXHR) {
             var message = JSON.parse(jqXHR.responseText).message;
@@ -437,10 +434,12 @@ $(document).ready(function () {
             .find("input, button")
             .prop("disabled", false);
     }
-}).ajaxStop(function (event, jqXHR, settings) {
-        if (settings.method === "PUT" || setting.method === "POST") {
-            $(".modal-body")
-                .find("input, button")
-                .prop("disabled", false);
-        }
+}).ajaxComplete(function (event, jqXHR, settings) {
+    if (settings.method === "PUT" ||
+        settings.method === "POST" ||
+        settings.method === "DELETE") {
+        $(".modal-body")
+            .find("input, button")
+            .prop("disabled", false);
+    }
 });
