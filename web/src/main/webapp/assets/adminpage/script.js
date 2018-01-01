@@ -6,46 +6,9 @@ $(document).ready(function () {
     var serviceUrls = {};
     var userData = {};
 
-    var dataLists = {};
-    var tableStructures = {
-        user: ["id", "name", "role", "email", "restaurantId"],
-        restaurant: ["id", "address", "phone"],
-        category: ["id", "name", "description"],
-        item: ["id", "name", "price", "categoryId", "status"]
-    };
-    var tableHeaders = {
-        user: ["#ID", "Name", "Role", "Email", "Restaurant", ""],
-        restaurant: ["#ID", "Address", "Phone", ""],
-        category: ["#ID", "Name", "Description", ""],
-        item: ["#ID", "Item Name", "Price", "Category", "Status", ""]
-    };
-    var createRequestBody = {
-        user: {
-            "name": "#fullname",
-            "email": "#email",
-            "restaurantId": "#restaurant-id",
-            "role": "input[name='role']:checked"
-        },
-        userIdentity: {
-            "username": "#new-username",
-            "password": "#password",
-            "role": "input[name='role']:checked"
-        },
-        restaurant: {
-            "address": "#address",
-            "phone": "#phone"
-        },
-        category: {
-            "name": "#category-name",
-            "description": "#category-description"
-        },
-        item: {
-            "name": "#item-name",
-            "price": "#item-price",
-            "categoryId": "#category-id",
-            "status": "#item-status"
-        }
-    };
+    var tableStructures = {};
+    var tableHeaders = {};
+    var requestBodyFormat = {};
 
     // Get configurations and check cookie
     (function () {
@@ -57,30 +20,28 @@ $(document).ready(function () {
         $.getJSON(configUrl, function (data) {
             config = data;
             baseUrl = config.baseUrl;
-            serviceUrls.parser = baseUrl + config.endpoints.parser;
-            serviceUrls.user = baseUrl + config.endpoints.user;
-            serviceUrls.userIdentity = baseUrl + config.endpoints.userIdentity;
-            serviceUrls.item = baseUrl + config.endpoints.item;
-            serviceUrls.category = baseUrl + config.endpoints.category;
-            serviceUrls.restaurant = baseUrl + config.endpoints.restaurant;
-        }).done(function () {
-            $.ajax(serviceUrls.parser, {
+            $.each(config.endpoints, function (service, url) {
+                serviceUrls[service] = baseUrl + url;
+            });
+            requestBodyFormat = config.requestBodyFormat;
+            tableHeaders = config.tableHeaders;
+            tableStructures = config.tableStructures;
+        }).then(function () {
+            return $.ajax(serviceUrls.parser, {
                 method: "POST",
                 contentType: "application/x-www-form-urlencoded",
                 data: {token: token}
             })
-                .success(function (data) {
-                    userData = data.payload;
-                    if (userData.role === "admin") {
-                        console.log("Logged in as an admin.");
-                        initializeAdminPage();
-                    } else {
-                        backToLoginPage("You are not logged in as an admin. Please login as an admin.");
-                    }
-                })
-                .fail(function () {
-                    backToLoginPage("Your session is already expired. Please login again.");
-                });
+        }).done(function (data) {
+            userData = data.payload;
+            if (userData.role === "admin") {
+                console.log("Logged in as an admin.");
+                initializeAdminPage();
+            } else {
+                backToLoginPage("You are not logged in as an admin. Please login as an admin.");
+            }
+        }).fail(function () {
+                backToLoginPage("Your session is already expired. Please login again.");
         });
     })();
 
@@ -120,13 +81,13 @@ $(document).ready(function () {
 
         $.get(serviceUrls[dataName])
             .done(function (data) {
-                dataLists[dataName] = data.payload;
+                var dataList = data.payload;
 
-                $("#"+dataName+"-count-badge").html(dataLists[dataName].length);
-                $("#"+dataName+"-count-well").html(dataLists[dataName].length);
+                $("#"+dataName+"-count-badge").html(dataList.length);
+                $("#"+dataName+"-count-well").html(dataList.length);
 
                 $("#"+dataName+"-table").html(tableHeader);
-                dataLists[dataName].forEach(function (item) {
+                dataList.forEach(function (item) {
                     $("#"+dataName+"-table").append(objectToTableRow(dataName, item));
                 })
             })
@@ -166,7 +127,7 @@ $(document).ready(function () {
     }
 
     function fillModalForms(modalName, object) {
-        var template = createRequestBody[modalName];
+        var template = requestBodyFormat[modalName];
         $.each(template, function (field, elmtId) {
             $("#form-new-"+modalName).find(elmtId).val(object[field]);
         });
@@ -270,7 +231,7 @@ $(document).ready(function () {
     }
 
     function formInputToObject(dataName) {
-        var template = createRequestBody[dataName];
+        var template = requestBodyFormat[dataName];
         var newObject = {};
         $.each(template, function (field, elmtId) {
             newObject[field] = $("#form-new-" + dataName).find(elmtId).val();
