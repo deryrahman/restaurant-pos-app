@@ -132,7 +132,12 @@ body {
 .modal-body .btn-custom {
     color: #ffffff;
     background-color: #ff5722;
-    margin-left: 10px;
+    border-color: #bf360c;
+    margin-left: 14px;
+}
+
+.modal-body .btn-custom:hover {
+    background-color: #bf360c;
 }
 
 .modal-body .buttons {
@@ -154,4 +159,32 @@ body {
 
 .modal-footer .btn-group:last-child > button {
     border-right: 0;
+}
+
+.modal-element-edit {
+    display: none;
+}
+
+.modal-id {
+    margin-left: 5px;
+}
+
+.left-side-button {
+    padding-left: 0;
+    padding-right: 30px;
+}
+
+.btn-delete {
+    color: #ff5722;
+}
+
+.btn-delete:focus {
+    color: #ffffff;
+    background-color: #bf360c;
+    border-radius: 4px;
+}
+
+.right-side-button {
+    padding-left: 30px;
+    padding-right: 0;
 }
