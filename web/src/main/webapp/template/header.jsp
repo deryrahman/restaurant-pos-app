@@ -10,6 +10,6 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Homepage</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="<%= basePath %>/assets/style.css">
-    <link rel="stylesheet" type="text/css" href="<%= basePath %>/assets/custom.css">
+    <link rel="stylesheet" type="text/css" href="<%= basePath %>/assets/mainpage/style.css">
+    <link rel="stylesheet" type="text/css" href="<%= basePath %>/assets/mainpage/custom.css">
 </head>

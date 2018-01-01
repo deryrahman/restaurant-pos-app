@@ -1,0 +1,176 @@
+body {
+	background: #fafafa;
+}
+
+p {
+	font-size: 1.1em;
+	font-weight: 300;
+	line-height: 1.7em;
+	color: #999;
+}
+
+a, a:hover, a:focus {
+	color: inherit;
+	text-decoration: none;
+	transition: all 0.3s;
+}
+
+.line {
+	width: 100%;
+	height: 1px;
+	border-bottom: 1px dashed #ddd;
+	margin: 40px 0;
+}
+
+/* ---------------------------------------------------
+    SIDEBAR STYLE
+----------------------------------------------------- */
+.wrapper {
+	display: flex;
+	align-items: stretch;
+}
+
+#sidebar {
+	min-width: 350px;
+	max-width: 350px;
+	background-color: #ff5722;
+	border-color: #bf360c;
+	color: #fff;
+	transition: all 0.3s;
+}
+
+#sidebar.active {
+	margin-left: -350px;
+}
+
+#sidebar .sidebar-header {
+	padding: 20px;
+	background: #bf360c;
+}
+
+#sidebar ul.components {
+	/*padding: 20px 0;*/
+	border-top: 1px solid #bf360c;
+	margin:0px;
+}
+
+#sidebar ul p {
+	color: #fff;
+	padding: 10px;
+}
+
+#sidebar ul li a {
+	padding: 10px;
+	font-size: 1.1em;
+	display: block;
+}
+#sidebar ul li a:hover {
+	color: #bf360c;
+	background: #fff;
+}
+
+/*#sidebar ul li.active > a, a[aria-expanded="true"] {*/
+	/*color: #fff;*/
+	/*background: #bf360c;*/
+/*}*/
+
+
+/*a[data-toggle="collapse"] {*/
+	/*position: relative;*/
+/*}*/
+
+/*a[aria-expanded="false"]::before, a[aria-expanded="true"]::before {*/
+	/*content: '\e259';*/
+	/*display: block;*/
+	/*position: absolute;*/
+	/*right: 20px;*/
+	/*font-family: 'Glyphicons Halflings';*/
+	/*font-size: 0.6em;*/
+/*}*/
+/*a[aria-expanded="true"]::before {*/
+	/*content: '\e260';*/
+/*}*/
+
+ul.CTAs {
+	padding: 20px;
+}
+
+ul.CTAs a {
+	text-align: center;
+	font-size: 0.9em !important;
+	display: block;
+	border-radius: 5px;
+	margin-bottom: 5px;
+}
+
+ul.CTAs li {
+	margin-bottom:5px;
+}
+
+/*a.download {*/
+	/*background: #fff;*/
+	/*color: #bf360c;*/
+/*}*/
+
+/*a.article, a.article:hover {*/
+	/*background: #bf360c !important;*/
+	/*color: #fff !important;*/
+/*}*/
+
+/* ---------------------------------------------------
+    CONTENT STYLE
+----------------------------------------------------- */
+#content {
+	padding: 20px;
+	min-height: 100vh;
+	transition: all 0.3s;
+	width:100%;
+}
+
+/* ---------------------------------------------------
+    MEDIAQUERIES
+----------------------------------------------------- */
+@media (max-width: 768px) {
+	#sidebar {
+		margin-left: -350px;
+	}
+	#sidebar.active {
+		margin-left: 0;
+	}
+	#sidebarCollapse span {
+		display: none;
+	}
+}
+
+/* Header */
+#header {
+	background-color: #333333;
+	color: #ffffff;
+	padding-bottom: 15px;
+	margin-top: 33px;
+}
+
+#footer {
+	position: relative;
+	clear: both;
+	margin-top: -50px;
+	height: 50px;
+	background-color: #efefef;
+	text-align: center;
+}
+
+.main-bg-color {
+	background-color: #ff5722 !important;
+	border-color: #bf360c !important;
+	color: #ffffff !important;
+}
+
+.main-bg-color-inverted {
+	background-color: #bf360c!important;
+	border-color: #ff5722  !important;
+	color: #ffffff !important;
+}
+
+.pointer {
+	cursor: pointer;
+}

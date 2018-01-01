@@ -72,8 +72,8 @@ function loadItemByCategoryId(categoryId) {
             items.push(
                 itemToHTML(val)
             )
-        })
-        categoryItem['category-'+categoryId] = items
+        });
+        categoryItem['category-'+categoryId] = items;
         $("#category-" + categoryId).empty().append(items)
     })
 }

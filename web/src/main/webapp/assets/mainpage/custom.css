@@ -45,7 +45,9 @@
 	background-color: #bf360c;
 }
 .navbar-fixed-top .navbar-toggle {
-	border-color: #bf360c;
+	border-color: transparent !important;
+	padding:6px 12px;
+	margin:0px;
 }
 .navbar-fixed-top .navbar-toggle:hover,
 .navbar-fixed-top .navbar-toggle:focus {

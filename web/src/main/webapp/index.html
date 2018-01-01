@@ -1,46 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Homepage</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Homepage | Peregrine</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/assets/style.css">
-    <link rel="stylesheet" type="text/css" href="/assets/custom.css">
 </head>
 <body>
-<div id="navbar-top">
+
+<div id="navbar-container">
     <!--Here to render navbar-->
 </div>
-<nav class="navbar navbar-default navbar-fixed-top">
+
+<header id="header">
     <div class="container">
+        <div class="row">
+            <div class="col-md-10">
+                <h1>Dashboard <small>Manage Users and Items</small></h1>
+            </div>
+            <div class="col-md-2">
 
-        <div class="navbar-header">
-            <a href="#" class="navbar-brand">PEREGRINE</a>
+            </div>
         </div>
-
-        <div>
-            <ul class="nav navbar-nav navbar-left">
-                <li class="active"><a href="index.html">Admin Page</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="#" id="restaurant-branch"></a></li>
-                <li class="active"><a href="#" id="restaurant-phone"></a></li>
-                <li><a href="#">Iqbal</a></li>
-                <li><a href="login.html">Logout</a></li>
-            </ul>
-        </div>
-
     </div>
-</nav>
+</header>
 
-<div id="homepage" class="container">
-    <div class="row">
-        <div id="sidebar-container"></div>
-        <div class="col-xs-12 overlay"></div>
-        <div id="page-homepage-container"></div>
+<div class="wrapper">
+    <!-- Sidebar Holder -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <button data-toggle="modal" data-target="#modal-add-member" type="button" class="btn btn-default btn-block">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                Add Member
+            </button>
+        </div>
+
+        <ul class="list-unstyled components">
+            <li>
+                <a href="#">
+                    Item 1
+                    <ul class="list-inline" style="float:right">
+                        <li><span class="badge" style="background:#bf360c">5</span></li>
+                        <li>Rp 50000</li>
+                    </ul>
+                </a>
+            </li>
+        </ul>
+        <ul class="list-unstyled components">
+            <li>
+                <a href="#">
+                    Subtotal
+                    <ul class="list-inline" style="float:right">
+                        <li><span class="badge" style="background:#bf360c">5</span></li>
+                        <li>Rp 50000</li>
+                    </ul>
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    Tax
+                    <ul class="list-inline" style="float:right">
+                        <li>Rp 50000</li>
+                    </ul>
+                </a>
+            </li>
+        </ul>
+        <ul class="list-unstyled components">
+            <li>
+                <a href="#">
+                    Total
+                    <ul class="list-inline" style="float:right">
+                        <li>Rp 50000</li>
+                    </ul>
+                </a>
+            </li>
+        </ul>
+
+        <ul class="list-unstyled CTAs">
+            <li>
+                <button id="btn-new-restaurant" data-toggle="modal" data-target="#modal-new-restaurant" type="button" class="btn btn-default btn-block main-bg-color-inverted">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    Remove All
+                </button>
+            </li>
+            <li>
+                <button id="btn-new-restaurant" data-toggle="modal" data-target="#modal-new-restaurant" type="button" class="btn btn-default btn-block">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    Make Receipt
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Page Content Holder -->
+    <div id="content">
+
+        <nav class="navbar nav-tabs navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn main-bg-color">
+                        <i class="glyphicon glyphicon-align-left"></i>
+                    </button>
+                </div>
+
+                <ul id="nav-categories" class="nav navbar-nav navbar-right">
+                        <li><a href="#category-panel-all" data-toggle="tab" onclick="loadItemByCategoryId('all')">All</a></li>
+                        <!--Here category list-->
+                    </ul>
+            </div>
+        </nav>
+
+        <div id="tab-panel-main" class="row tab-content">
+            <div class="tab-pane fade active in" id="category-panel-all">
+                <!--Here the item-->
+            </div>
+        </div>
+
     </div>
 </div>
+
+
+
+<div class="modals">
+    <!-- Add Member Modal -->
+    <div class="modal fade" id="modal-add-member" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h3 class="modal-title" id="lineModalLabel">Add Member</h3>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Form Content -->
+                    <form id="form-add-member">
+                        <div class="form-group">
+                            <label for="member-id">Member Id</label>
+                            <input id="member-id" name="member-id" placeholder="Member ID" type="text" class="form-control" >
+                        </div>
+                        <div class="row buttons">
+                            <div class="col-sm-4 col-sm-offset-8">
+                                <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
+                                <button type="submit" class="btn btn-custom">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Restaurant Modal -->
+    <div class="modal fade" id="modal-new-restaurant" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h3 class="modal-title">Register New Restaurant</h3>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Form Content -->
+                    <form id="form-new-restaurant">
+                        <div class="form-group">
+                            <label for="address">Restaurant Address</label>
+                            <input id="address" name="address" placeholder="Address" type="text" class="form-control" >
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Restaurant Phone Number</label>
+                            <input id="phone" name="phone" placeholder="Phone Number" type="number" class="form-control" >
+                        </div>
+                        <div class="row buttons">
+                            <div class="col-sm-4 col-sm-offset-8">
+                                <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
+                                <button type="submit" class="btn btn-custom">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Category Modal -->
+    <div class="modal fade" id="modal-new-category" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h3 class="modal-title">Create New Category</h3>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Form Content -->
+                    <form id="form-new-category">
+                        <div class="form-group">
+                            <label for="category-name">Category Name</label>
+                            <input id="category-name" name="name" placeholder="Name" type="text" class="form-control" >
+                        </div>
+                        <div class="form-group">
+                            <label for="category-description">Category Description</label>
+                            <input id="category-description" name="description" placeholder="Description" type="text" class="form-control" >
+                        </div>
+                        <div class="row buttons">
+                            <div class="col-sm-4 col-sm-offset-8">
+                                <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
+                                <button type="submit" class="btn btn-custom">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Item Modal -->
+    <div class="modal fade" id="modal-new-item" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h3 class="modal-title">Create New Item</h3>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Form Content -->
+                    <form id="form-new-item">
+                        <div class="form-group">
+                            <label for="item-name">Item Name</label>
+                            <input id="item-name" name="name" placeholder="Name" type="text" class="form-control" >
+                        </div>
+                        <div class="form-group">
+                            <label for="item-price">Item Price</label>
+                            <input id="item-price" name="price" placeholder="Price" type="number" class="form-control" >
+                        </div>
+                        <div class="form-group">
+                            <label for="category-id">Category ID</label>
+                            <input id="category-id" name="categoryId" placeholder="Category ID" type="number" class="form-control" value="1">
+                        </div>
+                        <div id="item-status-selection" class="form-group">
+                            <label for="item-status">Select status:</label>
+                            <select id="item-status" name="status" class="form-control">
+                                <option value="publish">Publish</option>
+                                <option value="draft">Draft</option>
+                                <option value="trash">Trash</option>
+                            </select>
+                        </div>
+                        <div class="row buttons">
+                            <div class="col-sm-4 col-sm-offset-8">
+                                <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
+                                <button type="submit" class="btn btn-custom">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
 </body>
 <!-- Scripts -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -48,9 +277,17 @@
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script>
     document.write("<script type='text/javascript' src='/assets/mainpage/script.js?v=" + Date.now() + "'><\/script>");
-    document.write("<script type='text/javascript' src='/assets/mainpage/sidebar.js?v=" + Date.now() + "'><\/script>");
-    document.write("<script type='text/javascript' src='/assets/mainpage/main.js?v=" + Date.now() + "'><\/script>");
-    document.write("<script type='text/javascript' src='/assets/mainpage/config.js?v=" + Date.now() + "'><\/script>");
+    document.write("<link rel='stylesheet' href='assets/mainpage/style.css?v=" + Date.now() + "'>");
+    document.write("<link rel='stylesheet' href='assets/mainpage/custom.css?v=" + Date.now() + "'>");
 
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+
+//    document.write("<script type='text/javascript' src='/assets/mainpage/sidebar.js?v=" + Date.now() + "'><\/script>");
+//    document.write("<script type='text/javascript' src='/assets/mainpage/main.js?v=" + Date.now() + "'><\/script>");
+//    document.write("<script type='text/javascript' src='/assets/mainpage/config.js?v=" + Date.now() + "'><\/script>");
 </script>
 </html>
