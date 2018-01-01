@@ -2,7 +2,7 @@
   "baseUrl": "http://localhost:8080",
   "endpoints": {
     "login": "/auth/login",
-    "register": "/auth/register",
+    "userIdentity": "/auth/userIdentities",
     "parser": "/auth/parseToken",
     "user": "/core/users",
     "restaurant": "/core/restaurants",
@@ -16,5 +16,44 @@
     "admin": "adminpage.html",
     "login": "loginpage.html",
     "manager": ""
+  },
+  "requestBodyFormat": {
+    "user": {
+      "name": "#fullname",
+      "email": "#email",
+      "restaurantId": "#restaurant-id",
+      "role": "input[name='role']:checked"
+    },
+    "userIdentity": {
+      "username": "#new-username",
+      "password": "#password",
+      "role": "input[name='role']:checked"
+    },
+    "restaurant": {
+      "address": "#address",
+      "phone": "#phone"
+    },
+    "category": {
+      "name": "#category-name",
+      "description": "#category-description"
+    },
+    "item": {
+      "name": "#item-name",
+      "price": "#item-price",
+      "categoryId": "#category-id",
+      "status": "#item-status"
+    }
+  },
+  "tableHeaders": {
+    "user": ["#ID", "Name", "Username", "Role", "Email", "Restaurant", ""],
+    "restaurant": ["#ID", "Address", "Phone", ""],
+    "category": ["#ID", "Name", "Description", ""],
+    "item": ["#ID", "Item Name", "Price", "Category", "Status", ""]
+  },
+  "tableStructures": {
+    "user": ["id", "name", "username", "role", "email", "restaurantId"],
+    "restaurant": ["id", "address", "phone"],
+    "category": ["id", "name", "description"],
+    "item": ["id", "name", "price", "categoryId", "status"]
   }
 }
