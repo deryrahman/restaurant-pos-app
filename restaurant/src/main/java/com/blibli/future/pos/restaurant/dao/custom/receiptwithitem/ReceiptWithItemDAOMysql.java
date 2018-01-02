@@ -5,6 +5,7 @@ import com.blibli.future.pos.restaurant.common.model.custom.ItemOnReceipt;
 import com.blibli.future.pos.restaurant.common.model.custom.ReceiptWithItem;
 import com.blibli.future.pos.restaurant.dao.MysqlDAO;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,6 +21,9 @@ public class ReceiptWithItemDAOMysql extends MysqlDAO<ReceiptWithItem> implement
     @Override
     protected void mappingObject(ReceiptWithItem receiptWithItem, ResultSet rs) throws SQLException {
         receiptWithItem.setReceiptId(rs.getInt("receipt_id"));
+        receiptWithItem.setMemberId(rs.getInt("member_id"));
+        receiptWithItem.setNote(rs.getString("note"));
+        receiptWithItem.setTax(rs.getBigDecimal("tax"));
     }
 
     private void mappingItem(ItemOnReceipt items, ResultSet rs) throws SQLException {
@@ -80,7 +84,7 @@ public class ReceiptWithItemDAOMysql extends MysqlDAO<ReceiptWithItem> implement
         }
 
         for (Integer i: receiptIdList) {
-            query = "SELECT receipts.id as receipt_id, items.id as item_id, items.name, receipt_item.count_item, receipt_item.subtotal " +
+            query = "SELECT receipts.id as receipt_id, items.id as item_id, items.name, receipt_item.count_item, receipt_item.subtotal, receipts.tax as tax, receipts.note as note " +
                     "FROM receipt_item JOIN receipts JOIN items " +
                     "WHERE receipts.id=receipt_item.receipt_id AND items.id=receipt_item.item_id AND receipts.id=" +
                     i + " AND " +
@@ -88,7 +92,15 @@ public class ReceiptWithItemDAOMysql extends MysqlDAO<ReceiptWithItem> implement
             ps = TransactionHelper.getConnection().prepareStatement(query);
             rs = ps.executeQuery();
             itemOnReceiptList = new ArrayList<>();
+            BigDecimal tax = null;
+            String note = null;
             while (rs.next()){
+                if(tax == null){
+                    tax = rs.getBigDecimal("tax");
+                }
+                if(note == null){
+                    note = rs.getString("note");
+                }
                 itemOnReceipt = new ItemOnReceipt();
                 mappingItem(itemOnReceipt,rs);
                 itemOnReceiptList.add(itemOnReceipt);
@@ -98,6 +110,8 @@ public class ReceiptWithItemDAOMysql extends MysqlDAO<ReceiptWithItem> implement
             }
             receiptWithItem = new ReceiptWithItem();
             receiptWithItem.setReceiptId(i);
+            receiptWithItem.setNote(note);
+            receiptWithItem.setTax(tax);
             receiptWithItem.setItems(itemOnReceiptList);
             receiptWithItemList.add(receiptWithItem);
         }

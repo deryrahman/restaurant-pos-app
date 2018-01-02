@@ -44,8 +44,8 @@ public class AuthenticationFitler implements ContainerRequestFilter {
         String refreshToken = payload.get("refreshToken").toString();
         Integer userId = Integer.valueOf(payload.get("id").toString());
 
-        if(session.getAttribute("userId") == null){
-            System.out.println("init User");
+        if(session.getAttribute("userId") == null || session.getAttribute("userId") != userId){
+            System.out.println("init User : " + userId);
             try {
                 UserService.initUser(userId);
             } catch (Exception e) {
