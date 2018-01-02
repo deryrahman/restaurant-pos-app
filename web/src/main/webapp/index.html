@@ -30,10 +30,23 @@
     <!-- Sidebar Holder -->
     <nav id="sidebar">
         <div class="sidebar-header">
-            <button data-toggle="modal" data-target="#modal-add-member" type="button" class="btn btn-default btn-block">
+            <button data-toggle="modal" data-target="#modal-add-member" type="button" class="btn btn-default btn-block margin-bottom-default">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                Add Member
+                <span id="add-member-btn">Add Member</span>
             </button>
+            <div id="member-info" style="display: none">
+                <div class="panel panel-default main-bg-color">
+                    <div class="panel-heading main-bg-color">
+                        Member id : <span id="member-info-id"></span>
+                    </div>
+
+                    <ul class="list-group">
+                        <a href="#" class="list-group-item">Name: <span id="member-info-name"></span></a>
+                        <a href="#" class="list-group-item">Email: <span id="member-info-email"></span></a>
+                        <a href="#" class="list-group-item">Address: <span id="member-info-address"></span></a>
+                    </ul>
+                </div>
+            </div>
         </div>
 
         <ul id="item-on-sidebar" class="list-unstyled components">
@@ -120,7 +133,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                    <h3 class="modal-title" id="lineModalLabel">Add Member</h3>
+                    <h3 class="modal-title" id="lineModalLabel"><span id="modal-member-title">Add</span> Member</h3>
                 </div>
                 <form id="form-add-member">
                 <div class="modal-body">
@@ -129,17 +142,36 @@
                         <label for="member-id">Member Id</label>
                         <input id="member-id" name="member-id" placeholder="Member ID" type="text" class="form-control" >
                     </div>
-
-                    <button data-toggle="modal" data-target="#modal-new-member" type="button" class="btn btn-default btn-block">
+                    <div id="edit-member" style="display: none">
+                        <div class="form-group">
+                            <label for="member-name">Name</label>
+                            <input id="member-name" name="member-name" placeholder="Name" type="text" class="form-control" >
+                        </div>
+                        <div class="form-group">
+                            <label for="member-email">Email</label>
+                            <input id="member-email" name="member-email" placeholder="Email" type="email" class="form-control" >
+                        </div>
+                        <div class="form-group">
+                            <label for="member-address">Address</label>
+                            <input id="member-address" name="member-address" placeholder="Address" type="text" class="form-control" >
+                        </div>
+                    </div>
+                    <button id="modal-add-member-btn" data-toggle="modal" data-target="#modal-new-member" type="button" class="btn btn-default btn-block">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                         Add Member
+                    </button>
+
+                    <button id="modal-remove-member-btn" data-toggle="modal" data-target="#modal-remove-member" type="button" class="btn btn-default btn-block" style="display: none">
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        Remove
                     </button>
                 </div>
                 <div class="modal-footer">
                     <div class="row buttons">
                         <div class="col-sm-4 col-sm-offset-8">
                             <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
-                            <button type="submit" class="btn btn-custom">Submit</button>
+                            <button id="submit-add-member" data-dismiss="modal" type="submit" class="btn btn-custom" onclick="addMember()">Submit</button>
+                            <button id="submit-edit-member" data-dismiss="modal" type="submit" class="btn btn-custom" onclick="editMember()" style="display: none">Edit</button>
                         </div>
                     </div>
                 </div>
@@ -168,14 +200,14 @@
                         </div>
                         <div class="form-group">
                             <label for="email">Member Email</label>
-                            <input id="email" name="email" placeholder="Email" type="text" class="form-control" >
+                            <input id="email" name="email" placeholder="Email" type="email" class="form-control" >
                         </div>
                     </div>
                     <div class="modal-footer">
                         <div class="row buttons">
                             <div class="col-sm-4 col-sm-offset-8">
                                 <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
-                                <button type="submit" class="btn btn-custom">Submit</button>
+                                <button data-dismiss="modal" type="submit" class="btn btn-custom" onclick="newMember()">Submit</button>
                             </div>
                         </div>
                     </div>
@@ -216,12 +248,63 @@
                             </tr>
                         </tfoot>
                     </table>
+                    <button data-toggle="modal" data-target="#modal-add-note" type="button" class="btn btn-default btn-block">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        <span id="add-note-btn">Add Note</span>
+                    </button>
                 </div>
                 <div class="modal-footer">
                     <div class="row buttons">
                         <div class="col-sm-12">
                             <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
                             <button type="submit" class="btn btn-custom" onclick="makeReceipt()">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Add Note-->
+    <div class="modal fade" id="modal-add-note" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h3 class="modal-title" id="lineModalLabel">Add Note</h3>
+                </div>
+                <div class="modal-body">
+                    <!-- Form Content -->
+                    <div class="form-group">
+                        <label for="note">Note:</label>
+                        <textarea class="form-control" rows="5" id="note"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row buttons">
+                        <div class="col-sm-12">
+                            <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
+                            <button data-dismiss="modal" type="submit" class="btn btn-custom" onclick="addNote()">Add note</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Remove member -->
+    <div class="modal fade" id="modal-remove-member" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h3 class="modal-title">Remove Member</h3>
+                </div>
+                <div class="modal-footer">
+                    <div class="row buttons">
+                        <div class="col-sm-12">
+                            <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
+                            <button data-dismiss="modal" type="button" class="btn btn-danger" onclick="removeMember()">Remove</button>
                         </div>
                     </div>
                 </div>

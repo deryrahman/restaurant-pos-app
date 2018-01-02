@@ -5,10 +5,13 @@ var config;
 var baseUrl;
 var serviceUrls = {};
 var userData = {};
-var tax = 5;
 var itemIdToRemove;
 
 var dataLists = {};
+dataLists.receipt = {};
+dataLists.receipt.tax = 5;
+dataLists.receipt.note;
+dataLists.member;
 dataLists.categories = {};
 dataLists.categories['all'] = {};
 dataLists.items = {};
@@ -100,7 +103,7 @@ $(document).ready(function () {
 });
 
 // json http request
-function getJSON(async, url, callback){
+function getJSON(async, url, callback, err){
     $.ajax({
         type: 'GET',
         url: url,
@@ -111,11 +114,12 @@ function getJSON(async, url, callback){
         },
         error: function (e) {
             console.log(e.responseJSON.message);
-            alert("Error GET Request! See log for further information")
+            alert("Error GET Request! See log for further information");
+            err();
         }
     });
 }
-function postJSON(async, url, data, callback){
+function postJSON(async, url, data, callback, err){
     $.ajax(url, {
         data : JSON.stringify(data),
         contentType : 'application/json',
@@ -126,11 +130,12 @@ function postJSON(async, url, data, callback){
         },
         error: function (e) {
             console.log(e.responseJSON.message);
-            alert("Error POST Request! See log for further information")
+            alert("Error POST Request! See log for further information");
+            err();
         }
     });
 }
-function putJSON(async, url, data, callback){
+function putJSON(async, url, data, callback,err){
     $.ajax(url, {
         data : JSON.stringify(data),
         contentType : 'application/json',
@@ -141,11 +146,12 @@ function putJSON(async, url, data, callback){
         },
         error: function (e) {
             console.log(e.responseJSON.message);
-            alert("Error PUT Request! See log for further information")
+            alert("Error PUT Request! See log for further information");
+            err();
         }
     });
 }
-function deleteJSON(async, url, callback){
+function deleteJSON(async, url, callback, err){
     $.ajax(url, {
         contentType : 'application/json',
         type : 'DELETE',
@@ -155,7 +161,8 @@ function deleteJSON(async, url, callback){
         },
         error: function (e) {
             console.log(e.responseJSON.message);
-            alert("Error PUT Request! See log for further information")
+            alert("Error PUT Request! See log for further information");
+            err();
         }
     });
 }
@@ -169,7 +176,7 @@ function backToLoginPage(message) {
 function initializePage() {
     loadNavbar();
     $('.tax').each(function(){
-        $(this).text(tax);
+        $(this).text(dataLists.receipt.tax);
     });
     $('ul.CTAs').hide();
     document.title = pageRole + " Page";
@@ -308,6 +315,7 @@ function renderSidebar(){
     var totalPrice = 0;
     var totalCount = 0;
     var totalPriceAfterTax;
+    var tax = dataLists.receipt.tax;
     if($.isEmptyObject(dataLists.itemOnSidebar)){
         $('ul.CTAs').hide();
     } else {
@@ -407,11 +415,28 @@ function renderReceipt(){
     $('#receipt-items').empty().append(itemReceiptList);
 }
 
+function addNote() {
+    if($('#note').val() === ""){
+        delete dataLists.receipt.note;
+        $('#add-note-btn').text("Add Note");
+    } else {
+        console.log("here");
+        dataLists.receipt.note = $('#note').val();
+        $('#add-note-btn').text("Edit Note");
+    }
+}
+
 function makeReceipt(){
     var receipt = {
-        "tax" : tax,
+        "tax" : dataLists.receipt.tax,
         "items" : []
     };
+    if(dataLists.receipt.note){
+        receipt.note = dataLists.receipt.note;
+    }
+    if(dataLists.member){
+        receipt.memberId = dataLists.member.id;
+    }
     $.each(dataLists.itemOnSidebar,function(key,val){
         receipt.items.push(val);
     });
@@ -426,4 +451,96 @@ function makeReceipt(){
         alert("Success make receipt. Id : "+resultId);
         window.location.replace(config.pages.home);
     });
+}
+
+function addMember(){
+    if($('#member-id').val() === ""){
+        delete dataLists.member;
+    } else {
+        dataLists.member = {};
+        dataLists.member.id = $('#member-id').val();
+        var id = dataLists.member.id;
+        getJSON(false,serviceUrls.member+"/"+id,function(data){
+            var payload = data.payload;
+            dataLists.member = payload;
+        }, function(){
+            delete dataLists.member;
+        });
+    }
+    renderMemberInfo();
+}
+
+function renderMemberInfo(){
+    var member = dataLists.member;
+    if(member){
+        $('#submit-add-member').hide();
+        $('#submit-edit-member').show();
+        $('#modal-remove-member-btn').show();
+        $('#modal-add-member-btn').hide();
+        $('#edit-member').show();
+        $('#modal-member-title').text("Edit");
+        $('#member-id').val(member.id);
+        $('#member-id').attr('disabled', 'disabled');
+        $('#member-info-id').text(member.id);
+        $('#member-name').val(member.name);
+        $('#member-info-name').text(member.name);
+        $('#member-email').val(member.email);
+        $('#member-info-email').text(member.email);
+        $('#member-address').val(member.address);
+        $('#member-info-address').text(member.address);
+        $('#add-member-btn').text("Edit Member");
+        $('#member-info').show();
+    } else {
+        $('#submit-add-member').show();
+        $('#submit-edit-member').hide();
+        $('#modal-remove-member-btn').hide();
+        $('#modal-add-member-btn').show();
+        $('#edit-member').hide();
+        $('#modal-member-title').text("Add");
+        $('#member-id').val("");
+        $('#member-id').prop("disabled", false);
+        $('#add-member-btn').text("Add Member");
+        $('#member-info').hide();
+    }
+}
+
+function newMember(){
+    var member = {
+        "name" : $('#name').val(),
+        "address" : $('#address').val(),
+        "email" : $('#email').val()
+    };
+    var memberList = [];
+    memberList.push(member);
+    postJSON(false,serviceUrls.member,memberList,function(data){
+        var payload = data.payload;
+        console.log(payload);
+        $.each(payload,function(id, data){
+            alert("New Member with Id : " + data.id);
+            dataLists.member = data;
+        });
+    }, function(){
+        delete dataLists.member;
+    });
+    renderMemberInfo();
+}
+
+function editMember(){
+    var member = {
+        "name" : $('#member-name').val(),
+        "address" : $('#member-address').val(),
+        "email" : $('#member-email').val()
+    };
+    putJSON(false,serviceUrls.member+"/"+dataLists.member.id,member,function(data){
+        alert("Success edit member");
+        addMember();
+    }, function(){
+        delete dataLists.member;
+    });
+    renderMemberInfo();
+}
+
+function removeMember(){
+    delete dataLists.member;
+    renderMemberInfo();
 }
