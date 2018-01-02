@@ -79,7 +79,7 @@ public class UserService extends BaseRESTService {
 
         if(userIs(ADMIN)) {
             users = (List<User>) th.runTransaction(conn -> {
-                List<User> users = userDAO.find("true");
+                List<User> users = userDAO.find("role='admin' OR role='manager'");
                 if (users.size() == 0) {
                     throw new NotFoundException(ErrorMessage.NotFoundFrom(new User()));
                 }
@@ -92,7 +92,7 @@ public class UserService extends BaseRESTService {
         }
         if(userIs(MANAGER)){
             users = (List<User>) th.runTransaction(conn -> {
-                List<User> users = userDAO.find("restaurant_id="+this.restaurantId);
+                List<User> users = userDAO.find("restaurant_id="+this.restaurantId+" AND (role='manager' OR role='cashier')");
                 if (users.size() == 0) {
                     throw new NotFoundException(ErrorMessage.NotFoundFrom(new User()));
                 }
