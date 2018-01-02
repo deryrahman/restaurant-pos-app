@@ -84,7 +84,7 @@ public class ReceiptWithItemDAOMysql extends MysqlDAO<ReceiptWithItem> implement
         }
 
         for (Integer i: receiptIdList) {
-            query = "SELECT receipts.id as receipt_id, items.id as item_id, items.name, receipt_item.count_item, receipt_item.subtotal, receipts.tax as tax, receipts.note as note " +
+            query = "SELECT receipts.id as receipt_id, items.id as item_id, items.name, receipt_item.count_item, receipt_item.subtotal, receipts.tax as tax, receipts.note as note, receipts.member_id as member_id " +
                     "FROM receipt_item JOIN receipts JOIN items " +
                     "WHERE receipts.id=receipt_item.receipt_id AND items.id=receipt_item.item_id AND receipts.id=" +
                     i + " AND " +
@@ -94,12 +94,19 @@ public class ReceiptWithItemDAOMysql extends MysqlDAO<ReceiptWithItem> implement
             itemOnReceiptList = new ArrayList<>();
             BigDecimal tax = null;
             String note = null;
+            Integer memberId = null;
             while (rs.next()){
                 if(tax == null){
                     tax = rs.getBigDecimal("tax");
                 }
                 if(note == null){
                     note = rs.getString("note");
+                }
+                rs.getInt("member_id");
+                if(!rs.wasNull()) {
+                    if (memberId == null) {
+                        memberId = rs.getInt("member_id");
+                    }
                 }
                 itemOnReceipt = new ItemOnReceipt();
                 mappingItem(itemOnReceipt,rs);
@@ -112,6 +119,7 @@ public class ReceiptWithItemDAOMysql extends MysqlDAO<ReceiptWithItem> implement
             receiptWithItem.setReceiptId(i);
             receiptWithItem.setNote(note);
             receiptWithItem.setTax(tax);
+            receiptWithItem.setMemberId(memberId);
             receiptWithItem.setItems(itemOnReceiptList);
             receiptWithItemList.add(receiptWithItem);
         }
