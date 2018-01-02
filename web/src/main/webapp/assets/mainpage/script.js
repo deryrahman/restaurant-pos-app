@@ -5,8 +5,14 @@ var config;
 var baseUrl;
 var serviceUrls = {};
 var userData = {};
+var tax = 5;
+var itemIdToRemove;
 
 var dataLists = {};
+dataLists.categories = {};
+dataLists.categories['all'] = {};
+dataLists.items = {};
+dataLists.itemOnSidebar= {};
 var tableStructures = {
     user: ["id", "name", "role", "email", "restaurantId"],
     restaurant: ["id", "address", "phone"],
@@ -162,6 +168,10 @@ function backToLoginPage(message) {
 // Initialize all functionality
 function initializePage() {
     loadNavbar();
+    $('.tax').each(function(){
+        $(this).text(tax);
+    });
+    $('ul.CTAs').hide();
     document.title = pageRole + " Page";
     if(pageRole === "admin") {
 
@@ -202,7 +212,7 @@ function setNavbar() {
 }
 
 function itemToHTML(item){
-    var result = "<div id='item-"+item.itemId+"' class='item col-md-3 pointer' onclick='addItem("+item.itemId+")'>" +
+    var result = "<div class='item-"+item.itemId+" item col-md-3 pointer' onclick='addItem("+item.itemId+")'>" +
         "<div class='well dash-box'>" +
         "<h4 class='title-item'>"+item.itemName+"</h4>" +
         "<div>Stock : <span class='item-stock-"+item.itemId+"'>"+item.stock+"</span></div>" +
@@ -218,19 +228,28 @@ function loadItemByCategoryId(id) {
     } else {
         url = serviceUrls.category+"/"+id+"/items";
     }
-    getJSON(true,url,function (data) {
-        var payload = data.payload;
-        var items = [];
-        dataLists.items = []
-        payload.forEach(function(item){
-            dataLists.items.push(item)
-            items.push(
-                itemToHTML(item)
-            )
+    if(dataLists.categories[id].items){
+        console.log("Already loaded");
+        return;
+    } else {
+        getJSON(true, url, function (data) {
+            var payload = data.payload;
+            var items = [];
+            dataLists.categories[id].items = {};
+            payload.forEach(function (item) {
+                dataLists.categories[id].items[item.id] = item;
+                if(!dataLists.items[item.itemId]) {
+                    dataLists.items[item.itemId] = item;
+                }
+                items.push(
+                    itemToHTML(item)
+                )
+            });
+            console.log(dataLists);
+            $("#category-panel-" + id).empty().append(items);
+            renderMain();
         });
-        console.log(dataLists);
-        $("#category-panel-" + id).empty().append(items);
-    });
+    }
 }
 
 function categoryToHTML(category) {
@@ -255,6 +274,7 @@ function loadNavCategory() {
         var categories = [];
         var categoryPanels = [];
         payload.forEach(function(category){
+            dataLists.categories[category.id] = category;
             categories.push(
                 categoryToHTML(category)
             );
@@ -263,19 +283,123 @@ function loadNavCategory() {
             )
         });
 
-        $("#nav-categories").append(categories)
-        $("#tab-panel-main").append(categoryPanels)
+        $("#nav-categories").append(categories);
+        $("#tab-panel-main").append(categoryPanels);
     });
 }
 
 function addItem(id){
-
+    console.log(id);
+    if(dataLists.itemOnSidebar[id]){
+        dataLists.itemOnSidebar[id].count+=1;
+    } else {
+        dataLists.itemOnSidebar[id] = {
+            "itemId": id,
+            "count": 1
+        };
+    }
+    dataLists.items[id].stock-=1;
+    renderSidebar();
+    renderMain();
 }
 
 function renderSidebar(){
+    var itemSidebarList = [];
+    var totalPrice = 0;
+    var totalCount = 0;
+    var totalPriceAfterTax;
+    if(dataLists.itemOnSidebar.length == 0){
+        $('ul.CTAs').hide();
+    } else {
+        $('ul.CTAs').show();
+    }
+    $.each(dataLists.itemOnSidebar, function (key,val) {
+        itemSidebarList.push(itemOnSidebarToHTML(val));
+        totalCount+=val.count;
+        totalPrice+=val.count*dataLists.items[key].price;
+    });
+    totalPriceAfterTax = totalPrice*(100+tax)/100;
 
+    totalPriceAfterTax = totalPrice*(100+tax)/100;
+    $('#item-on-sidebar').empty().append(itemSidebarList);
+    $('.total-count').each(function(){
+        $(this).text(totalCount);
+    });
+    $('.total-price').each(function(){
+        $(this).text(totalPrice);
+    });
+    $('.total-price-after-tax').each(function () {
+        $(this).text(totalPriceAfterTax);
+    });
+}
+
+function invokeIdToRemove(id){
+    itemIdToRemove = id;
+}
+
+function removeOne() {
+    dataLists.items[itemIdToRemove].stock+=1;
+    dataLists.itemOnSidebar[itemIdToRemove].count-=1;
+    renderSidebar();
+    renderMain();
+}
+
+function removeById() {
+    dataLists.items[itemIdToRemove].stock+=dataLists.itemOnSidebar[itemIdToRemove].count;
+    delete dataLists.itemOnSidebar[itemIdToRemove];
+    renderSidebar();
+    renderMain();
+}
+
+function itemOnSidebarToHTML(itemOnSidebar){
+    var id = itemOnSidebar.itemId;
+    var cnt = itemOnSidebar.count;
+    var result = "<li data-toggle='modal' data-target='#modal-remove-id' onclick='invokeIdToRemove("+id+")'>"+
+        "<a href='#'>"+
+        dataLists.items[id].itemName +
+        "<ul class='list-inline' style='float:right'>"+
+        "<li><span class='badge' style='background:#bf360c'>"+cnt+"</span></li>"+
+        "<li>Rp "+dataLists.items[id].price*cnt+"</li>"+
+        "</ul>"+
+        "</a>"+
+        "</li>";
+    return result;
 }
 
 function renderMain(){
+    $.each(dataLists.items, function (key,val) {
+        $('.item-stock-'+key).each(function(){
+            $(this).text(dataLists.items[key].stock);
+        });
+    });
+}
 
+function removeAll(){
+    (function() {
+        $.each(dataLists.itemOnSidebar, function (key,val) {
+            dataLists.items[key].stock+=val.count;
+        });
+    })();
+
+    dataLists.itemOnSidebar = {};
+    renderSidebar();
+    renderMain();
+}
+
+function itemOnReceiptToHTML(item) {
+    var id = item.itemId;
+    var cnt = item.count;
+    var result = "<tr>"+
+        "<td>"+dataLists.items[id].itemName+"</td>"+
+        "<td>"+cnt+"</td>"+
+        "<td>Rp "+dataLists.items[id].price*cnt+"</td>"+
+        "</tr>";
+    return result;
+}
+function renderReceipt(){
+    var itemReceiptList = [];
+    $.each(dataLists.itemOnSidebar, function (key,val) {
+        itemReceiptList.push(itemOnReceiptToHTML(val));
+    });
+    $('#receipt-items').empty().append(itemReceiptList);
 }
