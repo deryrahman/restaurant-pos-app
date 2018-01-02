@@ -30,24 +30,24 @@
                         </div>
                         <div class="form-group">
                             <label for="fullname">Full Name</label>
-                            <input id="fullname" name="name" placeholder="Name" type="text" class="form-control" >
+                            <input id="fullname" name="name" placeholder="Name" type="text" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="new-username">Username</label>
-                            <input id="new-username" name="username" placeholder="Username" type="text" class="form-control" >
+                            <input id="new-username" name="username" placeholder="Username" type="text" class="form-control" required>
                             <small class="help-block">Please provide a username consisting of 20 or less characters</small>
                         </div>
                         <div class="form-group">
                             <label for="email">Email Address</label>
-                            <input id="email" name="email" placeholder="Email" type="email" class="form-control" >
+                            <input id="email" name="email" placeholder="Email" type="email" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="password">Password</label>
-                            <input id="password" name="password" placeholder="Password" type="password" class="form-control" >
+                            <input id="password" name="password" placeholder="Password" type="password" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="restaurant-id">Restaurant ID</label>
-                            <input id="restaurant-id" name="restaurantId" placeholder="Restaurant ID" type="number" class="form-control" >
+                            <input id="restaurant-id" name="restaurantId" placeholder="Restaurant ID" type="number" class="form-control" required>
                         </div>
                         <div id="role" class="radio">
                             <small class="help-block">Choose role:</small>
@@ -94,11 +94,11 @@
                         </div>
                         <div class="form-group">
                             <label for="address">Restaurant Address</label>
-                            <input id="address" name="address" placeholder="Address" type="text" class="form-control" >
+                            <input id="address" name="address" placeholder="Address" type="text" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="phone">Restaurant Phone Number</label>
-                            <input id="phone" name="phone" placeholder="Phone Number" type="number" class="form-control" >
+                            <input id="phone" name="phone" placeholder="Phone Number" type="number" class="form-control" required>
                         </div>
                         <div class="col-sm-2 left-side-button">
                             <!--<button id="delete-restaurant" type="button" class="btn btn-delete btn-link modal-element-edit">Delete</button>-->
@@ -135,11 +135,11 @@
                         </div>
                         <div class="form-group">
                             <label for="category-name">Category Name</label>
-                            <input id="category-name" name="name" placeholder="Name" type="text" class="form-control" >
+                            <input id="category-name" name="name" placeholder="Name" type="text" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="category-description">Category Description</label>
-                            <input id="category-description" name="description" placeholder="Description" type="text" class="form-control" >
+                            <input id="category-description" name="description" placeholder="Description" type="text" class="form-control" required>
                         </div>
                         <div class="col-sm-2 left-side-button">
                             <button id="delete-category" type="button" class="btn btn-delete btn-link modal-element-edit">Delete</button>
@@ -165,7 +165,7 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
                     <h3 class="modal-title modal-element-new">Create New Item</h3>
-                    <h3 class="modal-title modal-element-edit">Edit Restaurant</h3>
+                    <h3 class="modal-title modal-element-edit">Edit Item</h3>
                 </div>
                 <div class="modal-body">
 
@@ -176,15 +176,15 @@
                         </div>
                         <div class="form-group">
                             <label for="item-name">Item Name</label>
-                            <input id="item-name" name="name" placeholder="Name" type="text" class="form-control" >
+                            <input id="item-name" name="name" placeholder="Name" type="text" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="item-price">Item Price</label>
-                            <input id="item-price" name="price" placeholder="Price" type="number" class="form-control" >
+                            <input id="item-price" name="price" placeholder="Price" type="number" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="category-id">Category ID</label>
-                            <input id="category-id" name="categoryId" placeholder="Category ID" type="number" class="form-control" value="1">
+                            <input id="category-id" name="categoryId" placeholder="Category ID" type="number" class="form-control" value="1" required>
                         </div>
                         <div id="item-status-selection" class="form-group">
                             <label for="item-status">Select status:</label>
@@ -225,7 +225,7 @@
                 <li class="active"><a href="#">Admin Page</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a id="username" href="#">username</a></li>
+                <li><a id="username" href="#">name</a></li>
                 <li><a id="logout-btn" href="#">Logout</a></li>
             </ul>
         </div>
