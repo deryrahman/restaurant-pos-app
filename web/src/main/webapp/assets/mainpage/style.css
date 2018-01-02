@@ -174,3 +174,75 @@ ul.CTAs li {
 .pointer {
 	cursor: pointer;
 }
+
+/* Modal */
+.center {
+	margin-top:50px;
+}
+
+.modal-header {
+	color: #ff5722;
+	padding-bottom: 13px;
+	text-align: center;
+}
+
+.btn-custom {
+	color: #ffffff;
+	background-color: #ff5722;
+	border-color: #bf360c;
+	margin-left: 14px;
+}
+
+.btn-custom:hover {
+	color:#fff;
+	background-color: #bf360c;
+}
+
+.buttons {
+	margin-left: 30px;
+}
+
+
+/*.modal-footer {*/
+	/*padding: 0;*/
+/*}*/
+
+.modal-footer .btn-group button {
+	height:40px;
+	border-top-left-radius : 0;
+	border-top-right-radius : 0;
+	border: none;
+	border-right: 1px solid #ddd;
+}
+
+.modal-footer .btn-group:last-child > button {
+	border-right: 0;
+}
+
+.modal-element-edit {
+	display: none;
+}
+
+.modal-id {
+	margin-left: 5px;
+}
+
+.left-side-button {
+	padding-left: 0;
+	padding-right: 30px;
+}
+
+.btn-delete {
+	color: #ff5722;
+}
+
+.btn-delete:focus {
+	color: #ffffff;
+	background-color: #bf360c;
+	border-radius: 4px;
+}
+
+.right-side-button {
+	padding-left: 30px;
+	padding-right: 0;
+}

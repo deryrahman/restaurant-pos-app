@@ -308,7 +308,7 @@ function renderSidebar(){
     var totalPrice = 0;
     var totalCount = 0;
     var totalPriceAfterTax;
-    if(dataLists.itemOnSidebar.length == 0){
+    if($.isEmptyObject(dataLists.itemOnSidebar)){
         $('ul.CTAs').hide();
     } else {
         $('ul.CTAs').show();
@@ -340,6 +340,9 @@ function invokeIdToRemove(id){
 function removeOne() {
     dataLists.items[itemIdToRemove].stock+=1;
     dataLists.itemOnSidebar[itemIdToRemove].count-=1;
+    if(dataLists.itemOnSidebar[itemIdToRemove].count == 0){
+        delete dataLists.itemOnSidebar[itemIdToRemove];
+    }
     renderSidebar();
     renderMain();
 }
@@ -402,4 +405,25 @@ function renderReceipt(){
         itemReceiptList.push(itemOnReceiptToHTML(val));
     });
     $('#receipt-items').empty().append(itemReceiptList);
+}
+
+function makeReceipt(){
+    var receipt = {
+        "tax" : tax,
+        "items" : []
+    };
+    $.each(dataLists.itemOnSidebar,function(key,val){
+        receipt.items.push(val);
+    });
+    var data = [];
+    data.push(receipt);
+    postJSON(false,serviceUrls.receipt,data,function (e) {
+        var payload = e.payload;
+        var resultId = "";
+        payload.forEach(function(data){
+            resultId += data.receiptId;
+        });
+        alert("Success make receipt. Id : "+resultId);
+        window.location.replace(config.pages.home);
+    });
 }
