@@ -16,51 +16,6 @@ dataLists.categories = {};
 dataLists.categories['all'] = {};
 dataLists.items = {};
 dataLists.itemOnSidebar= {};
-var tableStructures = {
-    user: ["id", "name", "role", "email", "restaurantId"],
-    restaurant: ["id", "address", "phone"],
-    category: ["id", "name", "description"],
-    item: ["id", "name", "price", "categoryId", "status"],
-    itemWithStock: ["itemId", "itemName","stock","price","categoryId"]
-};
-var tableHeaders = {
-    user: ["#ID", "Name", "Role", "Email", "Restaurant", ""],
-    restaurant: ["#ID", "Address", "Phone", ""],
-    category: ["#ID", "Name", "Description", ""],
-    item: ["#ID", "Item Name", "Price", "Category", "Status", ""]
-};
-var createRequestBody = {
-    receipt: {
-
-    },
-    user: {
-        "name": "#fullname",
-        "email": "#email",
-        "restaurantId": "#restaurant-id"
-    },
-    userIdentity: {
-        "username": "#new-username",
-        "password": "#password",
-        "role": "input[name='role']:checked"
-    },
-    restaurant: {
-        "address": "#address",
-        "phone": "#phone"
-    },
-    category: {
-        "name": "#category-name",
-        "description": "#category-description"
-    },
-    item: {
-        "name": "#item-name",
-        "price": "#item-price",
-        "categoryId": "#category-id",
-        "status": "#item-status"
-    },
-    itemWithStock: {
-
-    }
-};
 
 $(document).ready(function () {
     // Get configurations and check cookie

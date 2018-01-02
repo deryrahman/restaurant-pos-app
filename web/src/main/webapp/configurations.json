@@ -8,6 +8,7 @@
     "restaurant": "/core/restaurants",
     "receipt": "/core/receipts",
     "item": "/core/items",
+    "itemWithStock" : "/core/items",
     "category": "/core/categories",
     "member": "/core/members"
   },
@@ -15,7 +16,7 @@
     "home": "index.html",
     "admin": "adminpage.html",
     "login": "loginpage.html",
-    "manager": ""
+    "manager": "managerpage.html"
   },
   "requestBodyFormat": {
     "user": {
@@ -48,12 +49,18 @@
     "user": ["#ID", "Name", "Username", "Role", "Email", "Restaurant", ""],
     "restaurant": ["#ID", "Address", "Phone", ""],
     "category": ["#ID", "Name", "Description", ""],
-    "item": ["#ID", "Item Name", "Price", "Category", "Status", ""]
+    "item": ["#ID", "Item Name", "Price", "Category", "Status", ""],
+    "itemWithStock": ["#ID", "Item Name", "Stock", "Price", "Category ID", ""],
+    "receipt": ["#ID", "Date", "Cashier ID", "Member ID", "Tax", "Total Price", ""],
+    "member": ["#ID", "Date", "Name", "Address", "Email", ""]
   },
   "tableStructures": {
     "user": ["id", "name", "username", "role", "email", "restaurantId"],
     "restaurant": ["id", "address", "phone"],
     "category": ["id", "name", "description"],
-    "item": ["id", "name", "price", "categoryId", "status"]
+    "item": ["id", "name", "price", "categoryId", "status"],
+    "itemWithStock": ["itemId", "itemName", "stock", "price", "categoryId"],
+    "receipt": ["id", "timestampCreated", "userId", "memberId", "tax", "totalPrice"],
+    "member": ["id", "timestampCreated", "name", "address", "email"]
   }
 }
