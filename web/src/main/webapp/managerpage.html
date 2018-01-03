@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Manager | Peregrine</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker3.css" />
 </head>
 <body>
 
@@ -56,6 +57,9 @@
                         <span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>
                         Restaurant Profile
                     </a>
+                    <a href="#" class="list-group-item" id="show-ledger">
+                        <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+                        Ledger</a>
                     <a href="#" class="list-group-item" id="show-users">
                         <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
                         <span id="user-count-badge" class="badge">0</span>
@@ -254,6 +258,44 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Ledger -->
+                <div class="panel panel-default" style="display:none" id="panel-ledger">
+                    <div class="panel-heading main-bg-color">
+                        <h3 class="panel-title">General Ledger</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-sm-4">
+                            <label>Start date:</label>
+                            <div id="start-date" class="input-group date">
+                                <input type="text" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label>End date:</label>
+                            <div id="end-date" class="input-group date">
+                                <input type="text" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-2">
+                            <button id="get-ledger" type="button" class="btn btn-custom">Go</button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table id="ledger-table" class="table table-hover">
+                            <tr>
+                                <th>#ID</th>
+                                <th>Date</th>
+                                <th>Cashier ID</th>
+                                <th>Member ID</th>
+                                <th>Tax</th>
+                                <th>Total Price</th>
+                                <th></th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -388,6 +430,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
 <script>
     document.write("<script type='text/javascript' src='assets/managerpage/script.js?v=" + Date.now() + "'><\/script>");
     document.write("<link rel='stylesheet' href='assets/managerpage/style.css?v=" + Date.now() + "'>");

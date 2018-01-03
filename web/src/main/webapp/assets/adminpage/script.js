@@ -317,7 +317,7 @@ $(document).ready(function () {
 
         var datepickerSettings = {
             format: "yyyy-mm-dd",
-            todayBtn: true,
+            todayHighlight: true,
             autoclose: true
         };
 

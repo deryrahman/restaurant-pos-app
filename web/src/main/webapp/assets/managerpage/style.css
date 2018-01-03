@@ -98,3 +98,8 @@ body {
 .buttons {
     margin-left: 30px;
 }
+
+#get-ledger {
+    margin-top: 15px;
+    float: right;
+}
