@@ -1,3 +1,92 @@
+/* NAVBAR TOP */
+.navbar-fixed-top {
+	min-height: 33px !important;
+	margin-bottom: 0;
+	border-radius: 0;
+}
+
+.navbar-fixed-top .navbar-nav > li > a, .navbar-brand {
+	padding-top: 6px !important;
+	padding-bottom: 0 !important;
+	height: 33px;
+}
+
+.navbar-fixed-top {
+	background-color: #ff5722;
+	border-color: #bf360c;
+}
+.navbar-fixed-top .navbar-brand {
+	color: #ffffff;
+}
+.navbar-fixed-top .navbar-brand:hover,
+.navbar-fixed-top .navbar-brand:focus {
+	color: #ffccbc;
+}
+.navbar-fixed-top .navbar-text {
+	color: #ffffff;
+}
+.navbar-fixed-top .navbar-nav > li > a {
+	color: #ffffff;
+}
+.navbar-fixed-top .navbar-nav > li > a:hover,
+.navbar-fixed-top .navbar-nav > li > a:focus {
+	color: #ffccbc;
+}
+.navbar-fixed-top .navbar-nav > .active > a,
+.navbar-fixed-top .navbar-nav > .active > a:hover,
+.navbar-fixed-top .navbar-nav > .active > a:focus {
+	color: #ffccbc;
+	background-color: #bf360c;
+}
+.navbar-fixed-top .navbar-nav > .open > a,
+.navbar-fixed-top .navbar-nav > .open > a:hover,
+.navbar-fixed-top .navbar-nav > .open > a:focus {
+	color: #ffccbc;
+	background-color: #bf360c;
+}
+.navbar-fixed-top .navbar-toggle {
+	border-color: transparent !important;
+	padding:6px 12px;
+	margin:0px;
+}
+.navbar-fixed-top .navbar-toggle:hover,
+.navbar-fixed-top .navbar-toggle:focus {
+	background-color: #bf360c;
+}
+.navbar-fixed-top .navbar-toggle .icon-bar {
+	background-color: #ffffff;
+}
+.navbar-fixed-top .navbar-collapse,
+.navbar-fixed-top .navbar-form {
+	border-color: #ffffff;
+}
+.navbar-fixed-top .navbar-link {
+	color: #ffffff;
+}
+.navbar-fixed-top .navbar-link:hover {
+	color: #ffccbc;
+}
+
+/* MENU NAV */
+
+.navbar-white-orange .navbar-nav > li > a {
+	color: #ff8a65 !important;
+}
+.navbar-white-orange .navbar-nav > li > a:hover {
+	color: #ff5722 !important;
+	background-color: transparent !important;
+	border-bottom: 3px solid #ccc;
+}
+.navbar-white-orange .navbar-nav > .active > a {
+	color: #ff5722 !important;
+	background-color: transparent !important;
+	border-bottom: 3px solid #ff5722;
+}
+.navbar-white-orange .navbar-nav > .active > a:hover {
+	color: #ff5722 !important;
+	border-bottom: 3px solid #ff5722 !important;
+}
+
 body {
 	background: #fafafa;
 }
