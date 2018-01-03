@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,17 +84,34 @@ public class ItemService extends BaseRESTService{
         }
 
         List<ItemWithStock> itemWithStockList = (List<ItemWithStock>) th.runTransaction(conn -> {
-            List<ItemWithStock> items = new ArrayList<>();
-            if(userIs(CASHIER)) {
-                items = itemWithStockDAO.findByRestaurantId(this.restaurantId, "true");
-            }
-            if(userIs(MANAGER)){
-                items = itemWithStockDAO.find("true");
-            }
-            if(items.size()==0){
+            List<ItemWithStock> itemWithStockList1 = itemWithStockDAO.findByRestaurantId(this.restaurantId, "true");
+            if(itemWithStockList1.size()==0){
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(item));
             }
-            return items;
+            if(userIs(MANAGER)){
+                items = itemDAO.find("true");
+                int j = 0;
+                for (int i = 0; i<itemWithStockList1.size(); i++) {
+                    for(;j<items.size();j++){
+                        if(items.get(j).getId() == itemWithStockList1.get(i).getItemId()){
+                            break;
+                        } else {
+                            Integer itemId = items.get(j).getId();
+                            String name = items.get(j).getName();
+                            BigDecimal price = items.get(j).getPrice();
+                            Integer categoryId = items.get(j).getCategoryId();
+                            ItemWithStock newItem = new ItemWithStock();
+                            newItem.setItemId(itemId);
+                            newItem.setCategoryId(categoryId);
+                            newItem.setStock(0);
+                            newItem.setPrice(price);
+                            newItem.setItemName(name);
+                            itemWithStockList1.add(newItem);
+                        }
+                    }
+                }
+            }
+            return itemWithStockList1;
         });
 
         baseResponse = new BaseResponse(true,200,itemWithStockList);
