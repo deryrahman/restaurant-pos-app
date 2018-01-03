@@ -1,17 +1,20 @@
-var pageRole = "manager";
-
-var token = Cookies.get("POSRESTAURANT");
-var config;
-var baseUrl;
-var serviceUrls = {};
-var userData = {};
-var userIdentities = [];
-
-var dataLists = {};
-var tableHeaders = {};
-var tableStructures = {};
-
 $(document).ready(function () {
+
+    var token = Cookies.get("POSRESTAURANT");
+    var userData = {};
+    var restaurantData = {};
+    var userIdentities = [];
+    var panelLists = ["overview", "users",
+        "restaurant", "receipts", "itemWithStock",
+        "categories", "members"];
+
+    var config;
+    var baseUrl;
+    var serviceUrls = {};
+    var tableStructures = {};
+    var tableHeaders = {};
+    var requestBodyFormat = {};
+
     // Get configurations and check cookie
     (function () {
         if (token === undefined) {
@@ -28,456 +31,456 @@ $(document).ready(function () {
             requestBodyFormat = config.requestBodyFormat;
             tableHeaders = config.tableHeaders;
             tableStructures = config.tableStructures;
-        }).done(function () {
-            $.ajax(serviceUrls.parser, {
+        }).then(function () {
+            return $.ajax(serviceUrls.parser, {
                 method: "POST",
                 contentType: "application/x-www-form-urlencoded",
                 data: {token: token}
             })
-                .success(function (data) {
-                    userData = data.payload;
-                    if (userData.role === pageRole) {
-                        console.log("Logged in as an " + pageRole);
-                        initializePage();
-                    } else {
-                        backToLoginPage("You are not logged in as an " + pageRole + ". Please login as an " + pageRole);
-                    }
-                })
-                .fail(function () {
-                    backToLoginPage("Your session is already expired. Please login again.");
-                });
+        }).done(function (data) {
+            userData = data.payload;
+            console.log(userData);
+            if (userData.role === "manager") {
+                console.log("Logged in as a manager.");
+                initializeManagerPage();
+            } else {
+                backToLoginPage("You are not logged in as a manager. Please login as a manager.");
+            }
+        }).fail(function () {
+            backToLoginPage("Your session is already expired. Please login again.");
         });
     })();
-});
 
-// json http request
-function getJSON(async, url, callback, err){
-    $.ajax({
-        type: 'GET',
-        url: url,
-        dataType: 'json',
-        async: async,
-        success: function (data) {
-            callback(data)
-        },
-        error: function (e) {
-            console.log(e.responseJSON.message);
-            alert("Error GET Request! See log for further information");
-            err();
-        }
-    });
-}
-function postJSON(async, url, data, callback, err){
-    $.ajax(url, {
-        data : JSON.stringify(data),
-        contentType : 'application/json',
-        type : 'POST',
-        async : async,
-        success: function (data){
-            callback(data)
-        },
-        error: function (e) {
-            console.log(e.responseJSON.message);
-            alert("Error POST Request! See log for further information");
-            err();
-        }
-    });
-}
-function putJSON(async, url, data, callback,err){
-    $.ajax(url, {
-        data : JSON.stringify(data),
-        contentType : 'application/json',
-        type : 'PUT',
-        async : async,
-        success: function (data){
-            callback(data)
-        },
-        error: function (e) {
-            console.log(e.responseJSON.message);
-            alert("Error PUT Request! See log for further information");
-            err();
-        }
-    });
-}
-function deleteJSON(async, url, callback, err){
-    $.ajax(url, {
-        contentType : 'application/json',
-        type : 'DELETE',
-        async : async,
-        success: function (data){
-            callback(data)
-        },
-        error: function (e) {
-            console.log(e.responseJSON.message);
-            alert("Error PUT Request! See log for further information");
-            err();
-        }
-    });
-}
+    function backToLoginPage(message) {
+        alert(message);
+        window.location.replace(config.pages.login);
+    }
 
-function backToLoginPage(message) {
-    alert(message);
-    window.location.replace(config.pages.login);
-}
-
-// Initialize all functionality
-function initializePage() {
-    loadNavbar();
-    document.title = pageRole + " Page";
-    if(pageRole === "admin") {
-
-    } else if (pageRole === "manager"){
+    // Initialize all functionality
+    function initializeManagerPage() {
+        setUsername().then(setRestaurant);
+        bindAllButtons();
         loadAllData();
+    }
+
+    // Set user and restaurant profile
+    function setUsername() {
+        console.log(userData.id);
+        return sendSpecificGetRequest("user", userData.id)
+            .then(function (data) {
+                userData = data.payload;
+                var name = userData.name;
+                $("#username").html("Hello, " + name);
+                console.log(userData);
+            })
+    }
+
+    function setRestaurant() {
+        return sendSpecificGetRequest("restaurant", userData.restaurantId)
+            .then(function (data) {
+                restaurantData = data.payload;
+                console.log(restaurantData);
+                $.each(restaurantData, function (prop, value) {
+                    $(".restaurant-" + prop).html(value);
+                })
+            });
+    }
+
+    // Get and load all data from core service
+    function loadAllData() {
+        loadUserIdentity()
+            .then(function () {
+                return loadData("user");
+            });
+        loadData("category");
+        loadData("receipt");
+        loadData("member");
+        loadData("itemWithStock");
+    }
+
+    function loadUserIdentity() {
+        return $.get(serviceUrls.userIdentity)
+            .done(function (data) {
+                var userList = data.payload;
+                userList.forEach(function (user) {
+                    userIdentities[user.id] = user.username;
+                });
+            })
+    }
+
+    function loadData(dataName) {
+        var tableHeader = "<tr><th>"
+            + tableHeaders[dataName].join("</th><th>")
+            + "</th></tr>";
+
+        return $.get(serviceUrls[dataName])
+            .done(function (data) {
+                var dataList = data.payload;
+
+                $("#"+dataName+"-count-badge").html(dataList.length);
+                $("#"+dataName+"-count-well").html(dataList.length);
+
+                $("#"+dataName+"-table").html(tableHeader);
+                dataList.forEach(function (item) {
+                    if (dataName === "user") {
+                        item.username = userIdentities[item.id];
+                    }
+                    $("#"+dataName+"-table").append(objectToTableRow(dataName, item));
+                })
+            })
+            .then(function () {
+                bindEditButtonToModal(dataName);
+            });
+    }
+
+    function bindEditButtonToModal(modalName) {
+        var targetId = "#modal-new-"+modalName;
+
+        $("#"+modalName+"-table").find(".btn-edit")
+            .addClass("btn-edit-"+modalName)
+            .attr({
+                "data-toggle": "modal",
+                "data-target": targetId
+            });
+
+        $(".btn-edit-"+modalName).click(function (event) {
+            var row = $(event.target).parent().siblings();
+            var newObject = tableRowToObject(modalName, row);
+
+            modifyModalInterface(modalName, newObject);
+        });
+    }
+
+    // Bind all general buttons
+    function bindAllButtons() {
         bindShowPanelToClickEvent();
         bindNewButtonsToModals();
         bindModalsToSubmitEvent();
         bindUpdateButtonsToClickEvent();
         bindDeleteButtonsToClickEvent();
-    } else if (pageRole === 'cashier'){
-        loadNavCategory();
-        loadItemByCategoryId("all");
-    }
-}
-function loadNavbar() {
-    $('#navbar-container').load('template/navbar.html', function(){
-        console.log("load navbar");
-        setNavbar();
-    });
-}
 
-// Set navbar username
-function setNavbar() {
-    getJSON(true,serviceUrls.user+"/"+userData.id,function (data) {
-        userData.userInfo = data.payload;
-        var restaurantId = userData.userInfo.restaurantId;
-        getJSON(true, serviceUrls.restaurant+"/"+restaurantId,function (data) {
-            userData.restaurantInfo = data.payload;
-            $("#page-role > a")
-                .text(pageRole + " Page")
-                .attr("href",pageRole+"page.html");
-            $("#user-name > a").text(userData.username);
-            if(pageRole == "admin"){
-                $("#restaurant-id").remove();
-                $("#restaurant-phone").remove();
-            } else {
-                $("#restaurant-id > a > span").text(userData.restaurantInfo.id);
-                $("#restaurant-phone > a").text(userData.restaurantInfo.phone);
+        $("#btn-save-edit").click(function (e) {
+            var dataToBeSent = formInputToObject("restaurant");
+            if (dataToBeSent.address === "") {
+                dataToBeSent.address = restaurantData.address;
             }
+            if (dataToBeSent.phone === "") {
+                dataToBeSent.phone = restaurantData.phone;
+            }
+            dataToBeSent.id = restaurantData.id;
+            sendUpdateRequest("restaurant", dataToBeSent)
+                .then(function () {
+                    setRestaurant();
+                    $("#address").val("");
+                    $("#phone").val("");
+                });
         });
-    });
-}
 
-// Bind show panel to button click event
-function bindShowPanelToClickEvent() {
-    showPanelButtonOnclick("overview");
-    showPanelButtonOnclick("restaurant");
-    showPanelButtonOnclick("users");
-    showPanelButtonOnclick("receipts");
-    showPanelButtonOnclick("itemWithStock");
-    showPanelButtonOnclick("categories");
-    showPanelButtonOnclick("members");
-}
-function showPanelButtonOnclick(panelName) {
-    $("#show-"+panelName).click(function () {
-        $(".panel.panel-default").hide();
-        $("#panel-"+panelName).show();
-
-        $("a[id|='show']").removeClass('active main-bg-color');
-        $(this).addClass('active main-bg-color');
-    });
-}
-
-function bindNewButtonsToModals() {
-    addClickEventToNewButton("user");
-    addClickEventToNewButton("restaurant");
-    addClickEventToNewButton("category");
-    addClickEventToNewButton("itemWithStock");
-}
-function addClickEventToNewButton(modalName) {
-    $("#btn-new-"+modalName).click(function () {
-        revertModalInterface(modalName);
-    });
-}
-function revertModalInterface(modalName) {
-    var modalForm = $("#modal-new-"+modalName);
-    modalForm.find("#submit-"+modalName).attr("type", "submit");
-    modalForm.find("#update-"+modalName).attr("type", "button");
-    modalForm.find(".modal-element-edit").hide();
-    modalForm.find(".modal-element-new").show();
-
-    emptyModalForm(modalName);
-}
-function emptyModalForm(modalName) {
-    $("#form-new-" + modalName).find("input.form-control").val("");
-}
-
-// Get and load all data from core service
-function loadAllData() {
-    loadUserIdentity().then(function () {
-        loadData("user",true);
-    });
-    loadData("category", false);
-    loadData("itemWithStock", true);
-    loadData("receipt", false);
-    loadData("member", false);
-}
-function loadDataRestaurant() {
-    getJSON(true,serviceUrls.restaurant+"/"+userData.userInfo.restaurantId,function(data){
-        userData.restaurantInfo = data.payload;
-        $.each($('.restaurant-id'),function(){
-            $(this).text(userData.restaurantInfo.id);
+        $('#logout-btn').click(function (e) {
+            Cookies.remove("POSRESTAURANT");
+            window.location.assign(config.pages.login);
         });
-        $.each($('.restaurant-address'),function(){
-            $(this).text(userData.restaurantInfo.address);
-        });
-        $.each($('.restaurant-phone'),function(){
-            $(this).text(userData.restaurantInfo.phone);
-        });
-        $('#address').val(userData.restaurantInfo.address);
-        $('#phone').val(userData.restaurantInfo.phone);
-    });
-}
-function loadData(dataName,hasEdit) {
-    var tableHeader;
-    if(hasEdit){
-        tableHeader = "<tr><th>"
-            + tableHeaders[dataName].join("</th><th>")
-            + "</th></tr>";
-    } else {
-        tableHeader = "<tr><th>"
-            + tableHeaders[dataName].slice(0,-1).join("</th><th>")
-            + "</th></tr>";
     }
 
-    $.get(serviceUrls[dataName])
-        .done(function (data) {
-            var dataList = data.payload;
-
-            $("#"+dataName+"-count-badge").html(dataList.length);
-            $("#"+dataName+"-count-well").html(dataList.length);
-
-            $("#"+dataName+"-table").html(tableHeader);
-            dataList.forEach(function (item) {
-                if (dataName === "user") {
-                    item.username = userIdentities[item.id];
-                }
-                $("#"+dataName+"-table").append(objectToTableRow(dataName, item, hasEdit));
-            })
+    // Bind show panel to button click event
+    function bindShowPanelToClickEvent() {
+        panelLists.forEach(function (panelName) {
+            showPanelButtonOnclick(panelName);
         })
-        .then(function () {
-            bindEditButtonToModal(dataName);
+    }
+
+    function showPanelButtonOnclick(panelName) {
+        $("#show-"+panelName).click(function () {
+            $(".panel.panel-default").hide();
+            $("#panel-"+panelName).show();
+
+            $("a[id|='show']").removeClass('active main-bg-color');
+            $(this).addClass('active main-bg-color');
         });
-}
-function loadUserIdentity() {
-    return $.get(serviceUrls.userIdentity)
-        .done(function (data) {
-            var userList = data.payload;
-            userList.forEach(function (item) {
-                userIdentities[item.id] = item.username;
-            });
-        })
-}
-function objectToTableRow(dataName, object, hasEdit) {
-    var columns = tableStructures[dataName];
-    var button = "<td><a class='btn-edit' role='button'>edit</a></td>";
+    }
 
-    var rowId = dataName + object.id;
-    var row = "<tr id='"+rowId+"'>";
-    columns.forEach(function (columnName) {
-        row += "<td>" + object[columnName] + "</td>";
-    });
-    if(hasEdit) {
+    // Bind CREATE API to modals submit event
+    function bindModalsToSubmitEvent() {
+        addClickEventToUserSubmitButton()
+    }
+
+    function addClickEventToSubmitButton(modalName) {
+        $("#submit-" + modalName).click(function (e) {
+            var dataToBeSent = [];
+            dataToBeSent.push(formInputToObject(modalName));
+            sendCreateRequest(modalName, dataToBeSent)
+                .then(function () {
+                    emptyModalForm(modalName);
+                    loadData(modalName);
+                });
+
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    }
+
+    function addClickEventToUserSubmitButton() {
+        $("#submit-user").click(function (e) {
+            var newUserIdentity = formInputToObject("userIdentity");
+            var userList = [];
+            userList.push(formInputToObject("user"));
+
+            sendCreateRequest("user", userList)
+                .then(function (data) {
+                    newUserIdentity.id = data.payload[0].id;
+
+                    return $.ajax(serviceUrls.userIdentity, {
+                        method: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(newUserIdentity)
+                    });
+                })
+                .done(function (data) {
+                    var newUser = data.payload[0];
+                    userIdentities[newUser.id] = newUser.username;
+                    console.log(newUser);
+                    emptyModalForm("user");
+                    loadData("user");
+                })
+                .fail(function (jqXHR) {
+                    console.log(JSON.parse(jqXHR.responseText));
+                });
+
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    }
+
+    // Bind UPDATE API to update button click event
+    function bindUpdateButtonsToClickEvent() {
+        addClickEventToUserUpdateButton();
+    }
+
+    function addClickEventToUserUpdateButton() {
+        $("#update-user").click(function (e) {
+            var rowId = $("#form-new-user").find(".modal-id").html();
+            var dataToBeSent = formInputToObject("user");
+            dataToBeSent.id = Number(rowId);
+
+            sendUpdateRequest("user", dataToBeSent)
+                .then(function () {
+                    var updateUrl = serviceUrls.userIdentity + "/" + dataToBeSent.id;
+                    dataToBeSent = formInputToObject("userIdentity")
+                    return $.ajax(updateUrl, {
+                        method: "PUT",
+                        contentType: "application/json",
+                        data: JSON.stringify(dataToBeSent)
+                    });
+                })
+                .done(function (data) {
+                    var newUser = data.payload[0];
+                    userIdentities[newUser.id] = newUser.username;
+                    console.log(newUser);
+                    closeModal("user");
+                    loadData("user");
+                })
+                .fail(function (jqXHR) {
+                    console.log(JSON.parse(jqXHR.responseText));
+                });
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    }
+
+    // Bind DELETE API to delete button click event
+    function bindDeleteButtonsToClickEvent() {
+        addClickEventToDeleteButton("user");
+    }
+
+    function addClickEventToDeleteButton(modalName) {
+        $("#delete-"+modalName).click(function () {
+            var rowId = $("#form-new-"+modalName).find(".modal-id").html();
+            sendDeleteRequest(modalName, Number(rowId))
+                .then(function () {
+                    loadData(modalName);
+                    closeModal(modalName);
+                });
+        });
+    }
+
+    // Bind modals to New button click event
+    function bindNewButtonsToModals() {
+        addClickEventToNewButton("user");
+        addClickEventToNewButton("itemWithStock");
+    }
+
+    function addClickEventToNewButton(modalName) {
+        $("#btn-new-"+modalName).click(function () {
+            revertModalInterface(modalName);
+            $("#restaurant-id").val(restaurantData.id);
+        });
+    }
+
+    // Send request to API methods
+    function sendSpecificGetRequest(dataName, objectId) {
+        var getUrl = serviceUrls[dataName] + "/" + objectId;
+        return $.get(getUrl)
+    }
+
+    function sendCreateRequest(dataName, dataToBeSent) {
+        return $.ajax({
+            url: serviceUrls[dataName],
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(dataToBeSent)
+        }).done(function (data) {
+            alert("Successfully created new " + dataName + ".");
+
+        }).fail(function (jqXHR) {
+            var message = JSON.parse(jqXHR.responseText).message;
+            alert("Failed to create new " + dataName + ".\n" + message);
+
+            console.log(jqXHR.responseText);
+        });
+    }
+
+    function sendUpdateRequest(dataName, dataToBeSent) {
+        var updateUrl = serviceUrls[dataName] + "/" + dataToBeSent.id;
+        return $.ajax(updateUrl, {
+            method: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(dataToBeSent)
+        }).done(function (data) {
+            alert("Successfully updated " + dataName + ".")
+        }).fail(function (jqXHR) {
+            var message = JSON.parse(jqXHR.responseText).message;
+            alert("Failed to update " + dataName +".\n" + message);
+
+            console.log(jqXHR.responseText);
+        });
+    }
+
+    function sendDeleteRequest(dataName, objectId) {
+        var deletUrl = serviceUrls[dataName] + "/" + objectId;
+        return $.ajax(deletUrl, {
+            method: "DELETE"
+        }).done(function (data) {
+            alert("Successfully deleted " + dataName + ".")
+        }).fail(function (jqXHR) {
+            var message = JSON.parse(jqXHR.responseText).message;
+            alert("Failed to update " + dataName +".\n" + message);
+
+            console.log(jqXHR.responseText);
+        })
+    }
+
+
+    // Modal manipulating methods
+    function modifyModalInterface(modalName, object) {
+        var modalForm = $("#modal-new-"+modalName);
+        modalForm.find("#submit-"+modalName).attr("type", "button");
+        modalForm.find("#update-"+modalName).attr("type", "submit");
+        modalForm.find(".modal-element-new").hide();
+        modalForm
+            .find(".modal-element-edit").show()
+            .find(".modal-id").html(object.id);
+
+        fillModalForms(modalName, object);
+    }
+
+    function revertModalInterface(modalName) {
+        var modalForm = $("#modal-new-"+modalName);
+        modalForm.find("#submit-"+modalName).attr("type", "submit");
+        modalForm.find("#update-"+modalName).attr("type", "button");
+        modalForm.find(".modal-element-edit").hide();
+        modalForm.find(".modal-element-new").show();
+
+        emptyModalForm(modalName);
+    }
+
+    function fillModalForms(modalName, object) {
+        var template = requestBodyFormat[modalName];
+        $.each(template, function (field, elmtId) {
+            $("#form-new-"+modalName).find(elmtId).val(object[field]);
+        });
+
+        var username;
+        if (modalName === "user") {
+            username = object.username;
+            $("#new-username").val(username);
+        }
+    }
+
+    function emptyModalForm(modalName) {
+        $("#form-new-" + modalName).find("input.form-control").val("");
+    }
+
+    function closeModal(modalName) {
+        $("#modal-new-"+modalName).modal("hide");
+    }
+
+
+    // Utility functions
+    function formInputToObject(dataName) {
+        var template = requestBodyFormat[dataName];
+        var newObject = {};
+        $.each(template, function (field, elmtId) {
+            newObject[field] = $("#form-new-" + dataName).find(elmtId).val();
+        });
+        return newObject;
+    }
+
+    function tableRowToObject(dataName, row) {
+        var objectProperties = tableStructures[dataName];
+        var newObject = {};
+
+        var propertyName;
+        for (var i = 0; i < row.length; i++) {
+            propertyName = objectProperties[i];
+            newObject[propertyName] = row[i].innerHTML;
+        }
+
+        return newObject;
+    }
+
+    function objectToTableRow(dataName, object) {
+        var columns = tableStructures[dataName];
+        var button;
+        if(dataName === "user" || dataName === "itemWithStock") {
+            button = "<td><a class='btn-edit' role='button'>edit</a></td>";
+        } else {
+            button = "";
+        }
+
+        var rowId = dataName + object.id;
+        var row = "<tr id='"+rowId+"'>";
+        columns.forEach(function (columnName) {
+            row += "<td>" + object[columnName] + "</td>";
+        });
         row += button + "</tr>";
+
+        return row;
     }
 
-    return row;
-}
 
-// Bind edit
-function bindEditButtonToModal(modalName) {
-    var targetId = "#modal-new-"+modalName;
-
-    $("#"+modalName+"-table").find(".btn-edit")
-        .addClass("btn-edit-"+modalName)
-        .attr({
-            "data-toggle": "modal",
-            "data-target": targetId
-        });
-
-    $(".btn-edit-"+modalName).click(function (event) {
-        var row = $(event.target).parent().siblings();
-        var newObject = tableRowToObject(modalName, row);
-
-        modifyModalInterface(modalName, newObject);
-    });
-}
-function modifyModalInterface(modalName, object) {
-    var modalForm = $("#modal-new-"+modalName);
-    modalForm.find("#submit-"+modalName).attr("type", "button");
-    modalForm.find("#update-"+modalName).attr("type", "submit");
-    modalForm.find(".modal-element-new").hide();
-    modalForm
-        .find(".modal-element-edit").show()
-        .find(".modal-id").html(object.id);
-
-    fillModalForms(modalName, object);
-}
-function fillModalForms(modalName, object) {
-    var template = requestBodyFormat[modalName];
-    $.each(template, function (field, elmtId) {
-        $("#form-new-"+modalName).find(elmtId).val(object[field]);
-    });
-
-    var username;
-    if (modalName === "user") {
-        username = object.username;
-        $("#new-username").val(username);
+}).ajaxSend(function (event, jqXHR, settings) {
+    if (settings.method === "PUT" ||
+        settings.method === "POST" ||
+        settings.method === "DELETE") {
+        $("input, button").prop("disabled", true);
+        // $(".modal-body")
+        //     .find("input, button")
+        //     .prop("disabled", true);
+    } else {
+        // $(".modal-body")
+        //     .find("input, button")
+        //     .prop("disabled", false);
+        $("input, button").prop("disabled", false);
+        $("#restaurant-id").prop("disabled", true);
     }
-}
-function tableRowToObject(dataName, row) {
-    var objectProperties = tableStructures[dataName];
-    var newObject = {};
-
-    var propertyName;
-    for (var i = 0; i < row.length; i++) {
-        propertyName = objectProperties[i];
-        newObject[propertyName] = row[i].innerHTML;
+}).ajaxComplete(function (event, jqXHR, settings) {
+    if (settings.method === "PUT" ||
+        settings.method === "POST" ||
+        settings.method === "DELETE") {
+        // $(".modal-body")
+        //     .find("input, button")
+        //     .prop("disabled", false);
+        $("input, button").prop("disabled", false);
+        $("#restaurant-id").prop("disabled", true);
     }
-
-    return newObject;
-}
-function saveEditRestaurant(){
-    var restaurant = {
-        'address' : $('#address').val(),
-        'phone' : $('#phone').val()
-    };
-    var id = userData.restaurantInfo.id;
-    putJSON(false, serviceUrls.restaurant+"/"+id, restaurant, function() {
-        alert("Success edit restaurant");
-        loadDataRestaurant();
-    });
-}
-
-// Bind CREATE API to modals submit event
-function bindModalsToSubmitEvent() {
-    addClickEventToUserSubmitButton();
-    addClickEventToSubmitButton("receipt");
-    addClickEventToSubmitButton("itemWithStock");
-    addClickEventToSubmitButton("member");
-}
-function addClickEventToSubmitButton(modalName) {
-    $("#submit-" + modalName).click(function (e) {
-        var dataToBeSent = [];
-        dataToBeSent.push(formInputToObject(modalName));
-        sendCreateRequest(modalName, dataToBeSent)
-            .then(function () {
-                emptyModalForm(modalName);
-                loadData(modalName);
-            });
-
-        e.preventDefault();
-        e.stopPropagation();
-    });
-}
-function addClickEventToUserSubmitButton() {
-    $("#form-new-user").submit(function (e) {
-        var newUserIdentity = formInputToObject("userIdentity");
-        var userList = [];
-        userList.push(formInputToObject("user"));
-
-        sendCreateRequest("user", userList,function(data){
-            newUserIdentity.id = data.payload[0].id;
-            postJSON(true,serviceUrls.userIdentity,newUserIdentity,function(){
-                alert("Success create user");
-                loadUserIdentity().then(function () {
-                    loadData("user",true);
-                });
-            });
-        });
-
-        e.preventDefault();
-        e.stopPropagation();
-    });
-}
-function sendCreateRequest(dataName, dataToBeSent, callback) {
-    postJSON(true,serviceUrls[dataName],dataToBeSent,function(data){
-        callback(data);
-    }, function (data) {
-        var message = JSON.parse(data.responseText).message;
-        alert("Failed to create new " + dataName + ".\n" + message);
-
-        console.log(data.responseText);
-    });
-}
-function formInputToObject(dataName) {
-    var template = requestBodyFormat[dataName];
-    var newObject = {};
-    $.each(template, function (field, elmtId) {
-        newObject[field] = $("#form-new-" + dataName).find(elmtId).val();
-    });
-    return newObject;
-}
-function invokeRestaurantId(){
-    $('#form-new-user #restaurant-id').val(userData.restaurantInfo.id);
-}
-
-// Bind UPDATE API to update button click event
-function bindUpdateButtonsToClickEvent() {
-    addClickEventToUserUpdateButton();
-    addClickEventToUpdateButton("restaurant");
-    addClickEventToUpdateButton("category");
-    addClickEventToUpdateButton("item");
-}
-function addClickEventToUpdateButton(modalName) {
-    $("#update-"+modalName).click(function (e) {
-        var rowId = $("#form-new-"+modalName).find(".modal-id").html();
-        var dataToBeSent = formInputToObject(modalName);
-        dataToBeSent.id = Number(rowId);
-
-        sendUpdateRequest(modalName, dataToBeSent)
-            .then(function () {
-                loadData(modalName);
-                closeModal(modalName);
-            });
-        e.preventDefault();
-        e.stopPropagation();
-    });
-}
-function addClickEventToUserUpdateButton() {
-    $("#update-user").click(function (e) {
-        var rowId = $("#form-new-user").find(".modal-id").html();
-        var dataToBeSent = formInputToObject("user");
-        dataToBeSent.id = Number(rowId);
-
-        sendUpdateRequest("user", dataToBeSent)
-            .then(function () {
-                var updateUrl = serviceUrls.userIdentity + "/" + dataToBeSent.id;
-                dataToBeSent = formInputToObject("userIdentity")
-                return $.ajax(updateUrl, {
-                    method: "PUT",
-                    contentType: "application/json",
-                    data: JSON.stringify(dataToBeSent)
-                });
-            })
-            .done(function (data) {
-                closeModal("user");
-                loadData("user");
-            })
-            .fail(function (jqXHR) {
-                console.log(JSON.parse(jqXHR.responseText));
-            });
-        e.preventDefault();
-        e.stopPropagation();
-    });
-}
-function sendUpdateRequest(dataName, dataToBeSent, callback) {
-    var url = serviceUrls[dataName] + "/" + dataToBeSent.id;
-    putJSON(true,url,dataToBeSent,function(data){
-        alert("Successfully updated " + dataName + ".");
-        callback(data);
-    }, function (data) {
-        var message = JSON.parse(data.responseText).message;
-        alert("Failed to update " + dataName + ".\n" + message);
-        console.log(data.responseText);
-    });
-}
+});

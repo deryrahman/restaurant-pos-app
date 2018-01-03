@@ -182,7 +182,7 @@ $(document).ready(function () {
     }
 
     function addClickEventToUserSubmitButton() {
-        $("#form-new-user").submit(function (e) {
+        $("#submit-user").click(function (e) {
             var newUserIdentity = formInputToObject("userIdentity");
             var userList = [];
             userList.push(formInputToObject("user"));

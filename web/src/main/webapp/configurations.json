@@ -43,6 +43,9 @@
       "price": "#item-price",
       "categoryId": "#category-id",
       "status": "#item-status"
+    },
+    "itemWithStock": {
+
     }
   },
   "tableHeaders": {
