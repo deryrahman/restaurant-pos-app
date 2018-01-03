@@ -83,7 +83,13 @@ public class ItemService extends BaseRESTService{
         }
 
         List<ItemWithStock> itemWithStockList = (List<ItemWithStock>) th.runTransaction(conn -> {
-            List<ItemWithStock> items = itemWithStockDAO.findByRestaurantId(this.restaurantId, "true");
+            List<ItemWithStock> items = new ArrayList<>();
+            if(userIs(CASHIER)) {
+                items = itemWithStockDAO.findByRestaurantId(this.restaurantId, "true");
+            }
+            if(userIs(MANAGER)){
+                items = itemWithStockDAO.find("true");
+            }
             if(items.size()==0){
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(item));
             }
