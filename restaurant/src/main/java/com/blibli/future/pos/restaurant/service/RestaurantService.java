@@ -12,7 +12,9 @@ import com.blibli.future.pos.restaurant.dao.custom.receiptwithitem.ReceiptWithIt
 import com.blibli.future.pos.restaurant.dao.restaurant.RestaurantDAOMysql;
 import com.blibli.future.pos.restaurant.dao.user.UserDAOMysql;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +41,8 @@ public class RestaurantService extends BaseRESTService {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response create(List<Restaurant> restaurants) throws Exception {
+    public Response create(@Context HttpServletRequest req, List<Restaurant> restaurants) throws Exception {
+        setUser(req);
 
         if(!userIs(ADMIN)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
@@ -66,7 +69,9 @@ public class RestaurantService extends BaseRESTService {
 
     @GET
     @Produces("application/json")
-    public Response getAll() throws Exception {
+    public Response getAll(@Context HttpServletRequest req) throws Exception {
+        setUser(req);
+
         restaurants = (List<Restaurant>) th.runTransaction(conn -> {
             List<Restaurant> restaurants = restaurantDAO.find("true");
             return restaurants;
@@ -94,7 +99,8 @@ public class RestaurantService extends BaseRESTService {
     @GET
     @Path("/{id}")
     @Produces("application/json")
-    public Response get(@PathParam("id") int id) throws Exception {
+    public Response get(@Context HttpServletRequest req, @PathParam("id") int id) throws Exception {
+        setUser(req);
         restaurant = (Restaurant) th.runTransaction(conn -> {
             Restaurant restaurant = restaurantDAO.findById(id);
             if(restaurant.isEmpty()){
@@ -140,8 +146,8 @@ public class RestaurantService extends BaseRESTService {
     @Path("/{id}")
     @Consumes("application/json")
     @Produces("application/json")
-    public Response update(@PathParam("id") int id, Restaurant restaurant) throws Exception {
-
+    public Response update(@Context HttpServletRequest req, @PathParam("id") int id, Restaurant restaurant) throws Exception {
+        setUser(req);
         if(!(userIs(ADMIN) || (this.restaurantId == id && userIs(MANAGER)))){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }

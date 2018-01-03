@@ -6,7 +6,10 @@ import com.blibli.future.pos.restaurant.common.model.User;
 import com.blibli.future.pos.restaurant.dao.user.UserDAOMysql;
 import org.slf4j.MDC;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,21 +21,19 @@ public class UserService extends BaseRESTService {
     private User user;
     private List<User> users;
 
-    public static void initUser(Integer id) throws Exception {
-        userId = id;
+    public static User getUser(Integer id) throws Exception {
         User user = (User) th.runTransaction(conn -> {
             return (new UserDAOMysql()).findById(id);
         });
-        restaurantId = user.getRestaurantId();
-        ROLE = user.getRole();
+        return user;
     }
 
     // ---- BEGIN /users ----
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response create(List<User> users) throws Exception {
-
+    public Response create(@Context HttpServletRequest req, List<User> users) throws Exception {
+        setUser(req);
         if(!(userIs(ADMIN) || userIs(MANAGER))){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
         }
@@ -75,7 +76,8 @@ public class UserService extends BaseRESTService {
 
     @GET
     @Produces("application/json")
-    public Response getAll() throws Exception {
+    public Response getAll(@Context HttpServletRequest req) throws Exception {
+        setUser(req);
 
         if(userIs(ADMIN)) {
             users = (List<User>) th.runTransaction(conn -> {
@@ -123,7 +125,8 @@ public class UserService extends BaseRESTService {
     @GET
     @Path("/{id}")
     @Produces("application/json")
-    public Response get(@PathParam("id") int id) throws Exception {
+    public Response get(@Context HttpServletRequest req, @PathParam("id") int id) throws Exception {
+        setUser(req);
 
         this.user = (User) th.runTransaction(conn -> {
             User user = userDAO.findById(id);
@@ -158,7 +161,8 @@ public class UserService extends BaseRESTService {
     @DELETE
     @Path("/{id}")
     @Produces("application/json")
-    public Response delete(@PathParam("id") int id) throws Exception {
+    public Response delete(@Context HttpServletRequest req, @PathParam("id") int id) throws Exception {
+        setUser(req);
 
         if(!(userIs(ADMIN) || userIs(MANAGER))){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
@@ -186,7 +190,8 @@ public class UserService extends BaseRESTService {
     @Path("/{id}")
     @Consumes("application/json")
     @Produces("application/json")
-    public Response update(@PathParam("id") int id, User user) throws Exception {
+    public Response update(@Context HttpServletRequest req, @PathParam("id") int id, User user) throws Exception {
+        setUser(req);
 
         if(!(userIs(ADMIN) || userIs(MANAGER))){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);

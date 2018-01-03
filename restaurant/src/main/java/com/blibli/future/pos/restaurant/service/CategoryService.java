@@ -9,7 +9,9 @@ import com.blibli.future.pos.restaurant.dao.category.CategoryDAOMysql;
 import com.blibli.future.pos.restaurant.dao.custom.itemwithstock.ItemWithStockDAOMysql;
 import com.blibli.future.pos.restaurant.dao.item.ItemDAOMysql;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +30,8 @@ public class CategoryService extends BaseRESTService {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response create(List<Category> categories) throws Exception {
+    public Response create(@Context HttpServletRequest req, List<Category> categories) throws Exception {
+        setUser(req);
 
         if(!userIs(ADMIN)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
@@ -87,7 +90,8 @@ public class CategoryService extends BaseRESTService {
     @GET
     @Path("/{id}")
     @Produces("application/json")
-    public Response get(@PathParam("id") int id) throws Exception {
+    public Response get(@Context HttpServletRequest req, @PathParam("id") int id) throws Exception {
+        setUser(req);
         category = (Category) th.runTransaction(conn -> {
             Category category = categoryDAO.findById(id);
             if (category.isEmpty()) {
@@ -111,7 +115,8 @@ public class CategoryService extends BaseRESTService {
     @DELETE
     @Path("/{id}")
     @Produces("application/json")
-    public Response delete(@PathParam("id") int id) throws Exception {
+    public Response delete(@Context HttpServletRequest req, @PathParam("id") int id) throws Exception {
+        setUser(req);
 
         if(!userIs(ADMIN)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
@@ -142,7 +147,8 @@ public class CategoryService extends BaseRESTService {
     @Path("/{id}")
     @Consumes("application/json")
     @Produces("application/json")
-    public Response update(@PathParam("id") int id, Category category) throws Exception {
+    public Response update(@Context HttpServletRequest req, @PathParam("id") int id, Category category) throws Exception {
+        setUser(req);
 
         if(!userIs(ADMIN)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
@@ -182,7 +188,8 @@ public class CategoryService extends BaseRESTService {
     @GET
     @Path("/{categoryId}/items")
     @Produces("application/json")
-    public Response getAllItem(@PathParam("categoryId") int categoryId) throws Exception {
+    public Response getAllItem(@Context HttpServletRequest req, @PathParam("categoryId") int categoryId) throws Exception {
+        setUser(req);
 
         if(userIs(ADMIN)){
             items = (List<Item>) th.runTransaction(conn -> {
