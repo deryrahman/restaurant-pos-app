@@ -46,7 +46,8 @@
       "status": "#item-status"
     },
     "itemWithStock": {
-      "stock": "#item-stock"
+      "stock": "#item-stock",
+      "itemId": "#select-item"
     }
   },
   "tableHeaders": {

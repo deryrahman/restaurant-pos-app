@@ -95,13 +95,14 @@ $(document).ready(function () {
                 return loadData("user");
             });
         loadData("restaurant").then(function (data) {
-            console.log(dataLists);
             bindLedgerButton();
         });
         loadData("category");
         loadData("receipt");
         loadData("member");
-        loadData("itemWithStock");
+        loadData("itemWithStock").then(function () {
+            filterItemWithStock();
+        });
     }
 
     function loadUserIdentity() {
@@ -137,10 +138,37 @@ $(document).ready(function () {
             })
             .then(function () {
                 bindEditButtonToModal(dataName);
-                if (dataName === "restaurant") {
-                    loadRstrId();
+                if (dataName === "itemWithStock") {
+                    filterItemWithStock();
                 }
             });
+    }
+
+    function filterItemWithStock() {
+        restaurantData.itemList = [];
+
+        var itemSelect = $("#select-item");
+        var itemTable = $("#itemWithStock-table");
+        var tableHeader = "<tr><th>"
+            + tableHeaders.itemWithStock.join("</th><th>")
+            + "</th></tr>";
+        var selectHeader = "<option value=\"\">-</option>";
+
+        itemSelect.html(selectHeader);
+        itemTable.html(tableHeader);
+        dataLists.itemWithStock.forEach(function (item) {
+            if (item.stock !== 0) {
+                restaurantData.itemList.push(item);
+                $("#itemWithStock-table").append(objectToTableRow("itemWithStock", item));
+            } else {
+                itemSelect.append("<option value='"+item.itemId+"'>"+item.itemName+"</option>");
+            }
+        });
+
+        $("#itemWithStock-count-well").html(restaurantData.itemList.length);
+        $("#itemWithStock-count-badge").html(restaurantData.itemList.length);
+
+        bindEditButtonToModal("itemWithStock");
     }
 
     function bindEditButtonToModal(modalName) {
@@ -300,16 +328,15 @@ $(document).ready(function () {
     function addClickEventToItemSubmitButton() {
         $("#submit-item").click(function (e) {
             var dataToBeSent = [];
-            var dataName = "item";
             dataToBeSent.push(formInputToObject("itemWithStock"));
             $.ajax({
-                url: serviceUrls[dataName] + "/" + dataToBeSent.itemId,
+                url: serviceUrls.item + "/stock",
                 method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify(dataToBeSent)
             }).done(function (data) {
                 alert("Successfully added stock to item.");
-
+                loadData("itemWithStock").then(filterItemWithStock);
             }).fail(function (jqXHR) {
                 var message = JSON.parse(jqXHR.responseText).message;
                 alert("Failed to add stock to item.\n" + message);
@@ -385,14 +412,6 @@ $(document).ready(function () {
                     .fail(showAlert);
             }
 
-        });
-    }
-
-    function loadRstrId() {
-        var target = $("#ledger-id");
-        target.html("<option value=\"\">-</option>");
-        dataLists.restaurant.forEach(function (r) {
-            target.append("<option value='"+r.id+"'>"+r.id+"</option>");
         });
     }
 
