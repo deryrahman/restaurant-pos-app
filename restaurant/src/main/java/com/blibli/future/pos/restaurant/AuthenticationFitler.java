@@ -54,6 +54,7 @@ public class AuthenticationFitler implements ContainerRequestFilter {
         }
         session.setAttribute("refreshToken",refreshToken);
         session.setAttribute("userId",userId);
+        ApplicationContex.getServletContext().setAttribute("session", session);
     }
 
     private Cookie getCookie(String key) {
