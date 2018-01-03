@@ -68,9 +68,13 @@ function getJSON(async, url, callback, err){
             callback(data)
         },
         error: function (e) {
-            console.log(e.responseJSON.message);
-            alert("Error GET Request! See log for further information");
-            err();
+            if(e.responseJSON) {
+                console.log(e.responseJSON.message);
+            }
+            // alert("Error GET Request! See log for further information");
+            if(err) {
+                err(e);
+            }
         }
     });
 }
@@ -84,9 +88,13 @@ function postJSON(async, url, data, callback, err){
             callback(data)
         },
         error: function (e) {
-            console.log(e.responseJSON.message);
-            alert("Error POST Request! See log for further information");
-            err();
+            if(e.responseJSON) {
+                console.log(e.responseJSON.message);
+            }
+            // alert("Error POST Request! See log for further information");
+            if(err) {
+                err(e);
+            }
         }
     });
 }
@@ -100,9 +108,13 @@ function putJSON(async, url, data, callback,err){
             callback(data)
         },
         error: function (e) {
-            console.log(e.responseJSON.message);
-            alert("Error PUT Request! See log for further information");
-            err();
+            if(e.responseJSON) {
+                console.log(e.responseJSON.message);
+            }
+            // alert("Error PUT Request! See log for further information");
+            if(err) {
+                err(e);
+            }
         }
     });
 }
@@ -115,9 +127,13 @@ function deleteJSON(async, url, callback, err){
             callback(data)
         },
         error: function (e) {
-            console.log(e.responseJSON.message);
-            alert("Error PUT Request! See log for further information");
-            err();
+            if(e.responseJSON) {
+                console.log(e.responseJSON.message);
+            }
+            // alert("Error DELETE Request! See log for further information");
+            if(err) {
+                err(e);
+            }
         }
     });
 }
@@ -145,7 +161,7 @@ function initializePage() {
     }
 }
 function loadNavbar() {
-    $('#navbar-container').load('template/navbar.html', function(){
+    $('#navbar-container').load('fragment/navbar.html', function(){
         console.log("load navbar");
         setNavbar();
     });
@@ -207,9 +223,14 @@ function loadItemByCategoryId(id) {
                     itemToHTML(item)
                 )
             });
-            console.log(dataLists);
             $("#category-panel-" + id).empty().append(items);
             renderMain();
+        }, function(e){
+            if(e.responseJSON){
+                if(e.responseJSON.statusCode == 404){
+                    $('#not-found-'+id).show();
+                }
+            }
         });
     }
 }
@@ -226,7 +247,13 @@ function categoryToHTML(category) {
     return result;
 }
 function categoryPanelToHTML(id){
-    var result = "<div class='tab-pane fade' id='category-panel-"+id+"'></div>";
+    var result = "<div class='tab-pane fade' id='category-panel-"+id+"'>" +
+        "<div class='container' id='not-found-"+id+"' style='display: none'>" +
+        "<div class='jumbotron'>" +
+        "<h3>Item Not Found</h3>" +
+        "</div>" +
+        "</div>" +
+        "</div>";
     return result;
 }
 
@@ -237,6 +264,7 @@ function loadNavCategory() {
         var categoryPanels = [];
         payload.forEach(function(category){
             dataLists.categories[category.id] = category;
+
             categories.push(
                 categoryToHTML(category)
             );
