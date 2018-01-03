@@ -146,7 +146,7 @@ $(document).ready(function () {
         $(".btn-edit-"+modalName).click(function (event) {
             var row = $(event.target).parent().siblings();
             var newObject = tableRowToObject(modalName, row);
-
+            console.log(newObject);
             modifyModalInterface(modalName, newObject);
         });
     }
@@ -154,10 +154,8 @@ $(document).ready(function () {
     // Bind all general buttons
     function bindAllButtons() {
         bindShowPanelToClickEvent();
-        bindNewButtonsToModals();
-        bindModalsToSubmitEvent();
-        bindUpdateButtonsToClickEvent();
-        bindDeleteButtonsToClickEvent();
+        bindUserButtons();
+        bindItemButtons();
 
         $("#btn-save-edit").click(function (e) {
             var dataToBeSent = formInputToObject("restaurant");
@@ -199,24 +197,12 @@ $(document).ready(function () {
         });
     }
 
-    // Bind CREATE API to modals submit event
-    function bindModalsToSubmitEvent() {
-        addClickEventToUserSubmitButton()
-    }
-
-    function addClickEventToSubmitButton(modalName) {
-        $("#submit-" + modalName).click(function (e) {
-            var dataToBeSent = [];
-            dataToBeSent.push(formInputToObject(modalName));
-            sendCreateRequest(modalName, dataToBeSent)
-                .then(function () {
-                    emptyModalForm(modalName);
-                    loadData(modalName);
-                });
-
-            e.preventDefault();
-            e.stopPropagation();
-        });
+    // Bind buttons in user panel
+    function bindUserButtons() {
+        addClickEventToUserSubmitButton();
+        addClickEventToUserUpdateButton();
+        addClickEventToDeleteButton("user");
+        addClickEventToNewButton("user");
     }
 
     function addClickEventToUserSubmitButton() {
@@ -251,11 +237,6 @@ $(document).ready(function () {
         });
     }
 
-    // Bind UPDATE API to update button click event
-    function bindUpdateButtonsToClickEvent() {
-        addClickEventToUserUpdateButton();
-    }
-
     function addClickEventToUserUpdateButton() {
         $("#update-user").click(function (e) {
             var rowId = $("#form-new-user").find(".modal-id").html();
@@ -287,11 +268,6 @@ $(document).ready(function () {
         });
     }
 
-    // Bind DELETE API to delete button click event
-    function bindDeleteButtonsToClickEvent() {
-        addClickEventToDeleteButton("user");
-    }
-
     function addClickEventToDeleteButton(modalName) {
         $("#delete-"+modalName).click(function () {
             var rowId = $("#form-new-"+modalName).find(".modal-id").html();
@@ -303,10 +279,62 @@ $(document).ready(function () {
         });
     }
 
-    // Bind modals to New button click event
-    function bindNewButtonsToModals() {
-        addClickEventToNewButton("user");
+    // Bind buttons in item panel
+    function bindItemButtons() {
+        addClickEventToItemSubmitButton();
+        addClickEventToItemUpdateButton();
+        addClickEventToItemDeleteButton();
         addClickEventToNewButton("itemWithStock");
+    }
+
+    function addClickEventToItemSubmitButton() {
+        $("#submit-item").click(function (e) {
+            var dataToBeSent = [];
+            var dataName = "item";
+            dataToBeSent.push(formInputToObject("itemWithStock"));
+            $.ajax({
+                url: serviceUrls[dataName] + "/" + dataToBeSent.itemId,
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(dataToBeSent)
+            }).done(function (data) {
+                alert("Successfully added stock to item.");
+
+            }).fail(function (jqXHR) {
+                var message = JSON.parse(jqXHR.responseText).message;
+                alert("Failed to add stock to item.\n" + message);
+
+                console.log(jqXHR.responseText);
+            });
+
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    }
+
+    function addClickEventToItemUpdateButton() {
+        $("#update-item").click(function (e) {
+            var rowId = $("#form-new-itemWithStock").find(".modal-id").html();
+            var dataToBeSent = formInputToObject("itemWithStock");
+            dataToBeSent.itemId = Number(rowId);
+
+            sendUpdateRequest("itemWithStock", dataToBeSent)
+                .then(function () {
+                    loadData("itemWithStock");
+                    closeModal("itemWithStock");
+                });
+
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    }
+
+    function addClickEventToItemDeleteButton() {
+        $("#delete-item").click(function () {
+            var rowId = $("#form-new-itemWithStock").find(".modal-id").html();
+            var deleteUrl = "stock/" + rowId;
+            sendDeleteRequest("item", deleteUrl);
+        });
     }
 
     function addClickEventToNewButton(modalName) {
@@ -340,7 +368,14 @@ $(document).ready(function () {
     }
 
     function sendUpdateRequest(dataName, dataToBeSent) {
-        var updateUrl = serviceUrls[dataName] + "/" + dataToBeSent.id;
+        var updateUrl = serviceUrls[dataName] + "/";
+
+        if (dataName === "itemWithStock") {
+            updateUrl += "stock/" + dataToBeSent.itemId;
+        } else {
+            updateUrl += dataToBeSent.id;
+        }
+
         return $.ajax(updateUrl, {
             method: "PUT",
             contentType: "application/json",
@@ -349,6 +384,7 @@ $(document).ready(function () {
             alert("Successfully updated " + dataName + ".")
         }).fail(function (jqXHR) {
             var message = JSON.parse(jqXHR.responseText).message;
+            //var message = "";
             alert("Failed to update " + dataName +".\n" + message);
 
             console.log(jqXHR.responseText);
@@ -356,8 +392,8 @@ $(document).ready(function () {
     }
 
     function sendDeleteRequest(dataName, objectId) {
-        var deletUrl = serviceUrls[dataName] + "/" + objectId;
-        return $.ajax(deletUrl, {
+        var deleteUrl = serviceUrls[dataName] + "/" + objectId;
+        return $.ajax(deleteUrl, {
             method: "DELETE"
         }).done(function (data) {
             alert("Successfully deleted " + dataName + ".")
@@ -372,13 +408,20 @@ $(document).ready(function () {
 
     // Modal manipulating methods
     function modifyModalInterface(modalName, object) {
+        var rowId;
+        if (modalName === "itemWithStock") {
+            rowId = object.itemId;
+        } else {
+            rowId = object.id;
+        }
+
         var modalForm = $("#modal-new-"+modalName);
         modalForm.find("#submit-"+modalName).attr("type", "button");
         modalForm.find("#update-"+modalName).attr("type", "submit");
         modalForm.find(".modal-element-new").hide();
         modalForm
             .find(".modal-element-edit").show()
-            .find(".modal-id").html(object.id);
+            .find(".modal-id").html(rowId);
 
         fillModalForms(modalName, object);
     }
@@ -441,8 +484,10 @@ $(document).ready(function () {
     function objectToTableRow(dataName, object) {
         var columns = tableStructures[dataName];
         var button;
-        if(dataName === "user" || dataName === "itemWithStock") {
+        if(dataName === "user") {
             button = "<td><a class='btn-edit' role='button'>edit</a></td>";
+        } else if (dataName === "itemWithStock") {
+            button = "<td><a class='btn-edit' role='button'>restock</a></td>";
         } else {
             button = "";
         }

@@ -45,7 +45,7 @@
       "status": "#item-status"
     },
     "itemWithStock": {
-
+      "stock": "#item-stock"
     }
   },
   "tableHeaders": {
@@ -53,7 +53,7 @@
     "restaurant": ["#ID", "Address", "Phone", ""],
     "category": ["#ID", "Name", "Description", ""],
     "item": ["#ID", "Item Name", "Price", "Category", "Status", ""],
-    "itemWithStock": ["#ID", "Item Name", "Stock", "Price", "Category ID", ""],
+    "itemWithStock": ["#ID", "Item Name", "Category ID", "Price", "Stock", ""],
     "receipt": ["#ID", "Date", "Cashier ID", "Member ID", "Tax", "Total Price", ""],
     "member": ["#ID", "Date", "Name", "Address", "Email", ""]
   },
@@ -62,7 +62,7 @@
     "restaurant": ["id", "address", "phone"],
     "category": ["id", "name", "description"],
     "item": ["id", "name", "price", "categoryId", "status"],
-    "itemWithStock": ["itemId", "itemName", "stock", "price", "categoryId"],
+    "itemWithStock": ["itemId", "itemName", "categoryId", "price", "stock"],
     "receipt": ["id", "timestampCreated", "userId", "memberId", "tax", "totalPrice"],
     "member": ["id", "timestampCreated", "name", "address", "email"]
   }
