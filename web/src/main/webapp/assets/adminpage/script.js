@@ -11,6 +11,8 @@ $(document).ready(function () {
     var tableHeaders = {};
     var requestBodyFormat = {};
 
+    var dataLists = {};
+
     // Get configurations and check cookie
     (function () {
         if (token === undefined) {
@@ -72,7 +74,10 @@ $(document).ready(function () {
         loadUserIdentity().then(function () {
             loadData("user");
         });
-        loadData("restaurant");
+        loadData("restaurant").then(function (data) {
+            console.log(dataLists);
+            bindLedgerButton();
+        });
         loadData("category");
         loadData("item");
     }
@@ -92,9 +97,10 @@ $(document).ready(function () {
             + tableHeaders[dataName].join("</th><th>")
             + "</th></tr>";
 
-        $.get(serviceUrls[dataName])
+        return $.get(serviceUrls[dataName])
             .done(function (data) {
                 var dataList = data.payload;
+                dataLists[dataName] = dataList;
 
                 $("#"+dataName+"-count-badge").html(dataList.length);
                 $("#"+dataName+"-count-well").html(dataList.length);
@@ -109,6 +115,9 @@ $(document).ready(function () {
             })
             .then(function () {
                 bindEditButtonToModal(dataName);
+                if (dataName === "restaurant") {
+                    loadRstrId();
+                }
             });
     }
 
@@ -146,6 +155,7 @@ $(document).ready(function () {
         showPanelButtonOnclick("restaurants");
         showPanelButtonOnclick("categories");
         showPanelButtonOnclick("items");
+        showPanelButtonOnclick("ledger");
     }
 
     function showPanelButtonOnclick(panelName) {
@@ -301,6 +311,80 @@ $(document).ready(function () {
         window.location.assign(config.pages.login);
     });
 
+    //Bind ledger button
+    function bindLedgerButton() {
+        loadRstrId();
+
+        var datepickerSettings = {
+            format: "yyyy-mm-dd",
+            todayBtn: true,
+            autoclose: true
+        };
+
+        var startDatepicker = $("#start-date");
+        startDatepicker.datepicker(datepickerSettings);
+
+        var endDatepicker = $("#end-date");
+        endDatepicker.datepicker(datepickerSettings);
+
+        $("#get-ledger").click(function () {
+            var rstrId = $("#ledger-id").val();
+            var stParam = startDatepicker.find("input").val();
+            var etParam = endDatepicker.find("input").val();
+            var ledgerUrl = serviceUrls.ledger + "?id=" + rstrId
+                + "&st=" + stParam + "&et=" + etParam;
+
+            if (rstrId === "") {
+                alert("Please specify the restaurant ID.");
+            } else if (stParam === "" || etParam === "") {
+                alert("Please specify the date range.");
+            } else {
+                console.log(ledgerUrl);
+                $.get(ledgerUrl)
+                    .done(showLedger)
+                    .fail(showAlert);
+            }
+
+        });
+    }
+
+    function loadRstrId() {
+        var target = $("#ledger-id");
+        target.html("<option value=\"\">-</option>");
+        dataLists.restaurant.forEach(function (r) {
+            target.append("<option value='"+r.id+"'>"+r.id+"</option>");
+        });
+    }
+
+    function showLedger(data) {
+        var ledger = data.payload;
+        var total = "<strong>" + ledger.total + "</strong>";
+        var rstrId = ledger.restaurantId;
+        var receipts = ledger.receipts;
+
+        var tableHeader = "<tr><th>"
+            + tableHeaders.ledger.join("</th><th>")
+            + "</th></tr>";
+
+        footer = ["<strong>TOTAL</strong>", "", "", "", "", total];
+        var tableFooter = "<tr><td>"
+            + footer.join("</td><td>") + "</td></tr>";
+
+        $("#ledger-table").html(tableHeader);
+        receipts.forEach(function (r) {
+            $("#ledger-table").append(objectToTableRow("ledger", r));
+        });
+        $("#ledger-table").append(tableFooter);
+    }
+
+    function showAlert(jqXHR) {
+        if (jqXHR.status === 404) {
+            alert("No receipt found for given date range");
+        } else {
+            alert("Failed to get receipt.");
+        }
+    }
+
     // Send request to API methods
     function sendSpecificGetRequest(dataName, objectId) {
         var getUrl = serviceUrls[dataName] + "/" + objectId;
@@ -430,7 +514,10 @@ $(document).ready(function () {
         columns.forEach(function (columnName) {
             row += "<td>" + object[columnName] + "</td>";
         });
-        row += button + "</tr>";
+
+        if (dataName !== "ledger") {
+            row += button + "</tr>";
+        }
 
         return row;
     }

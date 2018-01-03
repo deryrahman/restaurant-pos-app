@@ -129,14 +129,14 @@ body {
     text-align: center;
 }
 
-.modal-body .btn-custom {
+.btn-custom {
     color: #ffffff;
     background-color: #ff5722;
     border-color: #bf360c;
     margin-left: 14px;
 }
 
-.modal-body .btn-custom:hover {
+.btn-custom:hover {
     background-color: #bf360c;
 }
 
@@ -187,4 +187,9 @@ body {
 .right-side-button {
     padding-left: 30px;
     padding-right: 0;
+}
+
+
+#get-ledger {
+    margin-top: 15px;
 }

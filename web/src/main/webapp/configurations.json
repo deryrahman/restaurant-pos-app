@@ -10,7 +10,8 @@
     "item": "/core/items",
     "itemWithStock" : "/core/items",
     "category": "/core/categories",
-    "member": "/core/members"
+    "member": "/core/members",
+    "ledger": "/core/ledgers"
   },
   "pages": {
     "home": "index.html",
@@ -55,7 +56,8 @@
     "item": ["#ID", "Item Name", "Price", "Category", "Status", ""],
     "itemWithStock": ["#ID", "Item Name", "Category ID", "Price", "Stock", ""],
     "receipt": ["#ID", "Date", "Cashier ID", "Member ID", "Tax", "Total Price", ""],
-    "member": ["#ID", "Date", "Name", "Address", "Email", ""]
+    "member": ["#ID", "Date", "Name", "Address", "Email", ""],
+    "ledger": ["#ID", "Date", "Cashier ID", "Member ID", "Tax", "Total Price"]
   },
   "tableStructures": {
     "user": ["id", "name", "username", "role", "email", "restaurantId"],
@@ -64,6 +66,7 @@
     "item": ["id", "name", "price", "categoryId", "status"],
     "itemWithStock": ["itemId", "itemName", "categoryId", "price", "stock"],
     "receipt": ["id", "timestampCreated", "userId", "memberId", "tax", "totalPrice"],
-    "member": ["id", "timestampCreated", "name", "address", "email"]
+    "member": ["id", "timestampCreated", "name", "address", "email"],
+    "ledger": ["id", "timestampCreated", "userId", "memberId", "tax", "totalPrice"]
   }
 }
