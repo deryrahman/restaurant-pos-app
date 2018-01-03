@@ -55,11 +55,7 @@ $(document).ready(function () {
     function initializeAdminPage() {
         setUsername();
         loadAllData();
-        bindShowPanelToClickEvent();
-        bindModalsToSubmitEvent();
-        bindNewButtonsToModals();
-        bindUpdateButtonsToClickEvent();
-        bindDeleteButtonsToClickEvent();
+        bindAllButtons();
     }
 
     // Set navbar username
@@ -79,6 +75,16 @@ $(document).ready(function () {
         loadData("restaurant");
         loadData("category");
         loadData("item");
+    }
+
+    function loadUserIdentity() {
+        return $.get(serviceUrls.userIdentity)
+            .done(function (data) {
+                var userList = data.payload;
+                userList.forEach(function (item) {
+                    userIdentities[item.id] = item.username;
+                });
+            })
     }
 
     function loadData(dataName) {
@@ -106,16 +112,6 @@ $(document).ready(function () {
             });
     }
 
-    function loadUserIdentity() {
-        return $.get(serviceUrls.userIdentity)
-            .done(function (data) {
-                var userList = data.payload;
-                userList.forEach(function (item) {
-                    userIdentities[item.id] = item.username;
-                });
-            })
-    }
-
     function bindEditButtonToModal(modalName) {
         var targetId = "#modal-new-"+modalName;
 
@@ -134,61 +130,32 @@ $(document).ready(function () {
         });
     }
 
-    function modifyModalInterface(modalName, object) {
-        var modalForm = $("#modal-new-"+modalName);
-        modalForm.find("#submit-"+modalName).attr("type", "button");
-        modalForm.find("#update-"+modalName).attr("type", "submit");
-        modalForm.find(".modal-element-new").hide();
-        modalForm
-            .find(".modal-element-edit").show()
-            .find(".modal-id").html(object.id);
-
-        fillModalForms(modalName, object);
+    // Bind all general buttons
+    function bindAllButtons() {
+        bindShowPanelToClickEvent();
+        bindModalsToSubmitEvent();
+        bindNewButtonsToModals();
+        bindUpdateButtonsToClickEvent();
+        bindDeleteButtonsToClickEvent();
     }
 
-    function fillModalForms(modalName, object) {
-        var template = requestBodyFormat[modalName];
-        $.each(template, function (field, elmtId) {
-            $("#form-new-"+modalName).find(elmtId).val(object[field]);
+    // Bind show panel to button click event
+    function bindShowPanelToClickEvent() {
+        showPanelButtonOnclick("overview");
+        showPanelButtonOnclick("users");
+        showPanelButtonOnclick("restaurants");
+        showPanelButtonOnclick("categories");
+        showPanelButtonOnclick("items");
+    }
+
+    function showPanelButtonOnclick(panelName) {
+        $("#show-"+panelName).click(function () {
+            $(".panel.panel-default").hide();
+            $("#panel-"+panelName).show();
+
+            $("a[id|='show']").removeClass('active main-bg-color');
+            $(this).addClass('active main-bg-color');
         });
-
-        var username;
-        if (modalName === "user") {
-            username = object.username;
-            $("#new-username").val(username);
-        }
-    }
-
-    function tableRowToObject(dataName, row) {
-        var objectProperties = tableStructures[dataName];
-        var newObject = {};
-
-        var propertyName;
-        for (var i = 0; i < row.length; i++) {
-            propertyName = objectProperties[i];
-            newObject[propertyName] = row[i].innerHTML;
-        }
-
-        return newObject;
-    }
-
-    function objectToTableRow(dataName, object) {
-        var columns = tableStructures[dataName];
-        var button = "<td><a class='btn-edit' role='button'>edit</a></td>";
-
-        var rowId = dataName + object.id;
-        var row = "<tr id='"+rowId+"'>";
-        columns.forEach(function (columnName) {
-            row += "<td>" + object[columnName] + "</td>";
-        });
-        row += button + "</tr>";
-
-        return row;
-    }
-
-    function sendSpecificGetRequest(dataName, objectId) {
-        var getUrl = serviceUrls[dataName] + "/" + objectId;
-        return $.get(getUrl)
     }
 
     // Bind CREATE API to modals submit event
@@ -243,32 +210,6 @@ $(document).ready(function () {
         });
     }
 
-    function sendCreateRequest(dataName, dataToBeSent) {
-        return $.ajax({
-            url: serviceUrls[dataName],
-            method: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(dataToBeSent)
-        }).done(function (data) {
-            alert("Successfully created new " + dataName + ".");
-
-        }).fail(function (jqXHR) {
-            var message = JSON.parse(jqXHR.responseText).message;
-            alert("Failed to create new " + dataName + ".\n" + message);
-
-            console.log(jqXHR.responseText);
-        });
-    }
-
-    function formInputToObject(dataName) {
-        var template = requestBodyFormat[dataName];
-        var newObject = {};
-        $.each(template, function (field, elmtId) {
-            newObject[field] = $("#form-new-" + dataName).find(elmtId).val();
-        });
-        return newObject;
-    }
-
     // Bind UPDATE API to update button click event
     function bindUpdateButtonsToClickEvent() {
         addClickEventToUserUpdateButton();
@@ -321,22 +262,6 @@ $(document).ready(function () {
         });
     }
 
-    function sendUpdateRequest(dataName, dataToBeSent) {
-        var updateUrl = serviceUrls[dataName] + "/" + dataToBeSent.id;
-        return $.ajax(updateUrl, {
-            method: "PUT",
-            contentType: "application/json",
-            data: JSON.stringify(dataToBeSent)
-        }).done(function (data) {
-            alert("Successfully updated " + dataName + ".")
-        }).fail(function (jqXHR) {
-            var message = JSON.parse(jqXHR.responseText).message;
-            alert("Failed to update " + dataName +".\n" + message);
-
-            console.log(jqXHR.responseText);
-        });
-    }
-
     // Bind DELETE API to delete button click event
     function bindDeleteButtonsToClickEvent() {
         addClickEventToDeleteButton("user");
@@ -356,6 +281,65 @@ $(document).ready(function () {
         });
     }
 
+    // Bind modals to New button click event
+    function bindNewButtonsToModals() {
+        addClickEventToNewButton("user");
+        addClickEventToNewButton("restaurant");
+        addClickEventToNewButton("category");
+        addClickEventToNewButton("item");
+    }
+
+    function addClickEventToNewButton(modalName) {
+        $("#btn-new-"+modalName).click(function () {
+            revertModalInterface(modalName);
+        });
+    }
+
+    // Bind logging out to logout button
+    $('#logout-btn').click(function (e) {
+        Cookies.remove("POSRESTAURANT");
+        window.location.assign(config.pages.login);
+    });
+
+    // Send request to API methods
+    function sendSpecificGetRequest(dataName, objectId) {
+        var getUrl = serviceUrls[dataName] + "/" + objectId;
+        return $.get(getUrl)
+    }
+
+    function sendCreateRequest(dataName, dataToBeSent) {
+        return $.ajax({
+            url: serviceUrls[dataName],
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(dataToBeSent)
+        }).done(function (data) {
+            alert("Successfully created new " + dataName + ".");
+
+        }).fail(function (jqXHR) {
+            var message = JSON.parse(jqXHR.responseText).message;
+            alert("Failed to create new " + dataName + ".\n" + message);
+
+            console.log(jqXHR.responseText);
+        });
+    }
+
+    function sendUpdateRequest(dataName, dataToBeSent) {
+        var updateUrl = serviceUrls[dataName] + "/" + dataToBeSent.id;
+        return $.ajax(updateUrl, {
+            method: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(dataToBeSent)
+        }).done(function (data) {
+            alert("Successfully updated " + dataName + ".")
+        }).fail(function (jqXHR) {
+            var message = JSON.parse(jqXHR.responseText).message;
+            alert("Failed to update " + dataName +".\n" + message);
+
+            console.log(jqXHR.responseText);
+        });
+    }
+
     function sendDeleteRequest(dataName, objectId) {
         var deletUrl = serviceUrls[dataName] + "/" + objectId;
         return $.ajax(deletUrl, {
@@ -370,42 +354,17 @@ $(document).ready(function () {
         })
     }
 
-    // Bind show panel to button click event
-    function bindShowPanelToClickEvent() {
-        showPanelButtonOnclick("overview");
-        showPanelButtonOnclick("users");
-        showPanelButtonOnclick("restaurants");
-        showPanelButtonOnclick("categories");
-        showPanelButtonOnclick("items");
-    }
+    // Modal manipulating methods
+    function modifyModalInterface(modalName, object) {
+        var modalForm = $("#modal-new-"+modalName);
+        modalForm.find("#submit-"+modalName).attr("type", "button");
+        modalForm.find("#update-"+modalName).attr("type", "submit");
+        modalForm.find(".modal-element-new").hide();
+        modalForm
+            .find(".modal-element-edit").show()
+            .find(".modal-id").html(object.id);
 
-    function showPanelButtonOnclick(panelName) {
-        $("#show-"+panelName).click(function () {
-            $(".panel.panel-default").hide();
-            $("#panel-"+panelName).show();
-
-            $("a[id|='show']").removeClass('active main-bg-color');
-            $(this).addClass('active main-bg-color');
-        });
-    }
-
-    // Bind logging out to logout button
-    $('#logout-btn').click(function (e) {
-        Cookies.remove("POSRESTAURANT");
-        window.location.assign(config.pages.login);
-    });
-
-    function bindNewButtonsToModals() {
-        addClickEventToNewButton("user");
-        addClickEventToNewButton("restaurant");
-        addClickEventToNewButton("category");
-        addClickEventToNewButton("item");
-    }
-
-    function addClickEventToNewButton(modalName) {
-        $("#btn-new-"+modalName).click(function () {
-            revertModalInterface(modalName);
-        });
+        fillModalForms(modalName, object);
     }
 
     function revertModalInterface(modalName) {
@@ -418,12 +377,62 @@ $(document).ready(function () {
         emptyModalForm(modalName);
     }
 
+    function fillModalForms(modalName, object) {
+        var template = requestBodyFormat[modalName];
+        $.each(template, function (field, elmtId) {
+            $("#form-new-"+modalName).find(elmtId).val(object[field]);
+        });
+
+        var username;
+        if (modalName === "user") {
+            username = object.username;
+            $("#new-username").val(username);
+        }
+    }
+
     function emptyModalForm(modalName) {
         $("#form-new-" + modalName).find("input.form-control").val("");
     }
 
     function closeModal(modalName) {
         $("#modal-new-"+modalName).modal("hide");
+    }
+
+    // Utility functions
+    function formInputToObject(dataName) {
+        var template = requestBodyFormat[dataName];
+        var newObject = {};
+        $.each(template, function (field, elmtId) {
+            newObject[field] = $("#form-new-" + dataName).find(elmtId).val();
+        });
+        return newObject;
+    }
+
+    function tableRowToObject(dataName, row) {
+        var objectProperties = tableStructures[dataName];
+        var newObject = {};
+
+        var propertyName;
+        for (var i = 0; i < row.length; i++) {
+            propertyName = objectProperties[i];
+            newObject[propertyName] = row[i].innerHTML;
+        }
+
+        return newObject;
+    }
+
+    function objectToTableRow(dataName, object) {
+        var columns = tableStructures[dataName];
+        var button = "<td><a class='btn-edit' role='button'>edit</a></td>";
+
+        var rowId = dataName + object.id;
+        var row = "<tr id='"+rowId+"'>";
+        columns.forEach(function (columnName) {
+            row += "<td>" + object[columnName] + "</td>";
+        });
+        row += button + "</tr>";
+
+        return row;
     }
 
 }).ajaxSend(function (event, jqXHR, settings) {
