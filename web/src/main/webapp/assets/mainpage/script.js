@@ -1,5 +1,6 @@
 var pageRole = "cashier";
 
+var cookie;
 var token = Cookies.get("POSRESTAURANT");
 var config;
 var baseUrl;
@@ -194,7 +195,7 @@ function itemToHTML(item){
         "<div class='well dash-box'>" +
         "<h4 class='title-item'>"+item.itemName+"</h4>" +
         "<div>Stock : <span class='item-stock-"+item.itemId+"'>"+item.stock+"</span></div>" +
-        "<div>Rp "+item.price+"</div>"+
+        "<div>Rp <span class='price-item'>"+item.price+"</span></div>"+
         "</div>" +
         "</div>";
     return result;
@@ -425,14 +426,37 @@ function makeReceipt(){
     });
     var data = [];
     data.push(receipt);
-    postJSON(false,serviceUrls.receipt,data,function (e) {
+    postJSON(true,serviceUrls.receipt,data,function (e) {
         var payload = e.payload;
         var resultId = "";
+        var timestamp = "";
+        var memberId = "-";
+        if(dataLists.member) {
+            memberId = dataLists.member.id;
+        }
         payload.forEach(function(data){
-            resultId += data.receiptId;
+            resultId = data.receiptId;
+            timestamp = data.timestamp;
         });
+        var itemOnCookie = [];
+        $.each(dataLists.itemOnSidebar, function(key,val){
+            var item = {
+                "name" : $('.item-'+key+' .title-item').text(),
+                "count" : val.count,
+                "price" : $('.item-'+key+' .price-item').text()
+            };
+            itemOnCookie.push(item);
+        });
+        cookie = {
+            "id" : resultId,
+            "data" : timestamp,
+            "memberId" : memberId,
+            "restaurantId" : userData.restaurantInfo.id,
+            "items" : itemOnCookie,
+            "tax" : dataLists.receipt.tax
+        };
         alert("Success make receipt. Id : "+resultId);
-        window.location.replace(config.pages.home);
+        $('#modal-download-receipt').modal('show');
     });
 }
 
@@ -526,4 +550,10 @@ function editMember(){
 function removeMember(){
     delete dataLists.member;
     renderMemberInfo();
+}
+
+function openReceipt(){
+    Cookies.set('receipt', cookie);
+    window.open('/receipt.html','_blank');
+    window.location.replace(config.pages.home);
 }

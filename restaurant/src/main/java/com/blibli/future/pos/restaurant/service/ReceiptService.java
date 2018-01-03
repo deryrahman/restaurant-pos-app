@@ -18,6 +18,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,6 +132,8 @@ public class ReceiptService extends BaseRESTService{
             // Create receipt first
             receiptDAO.create(receipt);
             receiptWithItem.setReceiptId(receipt.getId());
+            Timestamp ts = receiptDAO.findById(receipt.getId()).getTimestampCreated();
+            receiptWithItem.setTimestamp(ts);
             // create receipt with item
             receiptWithItemDAO.create(receiptWithItem);
             return null;
