@@ -1,17 +1,13 @@
 package com.blibli.future.pos.restaurant.service;
 
-import com.blibli.future.pos.restaurant.common.ApplicationContex;
 import com.blibli.future.pos.restaurant.common.ErrorMessage;
 import com.blibli.future.pos.restaurant.common.model.BaseResponse;
-import com.blibli.future.pos.restaurant.common.model.Config;
 import com.blibli.future.pos.restaurant.common.model.User;
 import com.blibli.future.pos.restaurant.dao.user.UserDAOMysql;
-import okhttp3.*;
+import org.slf4j.MDC;
 
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,82 +27,6 @@ public class UserService extends BaseRESTService {
         ROLE = user.getRole();
     }
 
-    private boolean createIdentity(User user) throws Exception {
-        class Identity{
-            private Integer id;
-            private String username;
-            private String password;
-            private String role;
-
-            public Integer getId() {
-                return id;
-            }
-
-            public void setId(Integer id) {
-                this.id = id;
-            }
-
-            public String getUsername() {
-                return username;
-            }
-
-            public void setUsername(String username) {
-                this.username = username;
-            }
-
-            public String getPassword() {
-                return password;
-            }
-
-            public void setPassword(String password) {
-                this.password = password;
-            }
-
-            public String getRole() {
-                return role;
-            }
-
-            public void setRole(String role) {
-                this.role = role;
-            }
-        }
-        Identity identity = new Identity();
-        identity.setId(user.getId());
-        identity.setUsername(user.getUsername());
-        identity.setRole(user.getRole());
-        identity.setPassword(user.getPassword());
-        json = objectMapper.writeValueAsString(identity);
-
-        final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        HttpSession session = (HttpSession) ApplicationContex.getServletContext().getAttribute("session");
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public okhttp3.Response intercept(Chain chain) throws IOException {
-                        final Request original = chain.request();
-
-                        final Request authorized = original.newBuilder()
-                                .addHeader("Cookie", "POSRESTAURANT="+((String) session.getAttribute("refreshToken")))
-                                .build();
-
-                        return chain.proceed(authorized);
-                    }
-                })
-                .build();
-        RequestBody body = RequestBody.create(JSON, json);
-        Config config = (Config) ApplicationContex.getServletContext().getAttribute("restaurantConfig");
-        String url = config.getAuthService() + "/userIdentities";
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .build();
-        okhttp3.Response response = client.newCall(request).execute();
-        if(response.isSuccessful()){
-            return true;
-        }
-        return false;
-    }
-
     // ---- BEGIN /users ----
     @POST
     @Consumes("application/json")
@@ -123,12 +43,6 @@ public class UserService extends BaseRESTService {
         this.users = new ArrayList<>();
         for (User user: users) {
             if(user.notValidAttribute()){
-                throw new BadRequestException(ErrorMessage.requiredValue(user));
-            }
-            if(user.getUsername() == null || user.getUsername().isEmpty()){
-                throw new BadRequestException(ErrorMessage.requiredValue(user));
-            }
-            if(user.getPassword() == null || user.getPassword().isEmpty()){
                 throw new BadRequestException(ErrorMessage.requiredValue(user));
             }
 
@@ -150,11 +64,6 @@ public class UserService extends BaseRESTService {
                 userDAO.create(user);
                 return user;
             });
-
-//            if(!createIdentity(user)){
-//                delete(user.getId());
-//                throw new BadRequestException();
-//            }
 
             this.users.add(user);
         }
