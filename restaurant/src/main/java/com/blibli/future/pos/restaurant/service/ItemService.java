@@ -9,7 +9,9 @@ import com.blibli.future.pos.restaurant.dao.item.ItemDAOMysql;
 import com.blibli.future.pos.restaurant.dao.custom.itemwithstock.ItemWithStockDAOMysql;
 import com.blibli.future.pos.restaurant.dao.restaurant.RestaurantDAOMysql;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,8 @@ public class ItemService extends BaseRESTService{
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response create(List<Item> items) throws Exception {
+    public Response create(@Context HttpServletRequest req, List<Item> items) throws Exception {
+        setUser(req);
 
         if(!userIs(ADMIN)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
@@ -62,7 +65,8 @@ public class ItemService extends BaseRESTService{
 
     @GET
     @Produces("application/json")
-    public Response getAll() throws Exception {
+    public Response getAll(@Context HttpServletRequest req) throws Exception {
+        setUser(req);
 
         if(userIs(ADMIN)){
             items = (List<Item>) th.runTransaction(conn -> {
@@ -79,7 +83,13 @@ public class ItemService extends BaseRESTService{
         }
 
         List<ItemWithStock> itemWithStockList = (List<ItemWithStock>) th.runTransaction(conn -> {
-            List<ItemWithStock> items = itemWithStockDAO.findByRestaurantId(this.restaurantId, "true");
+            List<ItemWithStock> items = new ArrayList<>();
+            if(userIs(CASHIER)) {
+                items = itemWithStockDAO.findByRestaurantId(this.restaurantId, "true");
+            }
+            if(userIs(MANAGER)){
+                items = itemWithStockDAO.find("true");
+            }
             if(items.size()==0){
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(item));
             }
@@ -110,7 +120,8 @@ public class ItemService extends BaseRESTService{
     @GET
     @Path("/{id}")
     @Produces("application/json")
-    public Response get(@PathParam("id") int id) throws Exception {
+    public Response get(@Context HttpServletRequest req, @PathParam("id") int id) throws Exception {
+        setUser(req);
 
         if(userIs(ADMIN)) {
             item = (Item) th.runTransaction(conn -> {
@@ -168,7 +179,8 @@ public class ItemService extends BaseRESTService{
     @Path("/{id}")
     @Consumes("application/json")
     @Produces("application/json")
-    public Response update(@PathParam("id") int id, Item item) throws Exception {
+    public Response update(@Context HttpServletRequest req, @PathParam("id") int id, Item item) throws Exception {
+        setUser(req);
 
         if(!userIs(ADMIN)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
@@ -203,7 +215,8 @@ public class ItemService extends BaseRESTService{
     @Consumes("application/json")
     @Produces("application/json")
     @Path("/stock")
-    public Response addStock(List<ItemWithStock> itemWithStockList) throws Exception {
+    public Response addStock(@Context HttpServletRequest req, List<ItemWithStock> itemWithStockList) throws Exception {
+        setUser(req);
 
         if(!userIs(MANAGER)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
@@ -247,7 +260,8 @@ public class ItemService extends BaseRESTService{
     @Path("/stock/{itemId}")
     @Consumes("application/json")
     @Produces("application/json")
-    public Response updateStock(@PathParam("itemId") Integer itemId, ItemWithStock itemWithStock) throws Exception{
+    public Response updateStock(@Context HttpServletRequest req, @PathParam("itemId") Integer itemId, ItemWithStock itemWithStock) throws Exception{
+        setUser(req);
 
         if(!userIs(MANAGER)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
@@ -280,7 +294,8 @@ public class ItemService extends BaseRESTService{
     @DELETE
     @Path("/stock/{itemId}")
     @Produces("application/json")
-    public Response deleteItemOnRestaurant(@PathParam("itemId") Integer itemId) throws Exception{
+    public Response deleteItemOnRestaurant(@Context HttpServletRequest req, @PathParam("itemId") Integer itemId) throws Exception{
+        setUser(req);
 
         if(userIs(MANAGER)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);

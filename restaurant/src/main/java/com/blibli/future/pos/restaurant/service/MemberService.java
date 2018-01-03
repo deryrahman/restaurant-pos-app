@@ -5,7 +5,9 @@ import com.blibli.future.pos.restaurant.common.model.BaseResponse;
 import com.blibli.future.pos.restaurant.common.model.Member;
 import com.blibli.future.pos.restaurant.dao.member.MemberDAOMysql;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +23,8 @@ public class MemberService extends BaseRESTService {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response create(List<Member> members) throws Exception {
+    public Response create(@Context HttpServletRequest req, List<Member> members) throws Exception {
+        setUser(req);
 
         if(!userIs(CASHIER)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
@@ -48,7 +51,9 @@ public class MemberService extends BaseRESTService {
 
     @GET
     @Produces("application/json")
-    public Response getAll() throws Exception {
+    public Response getAll(@Context HttpServletRequest req) throws Exception {
+        setUser(req);
+
         members = (List<Member>) th.runTransaction(conn -> {
             List<Member> members = memberDAO.find("true");
             if (members.size() == 0) {
@@ -79,7 +84,8 @@ public class MemberService extends BaseRESTService {
     @GET
     @Path("/{id}")
     @Produces("application/json")
-    public Response get(@PathParam("id") int id) throws Exception {
+    public Response get(@Context HttpServletRequest req, @PathParam("id") int id) throws Exception {
+        setUser(req);
 
         this.member = (Member) th.runTransaction(conn -> {
             Member member = memberDAO.findById(id);
@@ -112,7 +118,8 @@ public class MemberService extends BaseRESTService {
     @Path("/{id}")
     @Consumes("application/json")
     @Produces("application/json")
-    public Response update(@PathParam("id") int id, Member member) throws Exception {
+    public Response update(@Context HttpServletRequest req, @PathParam("id") int id, Member member) throws Exception {
+        setUser(req);
 
         if(!userIs(CASHIER)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);

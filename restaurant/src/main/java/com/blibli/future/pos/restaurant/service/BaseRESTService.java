@@ -10,6 +10,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.MDC;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.NotAuthorizedException;
 
@@ -24,14 +26,22 @@ public abstract class BaseRESTService {
     protected static TransactionHandler th;
     protected static BaseResponse baseResponse;
     protected static String json;
-    protected static Integer userId;
-    protected static Integer restaurantId;
-    protected static String ROLE = null;
+    protected Integer userId;
+    protected Integer restaurantId;
+    protected String ROLE = null;
 
     static {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
+    protected void setUser(HttpServletRequest req){
+        HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("user");
+        userId = user.getId();
+        restaurantId = user.getRestaurantId();
+        ROLE = user.getRole();
+    }
+//
     protected boolean userIs(String role) {
         if(userId == null){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);

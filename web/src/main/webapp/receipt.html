@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Invoice #</title>
+    <link rel="stylesheet" type="text/css" href="/assets/receipt/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+    <div class="row">
+        <div class="span4">
+            <img src="/assets/img/logo-small.png" class="img-rounded logo">
+            <address>
+                <strong>Restaurant #<span id="restaurant-id">-</span></strong><br>
+                <span id="restaurant-address">-</span><br>
+                <span id="restaurant-phone">-</span><br>
+            </address>
+            <div style="clear: both"></div>
+        </div>
+        <div class="span4 well">
+            <table class="invoice-head">
+                <tbody>
+                <tr>
+                    <td class="pull-right"><strong>Invoice #</strong></td>
+                    <td><span id="invoice-id">-</span></td>
+                </tr>
+                <tr>
+                    <td class="pull-right"><strong>Date</strong></td>
+                    <td><span id="invoice-date">-</span></td>
+                </tr>
+                <tr>
+                    <td class="pull-right"><strong>Member #</strong></td>
+                    <td><span id="member-id">-</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8">
+            <h2>Invoice</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8 well invoice-body">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Count</th>
+                    <th>Subtotal</th>
+                </tr>
+                </thead>
+                <tbody id="item-list">
+                <!--<tr>-->
+                    <!--<td>Ayam bakar</td>-->
+                    <!--<td>12</td>-->
+                    <!--<td>Rp300000</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                    <!--<td><strong>Total</strong></td>-->
+                    <!--<td>&nbsp;</td>-->
+                    <!--<td><strong>Rp300000</strong></td>-->
+                <!--</tr>-->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <button class="btn btn-default" onclick="printReceipt()" style="width: 100%" id="print-btn">Print Receipt</button>
+    </div>
+</div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<script>
+    document.write("<script type='text/javascript' src='/assets/receipt/script.js?v=" + Date.now() + "'><\/script>");
+</script>
+</html>

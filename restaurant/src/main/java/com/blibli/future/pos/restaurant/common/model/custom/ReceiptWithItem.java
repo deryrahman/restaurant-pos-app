@@ -3,6 +3,7 @@ package com.blibli.future.pos.restaurant.common.model.custom;
 import com.blibli.future.pos.restaurant.common.model.BaseResource;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ public class ReceiptWithItem extends BaseResource {
     private Integer memberId;
     private String note;
     private BigDecimal tax;
+    private Timestamp timestamp;
     private List<ItemOnReceipt> items;
 
     public ReceiptWithItem() {
@@ -55,6 +57,14 @@ public class ReceiptWithItem extends BaseResource {
 
     public void setItems(List<ItemOnReceipt> items) {
         this.items = items;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
     @Override

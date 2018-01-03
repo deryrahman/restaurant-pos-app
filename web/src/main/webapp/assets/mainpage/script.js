@@ -1,5 +1,6 @@
 var pageRole = "cashier";
 
+var cookie;
 var token = Cookies.get("POSRESTAURANT");
 var config;
 var baseUrl;
@@ -68,9 +69,13 @@ function getJSON(async, url, callback, err){
             callback(data)
         },
         error: function (e) {
-            console.log(e.responseJSON.message);
-            alert("Error GET Request! See log for further information");
-            err();
+            if(e.responseJSON) {
+                console.log(e.responseJSON.message);
+            }
+            // alert("Error GET Request! See log for further information");
+            if(err) {
+                err(e);
+            }
         }
     });
 }
@@ -84,9 +89,13 @@ function postJSON(async, url, data, callback, err){
             callback(data)
         },
         error: function (e) {
-            console.log(e.responseJSON.message);
-            alert("Error POST Request! See log for further information");
-            err();
+            if(e.responseJSON) {
+                console.log(e.responseJSON.message);
+            }
+            // alert("Error POST Request! See log for further information");
+            if(err) {
+                err(e);
+            }
         }
     });
 }
@@ -100,9 +109,13 @@ function putJSON(async, url, data, callback,err){
             callback(data)
         },
         error: function (e) {
-            console.log(e.responseJSON.message);
-            alert("Error PUT Request! See log for further information");
-            err();
+            if(e.responseJSON) {
+                console.log(e.responseJSON.message);
+            }
+            // alert("Error PUT Request! See log for further information");
+            if(err) {
+                err(e);
+            }
         }
     });
 }
@@ -115,9 +128,13 @@ function deleteJSON(async, url, callback, err){
             callback(data)
         },
         error: function (e) {
-            console.log(e.responseJSON.message);
-            alert("Error PUT Request! See log for further information");
-            err();
+            if(e.responseJSON) {
+                console.log(e.responseJSON.message);
+            }
+            // alert("Error DELETE Request! See log for further information");
+            if(err) {
+                err(e);
+            }
         }
     });
 }
@@ -145,7 +162,7 @@ function initializePage() {
     }
 }
 function loadNavbar() {
-    $('#navbar-container').load('template/navbar.html', function(){
+    $('#navbar-container').load('fragment/navbar.html', function(){
         console.log("load navbar");
         setNavbar();
     });
@@ -178,7 +195,7 @@ function itemToHTML(item){
         "<div class='well dash-box'>" +
         "<h4 class='title-item'>"+item.itemName+"</h4>" +
         "<div>Stock : <span class='item-stock-"+item.itemId+"'>"+item.stock+"</span></div>" +
-        "<div>Rp "+item.price+"</div>"+
+        "<div>Rp <span class='price-item'>"+item.price+"</span></div>"+
         "</div>" +
         "</div>";
     return result;
@@ -207,9 +224,14 @@ function loadItemByCategoryId(id) {
                     itemToHTML(item)
                 )
             });
-            console.log(dataLists);
             $("#category-panel-" + id).empty().append(items);
             renderMain();
+        }, function(e){
+            if(e.responseJSON){
+                if(e.responseJSON.statusCode == 404){
+                    $('#not-found-'+id).show();
+                }
+            }
         });
     }
 }
@@ -226,7 +248,13 @@ function categoryToHTML(category) {
     return result;
 }
 function categoryPanelToHTML(id){
-    var result = "<div class='tab-pane fade' id='category-panel-"+id+"'></div>";
+    var result = "<div class='tab-pane fade' id='category-panel-"+id+"'>" +
+        "<div class='container' id='not-found-"+id+"' style='display: none'>" +
+        "<div class='jumbotron'>" +
+        "<h3>Item Not Found</h3>" +
+        "</div>" +
+        "</div>" +
+        "</div>";
     return result;
 }
 
@@ -237,6 +265,7 @@ function loadNavCategory() {
         var categoryPanels = [];
         payload.forEach(function(category){
             dataLists.categories[category.id] = category;
+
             categories.push(
                 categoryToHTML(category)
             );
@@ -397,14 +426,37 @@ function makeReceipt(){
     });
     var data = [];
     data.push(receipt);
-    postJSON(false,serviceUrls.receipt,data,function (e) {
+    postJSON(true,serviceUrls.receipt,data,function (e) {
         var payload = e.payload;
         var resultId = "";
+        var timestamp = "";
+        var memberId = "-";
+        if(dataLists.member) {
+            memberId = dataLists.member.id;
+        }
         payload.forEach(function(data){
-            resultId += data.receiptId;
+            resultId = data.receiptId;
+            timestamp = data.timestamp;
         });
+        var itemOnCookie = [];
+        $.each(dataLists.itemOnSidebar, function(key,val){
+            var item = {
+                "name" : $('.item-'+key+' .title-item').text(),
+                "count" : val.count,
+                "price" : $('.item-'+key+' .price-item').text()
+            };
+            itemOnCookie.push(item);
+        });
+        cookie = {
+            "id" : resultId,
+            "data" : timestamp,
+            "memberId" : memberId,
+            "restaurantId" : userData.restaurantInfo.id,
+            "items" : itemOnCookie,
+            "tax" : dataLists.receipt.tax
+        };
         alert("Success make receipt. Id : "+resultId);
-        window.location.replace(config.pages.home);
+        $('#modal-download-receipt').modal('show');
     });
 }
 
@@ -498,4 +550,10 @@ function editMember(){
 function removeMember(){
     delete dataLists.member;
     renderMemberInfo();
+}
+
+function openReceipt(){
+    Cookies.set('receipt', cookie);
+    window.open('/receipt.html','_blank');
+    window.location.replace(config.pages.home);
 }

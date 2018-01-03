@@ -13,9 +13,12 @@ import com.blibli.future.pos.restaurant.dao.receipt.ReceiptDAOMysql;
 import com.blibli.future.pos.restaurant.dao.custom.receiptwithitem.ReceiptWithItemDAOMysql;
 import com.blibli.future.pos.restaurant.dao.restaurant.RestaurantDAOMysql;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +42,8 @@ public class ReceiptService extends BaseRESTService{
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response create(List<ReceiptWithItem> receiptWithItemList) throws Exception {
+    public Response create(@Context HttpServletRequest req, List<ReceiptWithItem> receiptWithItemList) throws Exception {
+        setUser(req);
 
         if(!userIs(CASHIER)){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);
@@ -128,6 +132,8 @@ public class ReceiptService extends BaseRESTService{
             // Create receipt first
             receiptDAO.create(receipt);
             receiptWithItem.setReceiptId(receipt.getId());
+            Timestamp ts = receiptDAO.findById(receipt.getId()).getTimestampCreated();
+            receiptWithItem.setTimestamp(ts);
             // create receipt with item
             receiptWithItemDAO.create(receiptWithItem);
             return null;
@@ -136,7 +142,8 @@ public class ReceiptService extends BaseRESTService{
 
     @GET
     @Produces("application/json")
-    public Response getAll() throws Exception {
+    public Response getAll(@Context HttpServletRequest req) throws Exception {
+        setUser(req);
 
         if(userIs(ADMIN)){
             receipts = (List<Receipt>) th.runTransaction(conn -> {
@@ -187,7 +194,8 @@ public class ReceiptService extends BaseRESTService{
     @GET
     @Path("/{id}")
     @Produces("application/json")
-    public Response get(@PathParam("id") int id) throws Exception {
+    public Response get(@Context HttpServletRequest req, @PathParam("id") int id) throws Exception {
+        setUser(req);
 
         if(!(userIs(ADMIN) || userIs(MANAGER))){
             throw new NotAuthorizedException(ErrorMessage.USER_NOT_ALLOWED);

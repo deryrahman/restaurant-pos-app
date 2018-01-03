@@ -3,6 +3,7 @@ package com.blibli.future.pos.restaurant;
 import com.blibli.future.pos.restaurant.common.ApplicationContex;
 import com.blibli.future.pos.restaurant.common.ErrorMessage;
 import com.blibli.future.pos.restaurant.common.model.Config;
+import com.blibli.future.pos.restaurant.common.model.User;
 import com.blibli.future.pos.restaurant.service.BaseRESTService;
 import com.blibli.future.pos.restaurant.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,13 +48,14 @@ public class AuthenticationFitler implements ContainerRequestFilter {
         if(session.getAttribute("userId") == null || session.getAttribute("userId") != userId){
             System.out.println("init User : " + userId);
             try {
-                UserService.initUser(userId);
+                User user = UserService.getUser(userId);
+                session.setAttribute("user",user);
             } catch (Exception e) {
                 throw new IOException(e.toString());
             }
         }
         session.setAttribute("refreshToken",refreshToken);
-        session.setAttribute("userId",userId);
+        ApplicationContex.getServletContext().setAttribute("session", session);
     }
 
     private Cookie getCookie(String key) {
