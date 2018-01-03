@@ -2,10 +2,12 @@ package api.v1;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mysql.jdbc.StringUtils;
 import exception.*;
 import model.response.IdentityPayload;
 import model.response.ResponseBody;
 import model.uid.UserIdentity;
+import org.mindrot.jbcrypt.BCrypt;
 import service.UserIdentityService;
 
 import javax.servlet.ServletException;
@@ -82,12 +84,11 @@ public class UserIdentityServlet extends HttpServlet {
         try {
             if (isPathProvided(request.getPathInfo())) {
                 long id = getIdFromPath(request.getPathInfo());
-                UserIdentityService.findById(id);
 
                 jsonBody = extractBody(request);
                 Map<String, Object> userMap = jsonToMap(jsonBody);
                 userMap.put("id", id);
-                UserIdentity updatedUserIdentity = UserIdentityService.updateFromMap(userMap);
+                UserIdentity updatedUserIdentity = updateUserFromMap(userMap);
 
                 payloads.add(new IdentityPayload(updatedUserIdentity));
                 message = "Successfully updated user identity.";
@@ -122,6 +123,48 @@ public class UserIdentityServlet extends HttpServlet {
             ResponseBody<IdentityPayload> responseBody = new ResponseBody<>(message, payloads);
             output.write(responseBody.toJSON());
             output.close();
+        }
+    }
+
+    private UserIdentity updateUserFromMap(Map<String, Object> userMap) throws Exception {
+        UserIdentity oldIdentity = UserIdentityService.findById((long) userMap.get("id"));
+        String newUsername = compareAndChoose(oldIdentity.getUsername(), userMap.get("username"));
+        String newRole = compareAndChoose(oldIdentity.getRole(), userMap.get("role"));
+        String newPassword = compareAndChoose(oldIdentity.getPassword(), userMap.get("password"), true);
+
+        oldIdentity.setUsername(newUsername);
+        oldIdentity.setRole(newRole);
+        oldIdentity.setPassword(newPassword, true);
+
+        return UserIdentityService.update(oldIdentity);
+    }
+
+    private String compareAndChoose(String oldAttribute, Object newAttribute) {
+        if (newAttribute != null) {
+            if (!newAttribute.equals("")) {
+                return (String) newAttribute;
+            } else {
+                return oldAttribute;
+            }
+        } else {
+            return oldAttribute;
+        }
+    }
+
+    private String compareAndChoose(String oldAttribute, Object newAttribute, boolean isPassword) {
+        if (isPassword) {
+            if (newAttribute != null) {
+                if (!newAttribute.equals("")) {
+                    String password = (String) newAttribute;
+                    return BCrypt.hashpw(password, BCrypt.gensalt());
+                } else {
+                    return  oldAttribute;
+                }
+            } else {
+                return oldAttribute;
+            }
+        } else {
+            return compareAndChoose(oldAttribute, newAttribute);
         }
     }
 
