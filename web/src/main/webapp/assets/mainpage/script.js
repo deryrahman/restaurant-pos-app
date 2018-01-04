@@ -163,7 +163,6 @@ function initializePage() {
 }
 function loadNavbar() {
     $('#navbar-container').load('fragment/navbar.html', function(){
-        console.log("load navbar");
         setNavbar();
     });
 }
@@ -208,7 +207,6 @@ function loadItemByCategoryId(id) {
         url = serviceUrls.category+"/"+id+"/items";
     }
     if(dataLists.categories[id].items){
-        console.log("Already loaded");
         return;
     } else {
         getJSON(true, url, function (data) {
@@ -407,7 +405,6 @@ function addNote() {
         delete dataLists.receipt.note;
         $('#add-note-btn').text("Add Note");
     } else {
-        console.log("here");
         dataLists.receipt.note = $('#note').val();
         $('#add-note-btn').text("Edit Note");
     }
@@ -524,7 +521,6 @@ function newMember(){
     memberList.push(member);
     postJSON(false,serviceUrls.member,memberList,function(data){
         var payload = data.payload;
-        console.log(payload);
         $.each(payload,function(id, data){
             alert("New Member with Id : " + data.id);
             dataLists.member = data;
