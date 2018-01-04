@@ -27,7 +27,6 @@ $(document).ready(function() {
             data: data
         }).done(function (token) {
             Cookies.set('POSRESTAURANT', token);
-            console.log(token);
 
         }).then(function (token) {
             return $.ajax(parserUrl, {
@@ -45,7 +44,6 @@ $(document).ready(function() {
             } else if (userInfo.role === "manager") {
                 window.location.assign(config.pages.manager);
             }
-            console.log(userInfo);
 
         }).fail(function (jqXHR) {
             $("#overlay").hide();

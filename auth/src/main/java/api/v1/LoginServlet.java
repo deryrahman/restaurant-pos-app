@@ -22,6 +22,7 @@ import static service.TokenService.generateJwtFromMap;
 public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setContentType("text/plain");
         PrintWriter output = response.getWriter();
 
         String jwt = null;
