@@ -280,18 +280,21 @@ function loadNavCategory() {
 }
 
 function addItem(id){
-    console.log(id);
-    if(dataLists.itemOnSidebar[id]){
-        dataLists.itemOnSidebar[id].count+=1;
+    if(dataLists.items[id].stock-1<0){
+        alert("Stock limited!");
     } else {
-        dataLists.itemOnSidebar[id] = {
-            "itemId": id,
-            "count": 1
-        };
+        if (dataLists.itemOnSidebar[id]) {
+            dataLists.itemOnSidebar[id].count += 1;
+        } else {
+            dataLists.itemOnSidebar[id] = {
+                "itemId": id,
+                "count": 1
+            };
+        }
+        dataLists.items[id].stock -= 1;
+        renderSidebar();
+        renderMain();
     }
-    dataLists.items[id].stock-=1;
-    renderSidebar();
-    renderMain();
 }
 
 function renderSidebar(){
