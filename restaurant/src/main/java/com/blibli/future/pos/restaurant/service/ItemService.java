@@ -84,12 +84,12 @@ public class ItemService extends BaseRESTService{
         }
 
         List<ItemWithStock> itemWithStockList = (List<ItemWithStock>) th.runTransaction(conn -> {
-            List<ItemWithStock> itemWithStockList1 = itemWithStockDAO.findByRestaurantId(this.restaurantId, "true");
+            List<ItemWithStock> itemWithStockList1 = itemWithStockDAO.findByRestaurantId(this.restaurantId, "status='publish'");
             if(itemWithStockList1.size()==0){
                 throw new NotFoundException(ErrorMessage.NotFoundFrom(item));
             }
             if(userIs(MANAGER)){
-                items = itemDAO.find("true");
+                items = itemDAO.find("status='publish'");
                 int j = 0;
                 for (int i = 0; i<itemWithStockList1.size(); i++) {
                     for(;j<items.size();j++){
@@ -144,7 +144,7 @@ public class ItemService extends BaseRESTService{
         if(userIs(ADMIN)) {
             item = (Item) th.runTransaction(conn -> {
                 Item item = itemDAO.findById(id);
-                if (item.isEmpty()) {
+                if (item.isEmpty() || !item.getStatus().equals("publish")) {
                     throw new NotFoundException(ErrorMessage.NotFoundFrom(item));
                 }
                 return item;
