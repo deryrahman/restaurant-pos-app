@@ -1,5 +1,5 @@
 {
-  "baseUrl": "file:///home/dery/IdeaProjects/restaurant-pos-app/web/src/main/webapp/",
+  "baseUrl": "https://peregrine.cf",
   "serviceUrl": "http://peregrine.cf:8080",
   "endpoints": {
     "login": "/auth/login",
