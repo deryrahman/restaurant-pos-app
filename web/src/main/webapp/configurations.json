@@ -1,5 +1,5 @@
 {
-  "baseUrl": "https://peregrine.cf",
+  "baseUrl": "http://peregrine.cf:8080",
   "serviceUrl": "http://peregrine.cf:8080",
   "endpoints": {
     "login": "/auth/login",

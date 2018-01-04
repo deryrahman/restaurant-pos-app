@@ -559,7 +559,7 @@ function openReceipt(){
     window.location.replace(config.pages.home);
 }
 
-$('#logout-btn').click(function (e) {
+function logout(){
     Cookies.remove("POSRESTAURANT");
     window.location.assign(config.pages.login);
-});
+}

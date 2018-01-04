@@ -61,6 +61,7 @@ public class LoginServlet extends HttpServlet {
                     }
                     cookie.setValue(jwt);
                     cookie.setMaxAge(60 * 60 * 24 * 365);
+                    cookie.setDomain(":8080");
                     cookie.setPath("/");
                     response.addCookie(cookie);
                 }

@@ -3,7 +3,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
-
+    <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>com.blibli.future.pos.restaurant.CORSFilter</filter-class>
+    </filter>
     <servlet>
         <servlet-name>Jersey Servlet</servlet-name>
         <servlet-class>
@@ -19,4 +22,8 @@
         <servlet-name>Jersey Servlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
+    <filter-mapping>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 </web-app>
