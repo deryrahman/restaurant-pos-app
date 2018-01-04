@@ -249,7 +249,7 @@ function categoryToHTML(category) {
 }
 function categoryPanelToHTML(id){
     var result = "<div class='tab-pane fade' id='category-panel-"+id+"'>" +
-        "<div class='container' id='not-found-"+id+"' style='display: none'>" +
+        "<div class='container not-found-page' id='not-found-"+id+"' style='display: none'>" +
         "<div class='jumbotron'>" +
         "<h3>Item Not Found</h3>" +
         "</div>" +
