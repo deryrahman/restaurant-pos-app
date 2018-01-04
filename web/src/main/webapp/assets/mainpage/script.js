@@ -557,3 +557,8 @@ function openReceipt(){
     window.open('/receipt.html','_blank');
     window.location.replace(config.pages.home);
 }
+
+$('#logout-btn').click(function (e) {
+    Cookies.remove("POSRESTAURANT");
+    window.location.assign(config.pages.login);
+});
