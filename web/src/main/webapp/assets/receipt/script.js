@@ -91,13 +91,14 @@ var receipt;
     $.getJSON(configUrl, function (data) {
         var config = data;
         var baseUrl = config.baseUrl;
-        serviceUrls.parser = baseUrl + config.endpoints.parser;
-        serviceUrls.user = baseUrl + config.endpoints.user;
-        serviceUrls.item = baseUrl + config.endpoints.item;
-        serviceUrls.category = baseUrl + config.endpoints.category;
-        serviceUrls.restaurant = baseUrl + config.endpoints.restaurant;
-        serviceUrls.member = baseUrl + config.endpoints.member;
-        serviceUrls.receipt = baseUrl + config.endpoints.receipt;
+        var serviceUrl = config.serviceUrl;
+        serviceUrls.parser = serviceUrl + config.endpoints.parser;
+        serviceUrls.user = serviceUrl + config.endpoints.user;
+        serviceUrls.item = serviceUrl + config.endpoints.item;
+        serviceUrls.category = serviceUrl + config.endpoints.category;
+        serviceUrls.restaurant = serviceUrl + config.endpoints.restaurant;
+        serviceUrls.member = serviceUrl + config.endpoints.member;
+        serviceUrls.receipt = serviceUrl + config.endpoints.receipt;
     }).done(function () {
         renderReceipt();
     });

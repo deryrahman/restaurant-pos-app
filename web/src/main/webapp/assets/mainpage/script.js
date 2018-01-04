@@ -4,6 +4,7 @@ var cookie;
 var token = Cookies.get("POSRESTAURANT");
 var config;
 var baseUrl;
+var serviceUrl;
 var serviceUrls = {};
 var userData = {};
 var itemIdToRemove;
@@ -29,13 +30,14 @@ $(document).ready(function () {
         $.getJSON(configUrl, function (data) {
             config = data;
             baseUrl = config.baseUrl;
-            serviceUrls.parser = baseUrl + config.endpoints.parser;
-            serviceUrls.user = baseUrl + config.endpoints.user;
-            serviceUrls.item = baseUrl + config.endpoints.item;
-            serviceUrls.category = baseUrl + config.endpoints.category;
-            serviceUrls.restaurant = baseUrl + config.endpoints.restaurant;
-            serviceUrls.member = baseUrl + config.endpoints.member;
-            serviceUrls.receipt = baseUrl + config.endpoints.receipt;
+            serviceUrl = config.serviceUrl;
+            serviceUrls.parser = serviceUrl + config.endpoints.parser;
+            serviceUrls.user = serviceUrl + config.endpoints.user;
+            serviceUrls.item = serviceUrl + config.endpoints.item;
+            serviceUrls.category = serviceUrl + config.endpoints.category;
+            serviceUrls.restaurant = serviceUrl + config.endpoints.restaurant;
+            serviceUrls.member = serviceUrl + config.endpoints.member;
+            serviceUrls.receipt = serviceUrl + config.endpoints.receipt;
         }).done(function () {
             $.ajax(serviceUrls.parser, {
                 method: "POST",

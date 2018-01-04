@@ -2,6 +2,7 @@ $(document).ready(function() {
 
     var config;
     var baseUrl;
+    var serviceUrl;
     var loginUrl;
     var parserUrl;
 
@@ -9,8 +10,9 @@ $(document).ready(function() {
     $.getJSON(configUrl, function (data) {
         config = data;
         baseUrl = config.baseUrl;
-        loginUrl = baseUrl + config.endpoints.login;
-        parserUrl = baseUrl + config.endpoints.parser;
+        serviceUrl = config.serviceUrl;
+        loginUrl = serviceUrl + config.endpoints.login;
+        parserUrl = serviceUrl + config.endpoints.parser;
     });
 
     $('#login-form').submit(function (e) {

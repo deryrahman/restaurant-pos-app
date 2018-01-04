@@ -10,6 +10,7 @@ $(document).ready(function () {
 
     var config;
     var baseUrl;
+    var serviceUrl;
     var serviceUrls = {};
     var tableStructures = {};
     var tableHeaders = {};
@@ -27,8 +28,9 @@ $(document).ready(function () {
         $.getJSON(configUrl, function (data) {
             config = data;
             baseUrl = config.baseUrl;
+            serviceUrl = config.serviceUrl;
             $.each(config.endpoints, function (service, url) {
-                serviceUrls[service] = baseUrl + url;
+                serviceUrls[service] = serviceUrl + url;
             });
             requestBodyFormat = config.requestBodyFormat;
             tableHeaders = config.tableHeaders;
