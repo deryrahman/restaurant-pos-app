@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class JBCryptTest {
     public static void main(String[] args) {
-        String password = "test";
+        String password = "iqbal";
         String salt = BCrypt.gensalt();
         String hashed = BCrypt.hashpw(password, salt);
 
