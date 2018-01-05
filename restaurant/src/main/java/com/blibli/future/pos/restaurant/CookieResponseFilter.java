@@ -2,32 +2,32 @@ package com.blibli.future.pos.restaurant;
 
 import org.apache.log4j.MDC;
 
+import javax.servlet.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.NewCookie;
-import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 
-@Provider
-public class CookieResponseFilter implements ContainerResponseFilter {
-    @Context
-    HttpServletRequest httpRequest;
-    @Context
-    HttpServletResponse httpResponse;
+public class CookieResponseFilter implements Filter {
+
+    HttpServletRequest httpServletRequest;
+    HttpServletResponse httpServletResponse;
 
     @Override
-    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        httpServletRequest = (HttpServletRequest) request;
+        httpServletResponse = (HttpServletResponse) response;
+
         Cookie cookie = null;
-        HttpSession session = httpRequest.getSession();
-        if (httpRequest.getCookies() != null) {
-            for (Cookie cookie1 : httpRequest.getCookies()) {
+        if (httpServletRequest.getCookies() != null) {
+            for (Cookie cookie1 : httpServletRequest.getCookies()) {
                 if (cookie1.getName().equals("POSRESTAURANT")) {
                     cookie = cookie1;
                 }
@@ -36,10 +36,16 @@ public class CookieResponseFilter implements ContainerResponseFilter {
         if(cookie == null){
             throw new NotAuthorizedException("Not valid cookie");
         }
-        String refreshToken = (String) session.getAttribute("refreshToken");
+        String refreshToken = (String) httpServletRequest.getAttribute("refreshToken");
         cookie.setValue(refreshToken);
         cookie.setMaxAge(60*60*24*365);
         cookie.setPath("/");
-        httpResponse.addCookie(cookie);
+        httpServletResponse.addCookie(cookie);
+        chain.doFilter(request,response);
+    }
+
+    @Override
+    public void destroy() {
+
     }
 }

@@ -35,8 +35,7 @@ public abstract class BaseRESTService {
     }
 
     protected void setUser(HttpServletRequest req){
-        HttpSession session = req.getSession();
-        User user = (User) session.getAttribute("user");
+        User user = (User) req.getAttribute("user");
         userId = user.getId();
         restaurantId = user.getRestaurantId();
         ROLE = user.getRole();

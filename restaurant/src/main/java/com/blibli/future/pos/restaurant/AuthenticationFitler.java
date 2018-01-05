@@ -10,68 +10,41 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 import org.apache.log4j.MDC;
 
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.servlet.http.Cookie;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Cookie;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.util.Map;
 
-@Provider
-public class AuthenticationFitler implements ContainerRequestFilter {
-
-    @Context
-    HttpServletRequest httpRequest;
+public class AuthenticationFitler implements Filter {
 
     private static final Config config = (Config) ApplicationContex.getServletContext().getAttribute("restaurantConfig");
-    private ContainerRequestContext requestContext;
 
-    @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException {
-        this.requestContext = requestContext;
-        HttpSession session = httpRequest.getSession();
-        // get cookie
-        Cookie cookie = getCookie("POSRESTAURANT");
-        // get response from cookie
-        Map<String,Object> response = getTokenResponse(cookie);
-        // get payload
-        Map<String,Object> payload = (Map<String,Object>) response.get("payload");
-
-        String refreshToken = payload.get("refreshToken").toString();
-        Integer userId = Integer.valueOf(payload.get("id").toString());
-
-        if(session.getAttribute("userId") == null || session.getAttribute("userId") != userId){
-            System.out.println("init User : " + userId);
-            try {
-                User user = UserService.getUser(userId);
-                session.setAttribute("user",user);
-            } catch (Exception e) {
-                throw new IOException(e.toString());
-            }
-        }
-        session.setAttribute("refreshToken",refreshToken);
-        ApplicationContex.getServletContext().setAttribute("session", session);
-    }
+    HttpServletRequest httpServletRequest;
 
     private Cookie getCookie(String key) {
         Cookie cookie = null;
-        Map<String,Cookie> cookies = requestContext.getCookies();
-        for (Map.Entry<String, Cookie> pair : cookies.entrySet()) {
-            if(pair.getKey().equals(key)){
-                cookie = pair.getValue();
+        if (httpServletRequest.getCookies() != null) {
+            for (Cookie cookie1 : httpServletRequest.getCookies()) {
+                if (cookie1.getName().equals("POSRESTAURANT")) {
+                    cookie = cookie1;
+                }
             }
         }
         if(cookie == null){
-            throw new NotFoundException("Cookie not found");
+            throw new NotAuthorizedException("Not valid cookie");
         }
         return cookie;
     }
-
+//
     private Map<String,Object> getTokenResponse(Cookie cookie) throws IOException {
         OkHttpClient client = new OkHttpClient();
         FormBody requestBody = new FormBody.Builder().add("token",cookie.getValue()).build();
@@ -93,5 +66,47 @@ public class AuthenticationFitler implements ContainerRequestFilter {
             throw new NotAuthorizedException("Invalid token");
         }
         return result;
+    }
+//
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+
+        httpServletRequest = (HttpServletRequest) request;
+        Cookie cookie = getCookie("POSRESTAURANT");
+        // get response from cookie
+        Map<String,Object> responseMap = getTokenResponse(cookie);
+        // get payload
+        Map<String,Object> payload = (Map<String,Object>) responseMap.get("payload");
+
+        String refreshToken = payload.get("refreshToken").toString();
+        Integer userId = Integer.valueOf(payload.get("id").toString());
+        String role = payload.get("role").toString();
+
+
+        User user = null;
+        try {
+            user = UserService.getUser(userId);
+            user.setRole(role);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(user == null){
+            throw new NotAuthorizedException("");
+        }
+
+        httpServletRequest.setAttribute("user", user);
+        httpServletRequest.setAttribute("refreshToken", refreshToken);
+        chain.doFilter(request,response);
+    }
+
+    @Override
+    public void destroy() {
+
     }
 }
