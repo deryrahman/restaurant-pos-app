@@ -145,10 +145,6 @@ body {
 }
 
 
-.modal-footer {
-    padding: 0;
-}
-
 .modal-footer .btn-group button {
     height:40px;
     border-top-left-radius : 0;
