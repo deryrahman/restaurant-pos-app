@@ -452,7 +452,7 @@ function makeReceipt(){
         });
         cookie = {
             "id" : resultId,
-            "data" : timestamp,
+            "timestamp" : timestamp,
             "memberId" : memberId,
             "restaurantId" : userData.restaurantInfo.id,
             "items" : itemOnCookie,

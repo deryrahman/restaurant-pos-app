@@ -1,12 +1,14 @@
 package com.blibli.future.pos.restaurant.common.model.custom;
 
+import com.blibli.future.pos.restaurant.common.model.BaseResource;
 import com.blibli.future.pos.restaurant.common.model.Receipt;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
-public class Ledger {
+public class Ledger extends BaseResource {
     private Timestamp startTime;
     private Timestamp endTime;
     private BigDecimal total;
@@ -65,5 +67,20 @@ public class Ledger {
                 ", restaurantId=" + restaurantId +
                 ", receipts=" + receipts +
                 '}';
+    }
+
+    @Override
+    public Boolean isEmpty() {
+        return null;
+    }
+
+    @Override
+    public Boolean notValidAttribute() {
+        return null;
+    }
+
+    @Override
+    public Map<String, String> requiredAttribute() {
+        return null;
     }
 }
