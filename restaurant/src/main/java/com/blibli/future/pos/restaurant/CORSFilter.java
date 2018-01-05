@@ -34,7 +34,7 @@ public class CORSFilter implements Filter {
             return;
         }
 
-        chain.doFilter(httpServletRequest, response);
+        chain.doFilter(request, response);
     }
 
     public void destroy() {

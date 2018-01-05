@@ -1,26 +1,17 @@
 package com.blibli.future.pos.restaurant;
 
 import com.blibli.future.pos.restaurant.common.ApplicationContex;
-import com.blibli.future.pos.restaurant.common.ErrorMessage;
 import com.blibli.future.pos.restaurant.common.model.Config;
 import com.blibli.future.pos.restaurant.common.model.User;
-import com.blibli.future.pos.restaurant.service.BaseRESTService;
 import com.blibli.future.pos.restaurant.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
-import org.apache.log4j.MDC;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
 import javax.servlet.http.Cookie;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.util.Map;
 
@@ -28,14 +19,18 @@ public class AuthenticationFitler implements Filter {
 
     private static final Config config = (Config) ApplicationContex.getServletContext().getAttribute("restaurantConfig");
 
-    HttpServletRequest httpServletRequest;
-
-    private Cookie getCookie(String key) {
+    private Cookie getCookie(String key, HttpServletRequest httpServletRequest) {
         Cookie cookie = null;
-        if (httpServletRequest.getCookies() != null) {
-            for (Cookie cookie1 : httpServletRequest.getCookies()) {
-                if (cookie1.getName().equals("POSRESTAURANT")) {
-                    cookie = cookie1;
+        Cookie[] cookies = httpServletRequest.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie1 : cookies) {
+                try {
+                    if (cookie1.getName().equals(key)) {
+                        cookie = cookie1;
+                        break;
+                    }
+                } catch (Exception e){
+                    System.out.println(e.getMessage());
                 }
             }
         }
@@ -44,7 +39,7 @@ public class AuthenticationFitler implements Filter {
         }
         return cookie;
     }
-//
+
     private Map<String,Object> getTokenResponse(Cookie cookie) throws IOException {
         OkHttpClient client = new OkHttpClient();
         FormBody requestBody = new FormBody.Builder().add("token",cookie.getValue()).build();
@@ -67,7 +62,7 @@ public class AuthenticationFitler implements Filter {
         }
         return result;
     }
-//
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -76,8 +71,10 @@ public class AuthenticationFitler implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        httpServletRequest = (HttpServletRequest) request;
-        Cookie cookie = getCookie("POSRESTAURANT");
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+
+        Cookie cookie = getCookie("POSRESTAURANT",httpServletRequest);
         // get response from cookie
         Map<String,Object> responseMap = getTokenResponse(cookie);
         // get payload
@@ -101,7 +98,12 @@ public class AuthenticationFitler implements Filter {
         }
 
         httpServletRequest.setAttribute("user", user);
-        httpServletRequest.setAttribute("refreshToken", refreshToken);
+
+        cookie.setValue(refreshToken);
+        cookie.setMaxAge(60*60*24*365);
+        cookie.setPath("/");
+        httpServletResponse.addCookie(cookie);
+
         chain.doFilter(request,response);
     }
 
