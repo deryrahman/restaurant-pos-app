@@ -85,32 +85,43 @@ public class ItemService extends BaseRESTService{
 
         List<ItemWithStock> itemWithStockList = (List<ItemWithStock>) th.runTransaction(conn -> {
             List<ItemWithStock> itemWithStockList1 = itemWithStockDAO.findByRestaurantId(this.restaurantId, "status='publish'");
-            if(itemWithStockList1.size()==0){
-                throw new NotFoundException(ErrorMessage.NotFoundFrom(item));
-            }
+
             if(userIs(MANAGER)){
                 items = itemDAO.find("status='publish'");
-                int j = 0;
-                for (int i = 0; i<itemWithStockList1.size(); i++) {
-                    for(;j<items.size();j++){
-                        if(items.get(j).getId() == itemWithStockList1.get(i).getItemId()){
+                if(items.isEmpty()){
+                    throw new NotFoundException(ErrorMessage.NotFoundFrom(new Item()));
+                }
+                int length1 = items.size();
+                int length2 = itemWithStockList1.size();
+
+                for(int i = 0; i < length1; i++){
+                    boolean found = false;
+                    for(int j = 0; j < length2; j++){
+                        if(items.get(i).getId() == itemWithStockList1.get(j).getItemId()){
+                            found = true;
                             break;
-                        } else {
-                            Integer itemId = items.get(j).getId();
-                            String name = items.get(j).getName();
-                            BigDecimal price = items.get(j).getPrice();
-                            Integer categoryId = items.get(j).getCategoryId();
-                            ItemWithStock newItem = new ItemWithStock();
-                            newItem.setItemId(itemId);
-                            newItem.setCategoryId(categoryId);
-                            newItem.setStock(0);
-                            newItem.setPrice(price);
-                            newItem.setItemName(name);
-                            itemWithStockList1.add(newItem);
                         }
+                    }
+                    if(!found){
+                        Integer itemId = items.get(i).getId();
+                        String name = items.get(i).getName();
+                        BigDecimal price = items.get(i).getPrice();
+                        Integer categoryId = items.get(i).getCategoryId();
+                        ItemWithStock newItem = new ItemWithStock();
+                        newItem.setItemId(itemId);
+                        newItem.setCategoryId(categoryId);
+                        newItem.setStock(0);
+                        newItem.setPrice(price);
+                        newItem.setItemName(name);
+                        itemWithStockList1.add(newItem);
                     }
                 }
             }
+
+            if(itemWithStockList1.size()==0){
+                throw new NotFoundException(ErrorMessage.NotFoundFrom(new Item()));
+            }
+
             return itemWithStockList1;
         });
 

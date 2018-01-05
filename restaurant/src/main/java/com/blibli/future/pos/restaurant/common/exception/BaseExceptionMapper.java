@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
 public class BaseExceptionMapper<T extends Exception> implements ExceptionMapper<T> {
+
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     static {

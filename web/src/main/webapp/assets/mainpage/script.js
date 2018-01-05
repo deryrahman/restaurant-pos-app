@@ -22,9 +22,6 @@ dataLists.itemOnSidebar= {};
 $(document).ready(function () {
     // Get configurations and check cookie
     (function () {
-        if (token === undefined) {
-            backToLoginPage("You are not logged in. Please login.");
-        }
 
         var configUrl = "configurations.json";
         $.getJSON(configUrl, function (data) {
@@ -38,6 +35,10 @@ $(document).ready(function () {
             serviceUrls.restaurant = serviceUrl + config.endpoints.restaurant;
             serviceUrls.member = serviceUrl + config.endpoints.member;
             serviceUrls.receipt = serviceUrl + config.endpoints.receipt;
+
+            if (token === undefined) {
+                backToLoginPage("You are not logged in. Please login.");
+            }
         }).done(function () {
             $.ajax(serviceUrls.parser, {
                 method: "POST",

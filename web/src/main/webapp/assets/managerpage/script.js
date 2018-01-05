@@ -20,9 +20,6 @@ $(document).ready(function () {
 
     // Get configurations and check cookie
     (function () {
-        if (token === undefined) {
-            backToLoginPage("You are not logged in. Please login.");
-        }
 
         var configUrl = "configurations.json";
         $.getJSON(configUrl, function (data) {
@@ -35,6 +32,9 @@ $(document).ready(function () {
             requestBodyFormat = config.requestBodyFormat;
             tableHeaders = config.tableHeaders;
             tableStructures = config.tableStructures;
+            if (token === undefined) {
+                backToLoginPage("You are not logged in. Please login.");
+            }
         }).then(function () {
             return $.ajax(serviceUrls.parser, {
                 method: "POST",
@@ -282,11 +282,11 @@ $(document).ready(function () {
             var rowId = $("#form-new-user").find(".modal-id").html();
             var dataToBeSent = formInputToObject("user");
             dataToBeSent.id = Number(rowId);
-
             sendUpdateRequest("user", dataToBeSent)
                 .then(function () {
                     var updateUrl = serviceUrls.userIdentity + "/" + dataToBeSent.id;
-                    dataToBeSent = formInputToObject("userIdentity")
+                    dataToBeSent = formInputToObject("userIdentity");
+                    console.log(dataToBeSent);
                     return $.ajax(updateUrl, {
                         method: "PUT",
                         contentType: "application/json",
@@ -385,8 +385,6 @@ $(document).ready(function () {
 
     //Bind ledger button
     function bindLedgerButton() {
-        loadRstrId();
-
         var datepickerSettings = {
             format: "yyyy-mm-dd",
             todayHighlight: true,
@@ -541,7 +539,11 @@ $(document).ready(function () {
     function fillModalForms(modalName, object) {
         var template = requestBodyFormat[modalName];
         $.each(template, function (field, elmtId) {
-            $("#form-new-"+modalName).find(elmtId).val(object[field]);
+            if(field != "role") {
+                $("#form-new-" + modalName).find(elmtId).val(object[field]);
+            } else {
+                $("#form-new-" + modalName).find("input[value="+object[field]+"]").prop("checked", true);
+            }
         });
 
         var username;
@@ -565,6 +567,7 @@ $(document).ready(function () {
         var template = requestBodyFormat[dataName];
         var newObject = {};
         $.each(template, function (field, elmtId) {
+            console.log($("#form-new-" + dataName).find(elmtId).val());
             newObject[field] = $("#form-new-" + dataName).find(elmtId).val();
         });
         return newObject;

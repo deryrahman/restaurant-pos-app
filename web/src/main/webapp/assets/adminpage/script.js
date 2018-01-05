@@ -16,10 +16,6 @@ $(document).ready(function () {
 
     // Get configurations and check cookie
     (function () {
-        if (token === undefined) {
-            backToLoginPage("You are not logged in. Please login.");
-        }
-
         var configUrl = "configurations.json";
         $.getJSON(configUrl, function (data) {
             config = data;
@@ -31,6 +27,10 @@ $(document).ready(function () {
             requestBodyFormat = config.requestBodyFormat;
             tableHeaders = config.tableHeaders;
             tableStructures = config.tableStructures;
+
+            if (token === undefined) {
+                backToLoginPage("You are not logged in. Please login.");
+            }
         }).then(function () {
             return $.ajax(serviceUrls.parser, {
                 method: "POST",
@@ -466,7 +466,11 @@ $(document).ready(function () {
     function fillModalForms(modalName, object) {
         var template = requestBodyFormat[modalName];
         $.each(template, function (field, elmtId) {
-            $("#form-new-"+modalName).find(elmtId).val(object[field]);
+            if(field != "role") {
+                $("#form-new-" + modalName).find(elmtId).val(object[field]);
+            } else {
+                $("#form-new-" + modalName).find("input[value="+object[field]+"]").prop("checked", true);
+            }
         });
 
         var username;
