@@ -22,10 +22,9 @@
                     <h3 class="modal-title modal-element-new" id="lineModalLabel">Register New User</h3>
                     <h3 class="modal-title modal-element-edit">Edit User</h3>
                 </div>
-                <div class="modal-body" id="form-new-userIdentity">
-
-                    <!-- Form Content -->
-                    <form id="form-new-user">
+                <!-- Form Content -->
+                <form id="form-new-user">
+                    <div class="modal-body" id="form-new-userIdentity">
                         <div class="modal-element-edit">
                             <label>User #ID: </label><span class="modal-id"></span>
                         </div>
@@ -59,6 +58,8 @@
                                 <input id="radio-admin" name="role" value="admin" type="radio"> Admin
                             </label>
                         </div>
+                    </div>
+                    <div class="modal-footer">
                         <div class="col-sm-2 left-side-button">
                             <button id="delete-user" type="button" class="btn btn-delete btn-link modal-element-edit">Delete</button>
                         </div>
@@ -68,10 +69,8 @@
                             <button id="update-user" type="button" class="btn btn-custom btn-update modal-element-edit">Update</button>
                         </div>
                         <div class="row buttons"></div>
-                    </form>
-
-                </div>
-                <div class="modal-footer"></div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -85,11 +84,9 @@
                     <h3 class="modal-title modal-element-new">Register New Restaurant</h3>
                     <h3 class="modal-title modal-element-edit">Edit Restaurant</h3>
                 </div>
-                <div class="modal-body">
-                    <!--<span class="modal-element-edit"><strong>Restaurant #ID: </strong><span id="modal-id"></span><br></span>-->
-
-                    <!-- Form Content -->
-                    <form id="form-new-restaurant">
+                <!-- Form Content -->
+                <form id="form-new-restaurant">
+                    <div class="modal-body">
                         <div class="modal-element-edit">
                             <label>Restaurant #ID: </label><span class="modal-id"></span>
                         </div>
@@ -101,6 +98,8 @@
                             <label for="phone">Restaurant Phone Number</label>
                             <input id="phone" name="phone" placeholder="Phone Number" type="number" class="form-control" required>
                         </div>
+                    </div>
+                    <div class="modal-footer">
                         <div class="col-sm-2 left-side-button">
                             <!--<button id="delete-restaurant" type="button" class="btn btn-delete btn-link modal-element-edit">Delete</button>-->
                         </div>
@@ -109,11 +108,9 @@
                             <button id="submit-restaurant" type="submit" class="btn btn-custom btn-submit modal-element-new">Submit</button>
                             <button id="update-restaurant" type="button" class="btn btn-custom btn-update modal-element-edit">Update</button>
                         </div>
-                        <div class="row"></div>
-                    </form>
 
-                </div>
-                <div class="modal-footer"></div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -127,10 +124,9 @@
                     <h3 class="modal-title modal-element-new">Create New Category</h3>
                     <h3 class="modal-title modal-element-edit">Edit Category</h3>
                 </div>
-                <div class="modal-body">
-
-                    <!-- Form Content -->
-                    <form id="form-new-category">
+                <!-- Form Content -->
+                <form id="form-new-category">
+                    <div class="modal-body">
                         <div class="modal-element-edit">
                             <label>Category #ID: </label><span class="modal-id"></span>
                         </div>
@@ -142,6 +138,8 @@
                             <label for="category-description">Category Description</label>
                             <input id="category-description" name="description" placeholder="Description" type="text" class="form-control" required>
                         </div>
+                    </div>
+                    <div class="modal-footer">
                         <div class="col-sm-2 left-side-button">
                             <button id="delete-category" type="button" class="btn btn-delete btn-link modal-element-edit">Delete</button>
                         </div>
@@ -150,11 +148,9 @@
                             <button id="submit-category" type="submit" class="btn btn-custom btn-submit modal-element-new">Submit</button>
                             <button id="update-category" type="button" class="btn btn-custom btn-update modal-element-edit">Update</button>
                         </div>
-                        <div class="row"></div>
-                    </form>
+                    </div>
+                </form>
 
-                </div>
-                <div class="modal-footer"></div>
             </div>
         </div>
     </div>
@@ -168,10 +164,9 @@
                     <h3 class="modal-title modal-element-new">Create New Item</h3>
                     <h3 class="modal-title modal-element-edit">Edit Item</h3>
                 </div>
-                <div class="modal-body">
-
-                    <!-- Form Content -->
-                    <form id="form-new-item">
+                <!-- Form Content -->
+                <form id="form-new-item">
+                    <div class="modal-body">
                         <div class="modal-element-edit">
                             <label>Item #ID: </label><span class="modal-id"></span>
                         </div>
@@ -195,6 +190,8 @@
                                 <option value="trash">Trash</option>
                             </select>
                         </div>
+                    </div>
+                    <div class="modal-footer">
                         <div class="col-sm-2 left-side-button">
                             <!--<button id="delete-item" type="button" class="btn btn-delete btn-link modal-element-edit">Delete</button>-->
                         </div>
@@ -203,11 +200,8 @@
                             <button id="submit-item" type="submit" class="btn btn-custom btn-submit modal-element-new">Submit</button>
                             <button id="update-item" type="button" class="btn btn-custom btn-update modal-element-edit">Update</button>
                         </div>
-                        <div class="row buttons"></div>
-                    </form>
-
-                </div>
-                <div class="modal-footer"></div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
